@@ -62,4 +62,19 @@ class Test {
         return Triple(ops, keywords, torrentPage)
     }
 
+    @Test
+    fun `should work 1`() {
+
+        val (ops, keywords, torrentPage) = mock()
+
+        val tracker = Tracker(TrackerParser.OneThreeThree(), ops)
+        val search = tracker.search(keywords)
+
+        Mockito.`when`(ops.open(search.torrents[0])).thenReturn(torrentPage)
+
+        val magnet = tracker.select(0)
+
+        assertThat(magnet).isEqualTo(PAGE_EXPECTED_TORRENT)
+    }
+
 }
