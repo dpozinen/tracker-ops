@@ -4,8 +4,9 @@ private const val separator =
 class Torrents(val torrents: List<Torrent>) {
 
     override fun toString() =
-        torrents.withIndex()
-            .joinToString(separator, separator) { "[${it.index}] ${it.value.name} --- " }
+        if (torrents.isEmpty()) "No Torrents"
+        else torrents.withIndex()
+            .joinToString(separator, separator) { "[${it.index}] ${it.value.name} " }
 
     companion object {
         fun empty() = Torrents(listOf())

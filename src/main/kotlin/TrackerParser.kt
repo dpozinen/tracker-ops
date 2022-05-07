@@ -7,13 +7,19 @@ interface TrackerParser {
 
     class OneThreeThree : TrackerParser {
 
-        override fun parseSearch(body: String): Torrents =
-            Torrents(
-                Jsoup.parse(body)
+        override fun parseSearch(body: String): Torrents {
+            val document = Jsoup.parse(body)
+
+            if (document.select("p").any { e -> e.text().contains("No results were returned") })
+                return Torrents.empty()
+
+            return Torrents(
+                document
                     .select(".table-list-wrap tbody a[href^=/torrent/]")
                     .map { Torrent.from(it) }
                     .toList()
             )
+        }
 
         override fun parseTorrentPage(body: String): Torrent {
             val document = Jsoup.parse(body)
