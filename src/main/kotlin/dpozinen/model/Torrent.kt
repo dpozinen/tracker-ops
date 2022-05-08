@@ -1,3 +1,5 @@
+package dpozinen.model
+
 import org.jsoup.nodes.Element
 
 class Torrent(val link: String, val name: String) {

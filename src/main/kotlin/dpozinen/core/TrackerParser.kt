@@ -1,3 +1,7 @@
+package dpozinen.core
+
+import dpozinen.model.Torrent
+import dpozinen.model.Torrents
 import org.jsoup.Jsoup
 
 interface TrackerParser {

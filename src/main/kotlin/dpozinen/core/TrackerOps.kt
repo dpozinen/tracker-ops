@@ -1,3 +1,6 @@
+package dpozinen.core
+
+import dpozinen.model.Torrent
 import org.jsoup.Connection
 import org.jsoup.Jsoup
 

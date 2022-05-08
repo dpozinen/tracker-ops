@@ -1,3 +1,5 @@
+package dpozinen.model
+
 private const val separator =
     "--------------------------------------------------------------------\n"
 
@@ -9,6 +11,6 @@ class Torrents(val torrents: List<Torrent>) {
             .joinToString(separator, separator) { "[${it.index}] ${it.value.name} \n" }
 
     companion object {
-        fun empty() = Torrents(listOf())
+        fun empty() = Torrents(mutableListOf())
     }
 }
