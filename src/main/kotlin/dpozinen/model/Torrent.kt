@@ -1,8 +1,5 @@
 package dpozinen.model
 
-import java.util.function.Function
-import java.util.function.Predicate
-
 data class Torrent(
     val link: String, val name: String,
     val size: String = "",
@@ -24,11 +21,11 @@ data class Torrent(
     )
 
     private fun <F> replace(other: Torrent,
-                            getter: Function<Torrent, F>,
-                            predicate: Predicate<F>,
+                            getter: (Torrent) -> F,
+                            predicate: (F) -> Boolean,
     ) : F {
-        val current = getter.apply(this)
-        return if (predicate.test(current)) getter.apply(other) else current
+        val current = getter.invoke(this)
+        return if (predicate.invoke(current)) getter.invoke(other) else current
     }
 
 }
