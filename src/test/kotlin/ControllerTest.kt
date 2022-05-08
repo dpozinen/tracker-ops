@@ -37,6 +37,7 @@ class ControllerTest(@Autowired val mockMvc: MockMvc) {
                 jsonPath<String>("[0].date", `is`(SEARCH_EXPECTED_TORRENT.date))
                 jsonPath<String>("[0].contributor", `is`(SEARCH_EXPECTED_TORRENT.contributor))
                 jsonPath<Int>("[0].index", `is`(0))
+                jsonPath<String>("[0].link", `is`("http://localhost:80/search/133/abc abc/select/0"))
             }
     }
 
