@@ -1,4 +1,5 @@
-import Data.OneThreeThree.SEARCH_EXPECTED_TORRENT
+import Data.OneThreeThree.Companion.PAGE_EXPECTED_TORRENT
+import Data.OneThreeThree.Companion.SEARCH_EXPECTED_TORRENT
 import com.ninjasquad.springmockk.MockkBean
 import dpozinen.App
 import dpozinen.TrackerController
@@ -43,12 +44,13 @@ class ControllerTest(@Autowired val mockMvc: MockMvc) {
 
     @Test
     fun `should select`() {
-        every { service.select(Trackers.OneThreeThree, "abc abc", 0) }.returns(Data.PAGE_EXPECTED_TORRENT)
+        every { service.select(Trackers.OneThreeThree, "abc abc", 0) }
+            .returns(PAGE_EXPECTED_TORRENT)
 
         mockMvc.get("/search/133/abc abc/select/0")
             .andExpect {
-                jsonPath<String>("name", `is`(Data.PAGE_EXPECTED_TORRENT.name))
-                jsonPath<String>("link", `is`(Data.PAGE_EXPECTED_TORRENT.link))
+                jsonPath<String>("name", `is`(PAGE_EXPECTED_TORRENT.name))
+                jsonPath<String>("link", `is`(PAGE_EXPECTED_TORRENT.link))
             }
     }
 }

@@ -1,8 +1,6 @@
-import Data.OneThreeThree.PAGE_COMPLETE_EXPECTED_TORRENT
-import Data.OneThreeThree.PAGE_EXPECTED_TORRENT
-import Data.OneThreeThree.SEARCH_EXPECTED_TORRENT
-import Data.OneThreeThree.SEARCH_PAGE_PATH
-import Data.OneThreeThree.TORRENT_PAGE_PATH
+import Data.OneThreeThree.Companion.PAGE_COMPLETE_EXPECTED_TORRENT
+import Data.OneThreeThree.Companion.SEARCH_PAGE_PATH
+import Data.OneThreeThree.Companion.TORRENT_PAGE_PATH
 import dpozinen.core.Tracker
 import dpozinen.core.TrackerOps
 import dpozinen.core.TrackerParser
