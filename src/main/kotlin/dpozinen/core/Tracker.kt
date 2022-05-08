@@ -6,20 +6,21 @@ import dpozinen.model.Torrents
 class Tracker(
     private val parser: TrackerParser,
     private val ops: TrackerOps,
-    private var torrents: Torrents = Torrents.empty()
+    private val torrents: MutableMap<String, Torrents> = mutableMapOf()
 ) {
 
-    fun search(keywords: List<String>): Torrents {
-        val body = ops.search(keywords)
-
-        this.torrents = parser.parseSearch(body)
-
-        return torrents
+    fun search(keywords: String): Torrents {
+        return torrents.computeIfAbsent(keywords) {
+            val body = ops.search(keywords.split(" "))
+            parser.parseSearch(body)
+        }
     }
 
-    fun select(index: Int): Torrent {
-        val torrent = torrents.torrents[index]
+    fun select(keywords: String, index: Int): Torrent {
+        val searchResult = this.torrents[keywords] ?: throw IllegalArgumentException(keywords)
+        val torrent = searchResult.torrents[index]
         val torrentPage = ops.open(torrent)
+
         return parser.parseTorrentPage(torrentPage).replaceMissing(torrent)
     }
 

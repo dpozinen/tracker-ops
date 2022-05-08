@@ -15,7 +15,8 @@ fun main() {
 
 private fun searchTracker(tracker: Tracker, read: ReadActions) {
     println("Enter Search Keyword")
-    val torrents = tracker.search(read.keyword())
+    val keywords = read.keyword()
+    val torrents = tracker.search(keywords)
 
     println(torrents)
 
@@ -23,7 +24,7 @@ private fun searchTracker(tracker: Tracker, read: ReadActions) {
 
     val index = read.torrentIndex()
 
-    val torrent = tracker.select(index)
+    val torrent = tracker.select(keywords, index)
 
     println(
         """

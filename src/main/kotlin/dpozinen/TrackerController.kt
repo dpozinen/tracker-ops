@@ -18,6 +18,6 @@ open class TrackerController(private val service: TrackerService) {
 
     @GetMapping("/search/{tracker}/{keywords}/select/{index}")
     fun select(@PathVariable tracker: String, @PathVariable keywords: String, @PathVariable index: Int): Torrent {
-        return service.select(Trackers.from(tracker), index)
+        return service.select(Trackers.from(tracker), keywords, index)
     }
 }

@@ -26,6 +26,8 @@ interface TrackerParser {
         }
 
         private fun toTorrent(element: Element): Torrent {
+            element.select(".size .seeds").remove()
+
             val link = element.select("a[href^=/torrent/]").attr("href")
             val name = element.select("a[href^=/torrent/]").text()
             val seeds = element.select(".seeds").first()!!.text().toInt()

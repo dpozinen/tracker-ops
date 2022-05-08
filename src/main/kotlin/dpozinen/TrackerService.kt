@@ -7,20 +7,18 @@ import dpozinen.model.Torrents
 import org.springframework.stereotype.Service
 
 @Service
-open class TrackerService(private val cache: MutableMap<Trackers, Tracker> = mutableMapOf()) {
+open class TrackerService(private val trackers: MutableMap<Trackers, Tracker> = mutableMapOf()) {
 
-//  todo cache search results per keywords
+    fun search(name: Trackers, keywords: String): Torrents {
+        val tracker = trackers.computeIfAbsent(name) { Tracker.from(name) }
 
-    fun search(trackers: Trackers, keywords: String): Torrents {
-        val tracker = cache.computeIfAbsent(trackers) { Tracker.from(trackers) }
-
-        return tracker.search(keywords.split(" "))
+        return tracker.search(keywords)
     }
 
-    fun select(trackers: Trackers, index: Int): Torrent {
-        val tracker = cache.getOrElse(trackers) { throw IllegalArgumentException(trackers.name) }
+    fun select(name: Trackers, keywords: String, index: Int): Torrent {
+        val tracker = trackers[name] ?: throw IllegalArgumentException(name.name)
 
-        return tracker.select(index)
+        return tracker.select(keywords, index)
     }
 
 }

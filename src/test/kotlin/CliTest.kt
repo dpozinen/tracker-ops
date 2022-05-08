@@ -1,7 +1,8 @@
-import Data.Companion.PAGE_EXPECTED_TORRENT
-import Data.Companion.SEARCH_EXPECTED_TORRENT
-import Data.Companion.SEARCH_PAGE_PATH
-import Data.Companion.TORRENT_PAGE_PATH
+import Data.OneThreeThree.PAGE_COMPLETE_EXPECTED_TORRENT
+import Data.OneThreeThree.PAGE_EXPECTED_TORRENT
+import Data.OneThreeThree.SEARCH_EXPECTED_TORRENT
+import Data.OneThreeThree.SEARCH_PAGE_PATH
+import Data.OneThreeThree.TORRENT_PAGE_PATH
 import dpozinen.core.Tracker
 import dpozinen.core.TrackerOps
 import dpozinen.core.TrackerParser
@@ -11,23 +12,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.test.Test
 
-class CliTest {
-
-    @Test
-    fun `should get torrents`() {
-        val body = Files.readString(Path.of(SEARCH_PAGE_PATH))
-        val torrents = TrackerParser.OneThreeThree().parseSearch(body)
-
-        assertThat(torrents.torrents).containsExactly(SEARCH_EXPECTED_TORRENT)
-    }
-
-    @Test
-    fun `should get torrent link`() {
-        val body = Files.readString(Path.of(TORRENT_PAGE_PATH))
-        val torrent = TrackerParser.OneThreeThree().parseTorrentPage(body)
-
-        assertThat(torrent).isEqualTo(PAGE_EXPECTED_TORRENT)
-    }
+class CliTest { // todo not really cli test
 
     @Test
     fun `should work`() {
@@ -38,18 +23,18 @@ class CliTest {
 
         Mockito.`when`(ops.open(search.torrents[0])).thenReturn(torrentPage)
 
-        val magnet = tracker.select(0)
+        val magnet = tracker.select(keywords, 0)
 
-        assertThat(magnet).isEqualTo(PAGE_EXPECTED_TORRENT)
+        assertThat(magnet).isEqualTo(PAGE_COMPLETE_EXPECTED_TORRENT)
     }
 
-    private fun mock(): Triple<TrackerOps, MutableList<String>, String> {
+    private fun mock(): Triple<TrackerOps, String, String> {
         val ops = Mockito.mock(TrackerOps::class.java)
-        val keywords = mutableListOf("a", "b")
+        val keywords = "a b"
         val searchPage = Files.readString(Path.of(SEARCH_PAGE_PATH))
         val torrentPage = Files.readString(Path.of(TORRENT_PAGE_PATH))
 
-        Mockito.`when`(ops.search(keywords)).thenReturn(searchPage)
+        Mockito.`when`(ops.search(keywords.split(" "))).thenReturn(searchPage)
 
         return Triple(ops, keywords, torrentPage)
     }

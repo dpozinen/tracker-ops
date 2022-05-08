@@ -7,7 +7,7 @@ class ReadActions {
         return Trackers.from(tracker)
     }
 
-    fun keyword() = readLine()?.split(" ")!!
+    fun keyword() = readLine()!!
 
     fun torrentIndex() = readLine()?.toInt()!!
 
