@@ -4,13 +4,18 @@ import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.SerializerProvider
 import dpozinen.model.Torrents
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.jackson.JsonComponent
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
 import java.io.IOException
 import javax.servlet.http.HttpServletRequest
 
 
-class TorrentsDeserializer : JsonSerializer<Torrents>() {
+@JsonComponent
+class TorrentsDeserializer(@Value("\${server.address}") private val address: String,
+                           @Value("\${server.port}") private val port: String,
+) : JsonSerializer<Torrents>() {
 
     @Throws(IOException::class)
     override fun serialize(
@@ -39,6 +44,6 @@ class TorrentsDeserializer : JsonSerializer<Torrents>() {
     }
 
     private fun searchResultLink(request: HttpServletRequest, i: Int) =
-        "${request.scheme}://${request.remoteHost}:${request.remotePort}${request.pathInfo}/select/${i}"
+        "${request.scheme}://${address}:${port}${request.requestURI}/select/${i}"
 
 }
