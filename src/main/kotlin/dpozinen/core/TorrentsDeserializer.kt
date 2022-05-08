@@ -17,9 +17,17 @@ class TorrentsDeserializer : JsonSerializer<Torrents>() {
     ) {
         json.writeStartArray()
         for (i in torrents.torrents.indices) {
+            val torrent = torrents.torrents[i]
             json.writeStartObject()
+
             json.writeNumberField("index", i)
-            json.writeStringField("name", torrents.torrents[i].name)
+            json.writeStringField("name", torrent.name)
+            json.writeStringField("size", torrent.size)
+            json.writeNumberField("seeds", torrent.seeds)
+            json.writeNumberField("leeches", torrent.leeches)
+            json.writeStringField("date", torrent.date)
+            json.writeStringField("contributor", torrent.contributor)
+
             json.writeEndObject()
         }
         json.writeEndArray()

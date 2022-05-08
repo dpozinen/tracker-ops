@@ -18,8 +18,9 @@ class Tracker(
     }
 
     fun select(index: Int): Torrent {
-        val torrentPage = ops.open(torrents.torrents[index])
-        return parser.parseTorrentPage(torrentPage)
+        val torrent = torrents.torrents[index]
+        val torrentPage = ops.open(torrent)
+        return parser.parseTorrentPage(torrentPage).replaceMissing(torrent)
     }
 
     companion object {

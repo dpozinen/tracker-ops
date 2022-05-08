@@ -29,6 +29,12 @@ class SpringTest(@Autowired val mockMvc: MockMvc) {
         mockMvc.get("/search/133/abc abc")
             .andExpect {
                 jsonPath<String>("[0].name", `is`(Data.SEARCH_EXPECTED_TORRENT.name))
+                jsonPath<String>("[0].name", `is`(Data.SEARCH_EXPECTED_TORRENT.name))
+                jsonPath<String>("[0].size", `is`(Data.SEARCH_EXPECTED_TORRENT.size))
+                jsonPath<Int>("[0].seeds", `is`(Data.SEARCH_EXPECTED_TORRENT.seeds))
+                jsonPath<Int>("[0].leeches", `is`(Data.SEARCH_EXPECTED_TORRENT.leeches))
+                jsonPath<String>("[0].date", `is`(Data.SEARCH_EXPECTED_TORRENT.date))
+                jsonPath<String>("[0].contributor", `is`(Data.SEARCH_EXPECTED_TORRENT.contributor))
                 jsonPath<Int>("[0].index", `is`(0))
             }
     }
