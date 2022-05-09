@@ -68,8 +68,8 @@ function search(event) {
 
 function addTorrent(torrent) {
     let card = `
-    <div class="col" id="torrent-${torrent.index}" style="cursor: pointer" onclick="fetchLink(this, '${torrent.link}')">
-        <div class="card">
+    <div class="col" id="torrent-${torrent.index}">
+        <div class="card" style="cursor: pointer" onclick="fetchLink(this, '${torrent.link}')">
             <div class="card-body">
                 <h5 class="card-title">${torrent.contributor}</h5>
                 <p class="card-text">${torrent.name}</p>
