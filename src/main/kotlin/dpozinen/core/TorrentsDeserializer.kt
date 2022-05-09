@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest
 
 
 @JsonComponent
-class TorrentsDeserializer(@Value("\${server.address}") private val address: String,
+class TorrentsDeserializer(@Value("\${server.address:localhost}") private val address: String,
                            @Value("\${server.port}") private val port: String,
 ) : JsonSerializer<Torrents>() {
 
