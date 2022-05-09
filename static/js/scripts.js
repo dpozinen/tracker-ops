@@ -51,13 +51,13 @@ function search(event) {
         type: "GET",
         dataType: "json",
         url: url,
-        success: function(data) {
+        success: function(torrents) {
             $('#torrents').empty()
 
-            if ($.isEmptyObject(data)) {
+            if ($.isEmptyObject(torrents)) {
                 addNoResultsCard();
             } else {
-                $.each(data, function(key, value) {
+                $.each(torrents, function(key, value) {
                     addTorrent(value)
                 });
             }
@@ -86,8 +86,12 @@ function addTorrent(torrent) {
                 </div>
                 <h6 class="card-text t-date"><small class="text-muted">${torrent.date}</small></h6>
                 <a hidden class="btn btn-primary"><i class="fa-solid fa-magnet"></i></a>
-                <button hidden type="button" class="btn btn-outline-primary">
+                <button hidden type="button" class="btn btn-outline-primary copy-magnet">
                     <i class="fa-solid fa-copy"></i>
+                    <i class="fa-solid fa-magnet"></i>
+                </button>
+                <button hidden type="button" class="btn btn-outline-primary manual-magnet">
+                    <i class="fa-solid fa-gears"></i>
                     <i class="fa-solid fa-magnet"></i>
                 </button>
             </div>
@@ -119,14 +123,14 @@ function fetchLink(elem, link) {
         type: "GET",
         dataType: "json",
         url: link,
-        complete: function(data) {
-            let json = data.responseJSON;
+        success: function(torrent) {
             $('.spinner-grow', elem).remove()
 
-            $('a', elem).attr('href', json.link)
+            $('a', elem).attr('href', torrent.link)
             $('a', elem).removeAttr('hidden')
             $('button', elem).removeAttr('hidden')
-            $('button', elem).click(copyToClipboard(json.link))
+            $('button .copy-magnet', elem).click(copyToClipboard(torrent.link))
+            $('button .manual-magnet', elem).click(sendToMyDeluge(torrent.link))
         }
     });
 }
@@ -147,3 +151,45 @@ function copyToClipboard(value) {
     navigator.clipboard.writeText(value);
 }
 
+function sendToMyDeluge(magnet) {
+    let addMagnet = function (config) {
+        let location = config.result.download_location
+        sendToDeluge(
+            delugeParams("core.add_torrent_magnet",
+                [ magnet, {"download_location": location} ]
+            )
+        )
+    };
+    let getConfig = function () {
+        sendToDeluge(
+            delugeParams("core.get_config", []),
+            addMagnet
+        )
+    };
+    let auth = function () {
+        sendToDeluge(
+            delugeParams("auth.login", ["deluge"]),
+            getConfig
+        )
+    }
+    auth();
+}
+
+function sendToDeluge(params, onSuccess) {
+    $.ajax({
+        type: "POST",
+        dataType: "json",
+        url: "http://192.168.0.184:8112/json",
+        body: JSON.stringify(params),
+        contentType: "application/json; charset=utf-8",
+        success: onSuccess
+    })
+}
+
+function delugeParams(method, params) {
+    return {
+        "method": method,
+        "params": params,
+        "id": 109384
+    }
+}
