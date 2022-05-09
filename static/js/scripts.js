@@ -69,10 +69,13 @@ function search(event) {
 function addTorrent(torrent) {
     let card = `
     <div class="col" id="torrent-${torrent.index}">
-        <div class="card" style="cursor: pointer" onclick="fetchLink(this, '${torrent.link}')">
+        <div class="card">
             <div class="card-body">
                 <h5 class="card-title">${torrent.contributor}</h5>
-                <p class="card-text">${torrent.name}</p>
+                <p class="card-text" style="cursor: pointer"
+                   onclick="fetchLink(this, '${torrent.link}', '${torrent.index}')">
+                    ${torrent.name}
+                </p>
                 <div class="row">
                     <div class="col-4">
                         <h6 class="card-subtitle mb-2 text-muted t-size">${torrent.size}</h6>
@@ -116,21 +119,31 @@ function addNoResultsCard() {
     $('#torrents').append(card)
 }
 
-function fetchLink(elem, link) {
-    showSpinner(elem);
+function fetchLink(elem, link, cardId) {
+    let card = $(`#torrent-${cardId}`)
+    showSpinner(card);
 
     $.ajax({
         type: "GET",
         dataType: "json",
         url: link,
         success: function(torrent) {
-            $('.spinner-grow', elem).remove()
+            $('.spinner-grow', card).remove()
 
-            $('a', elem).attr('href', torrent.link)
-            $('a', elem).removeAttr('hidden')
-            $('button', elem).removeAttr('hidden')
-            $('button .copy-magnet', elem).click(copyToClipboard(torrent.link))
-            $('button .manual-magnet', elem).click(sendToMyDeluge(torrent.link))
+            $('a', card).attr('href', torrent.link)
+            $('a', card).removeAttr('hidden')
+            $('button', card).removeAttr('hidden')
+            $('.copy-magnet', card).click(function () {
+                navigator.clipboard.writeText(torrent.link)
+            })
+            $('.manual-magnet', card).click(function () {
+                $.ajax({
+                    url: "http://192.168.0.130:8133/deluge",
+                    method: "POST",
+                    contentType: "text/plain",
+                    data: torrent.link
+                })
+            })
         }
     });
 }
@@ -147,10 +160,8 @@ function showSpinner(elem) {
     }
 }
 
-function copyToClipboard(value) {
-    navigator.clipboard.writeText(value);
-}
 
+// todo fix weird cors issues
 function sendToMyDeluge(magnet) {
     let addMagnet = function (config) {
         let location = config.result.download_location
@@ -177,12 +188,17 @@ function sendToMyDeluge(magnet) {
 
 function sendToDeluge(params, onSuccess) {
     $.ajax({
-        type: "POST",
-        dataType: "json",
+        type: "OPTIONS",
         url: "http://192.168.0.184:8112/json",
-        body: JSON.stringify(params),
-        contentType: "application/json; charset=utf-8",
-        success: onSuccess
+        success: function () {
+            let request = new XMLHttpRequest();
+            request.open("POST", "http://192.168.0.184:8112/json");
+            request.setRequestHeader("Content-Type", "application/json")
+            request.setRequestHeader("Access-Control-Allow-Origin", "*")
+            request.setRequestHeader("Access-Control-Allow-Methods", "POST")
+            request.setRequestHeader("Access-Control-Allow-Headers", "Content-Type")
+            request.send(JSON.stringify(params));
+        },
     })
 }
 
