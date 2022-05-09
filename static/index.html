@@ -38,18 +38,11 @@
         <header class="masthead bg-primary text-white text-center">
             <div class="container d-flex align-items-center flex-column">
                 <form onsubmit="search(event)" id="search-form">
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="1337x.to" id="1337x" value="133" checked>
-                        <label class="form-check-label" for="1337x">
-                            1337x.to
-                        </label>
-                    </div>
-                    <div class="form-check disabled">
-                        <input class="form-check-input" type="radio" name="rarbg.to" id="rarbg" value="rarbg" disabled>
-                        <label class="form-check-label" for="rarbg">
-                            rarbg.to (coming soon)
-                        </label>
-                    </div>
+                    <input type="radio" class="btn-check" name="tracker" id="1337x" value="133" autocomplete="off" checked>
+                    <label class="btn btn-outline-secondary" for="1337x">1337x.to</label>
+                    <input type="radio" class="btn-check " name="tracker" id="rarbg" value="rarbg" autocomplete="off" disabled>
+                    <label class="btn btn-outline-secondary" for="rarbg">rarbg.to (coming soon)</label>
+                    <div class="mb-5"></div>
                     <div class="divider-custom divider-light">
                         <div class="divider-custom-line"></div>
                     </div>

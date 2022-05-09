@@ -51,14 +51,13 @@ function search(event) {
         type: "GET",
         dataType: "json",
         url: url,
-        complete: function(data) {
+        success: function(data) {
             $('#torrents').empty()
-            let json = data.responseJSON;
 
-            if ($.isEmptyObject(json)) {
+            if ($.isEmptyObject(data)) {
                 addNoResultsCard();
             } else {
-                $.each(json, function(key, value) {
+                $.each(data, function(key, value) {
                     addTorrent(value)
                 });
             }
