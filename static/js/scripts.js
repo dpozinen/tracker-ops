@@ -41,9 +41,17 @@ window.addEventListener('DOMContentLoaded', event => {
 
 });
 
-function searchSpinner(enable) {
+function searchSpinner(enable, border, elem, disabledIcon) {
     if (enable) {
-        let spinner =
+        let spinner = border ?
+            `
+            <div class="col text-center">
+                <div class="spinner-border spinner-border-sm text-danger" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+            `
+            :
             `
             <div class="col text-center">
                 <div class="spinner-grow text-primary" role="status">
@@ -51,16 +59,15 @@ function searchSpinner(enable) {
                 </div>
             </div>
         `;
-        $('#search-divider-icon').empty().append(spinner);
+        elem.empty().append(spinner);
     } else {
-        let icon = '<i class="fa-solid fa-circle-nodes">'
-        $('#search-divider-icon').empty().append(icon)
+        elem.empty().append(disabledIcon)
     }
 }
 
 function search(event) {
     event.preventDefault()
-    searchSpinner(true)
+    searchSpinner(true, false, $('#search-divider-icon'))
     let tracker = $('#search-form input[checked]').val();
     let keywords = $('#keywords').val();
 
@@ -79,7 +86,7 @@ function search(event) {
                     addTorrent(value)
                 });
             }
-            searchSpinner(false)
+            searchSpinner(false, false, $('#search-divider-icon'), '<i class="fa-solid fa-circle-nodes">')
             $("#results")[0].scrollIntoView()
         }
     });
@@ -156,11 +163,16 @@ function fetchLink(elem, link, cardId) {
                 navigator.clipboard.writeText(torrent.link)
             })
             $('.manual-magnet', card).click(function () {
+                searchSpinner(true, true, $('.manual-magnet', card))
                 $.ajax({
                     url: "http://192.168.0.130:8133/deluge",
                     method: "POST",
                     contentType: "text/plain",
-                    data: torrent.link
+                    data: torrent.link,
+                    success: function () {
+                        searchSpinner(false, true, $('.manual-magnet', card),
+                    '<i class="fa-solid fa-check"></i> <i class="fa-solid fa-magnet"></i>')
+                    }
                 })
             })
         }
@@ -228,3 +240,7 @@ function delugeParams(method, params) {
         "id": 109384
     }
 }
+
+// dptodo: separate into several files
+// dptodo: add constants
+// dptodo: checkboxes for other buttons
