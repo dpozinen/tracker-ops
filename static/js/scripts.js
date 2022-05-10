@@ -170,8 +170,19 @@ function fetchLink(elem, link, cardId) {
                     contentType: "text/plain",
                     data: torrent.link,
                     success: function () {
+                        $('.manual-magnet', card).removeClass('btn-outline-danger')
+                            .addClass('btn-outline-primary')
                         searchSpinner(false, true, $('.manual-magnet', card),
                     '<i class="fa-solid fa-check"></i> <i class="fa-solid fa-magnet"></i>')
+                    },
+                    error: function () {
+                        $('.manual-magnet', card).removeClass('btn-outline-primary')
+                            .addClass('btn-outline-danger')
+                        searchSpinner(false, true, $('.manual-magnet', card),
+                            `
+                                        <i class="fa-solid fa-circle-exclamation"></i>
+                                        <i class="fa-solid fa-magnet"></i>
+                                        `)
                     }
                 })
             })

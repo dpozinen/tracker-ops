@@ -1,7 +1,7 @@
 package dpozinen.deluge
 
 data class DelugeResponse(
-    val result: Boolean?,
+    val result: String?,
     val id: Long?,
     val error: Map<String, Any>?
 ) {

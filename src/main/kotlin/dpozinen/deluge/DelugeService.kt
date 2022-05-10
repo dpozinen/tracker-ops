@@ -47,7 +47,6 @@ class DelugeService(
         log.info("Received from deluge {}", response.body)
 
         response.body.result ?: throw DelugeClientException(response.body)
-        if (!response.body.result!!) throw DelugeClientException(response.body)
 
         return response
     }
