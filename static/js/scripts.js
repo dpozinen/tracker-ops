@@ -41,8 +41,26 @@ window.addEventListener('DOMContentLoaded', event => {
 
 });
 
+function searchSpinner(enable) {
+    if (enable) {
+        let spinner =
+            `
+            <div class="col text-center">
+                <div class="spinner-grow text-primary" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+        `;
+        $('#search-divider-icon').empty().append(spinner);
+    } else {
+        let icon = '<i class="fa-solid fa-circle-nodes">'
+        $('#search-divider-icon').empty().append(icon)
+    }
+}
+
 function search(event) {
     event.preventDefault()
+    searchSpinner(true)
     let tracker = $('#search-form input[checked]').val();
     let keywords = $('#keywords').val();
 
@@ -61,6 +79,7 @@ function search(event) {
                     addTorrent(value)
                 });
             }
+            searchSpinner(false)
             $("#results")[0].scrollIntoView()
         }
     });
