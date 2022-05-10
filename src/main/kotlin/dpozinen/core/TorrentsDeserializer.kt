@@ -13,8 +13,8 @@ import javax.servlet.http.HttpServletRequest
 
 
 @JsonComponent
-class TorrentsDeserializer(@Value("\${server.address:localhost}") private val address: String,
-                           @Value("\${server.port}") private val port: String,
+class TorrentsDeserializer(@Value("\${tracker-ops.host:localhost}") private val address: String,
+                           @Value("\${server.port:8133}") private val port: String,
 ) : JsonSerializer<Torrents>() {
 
     @Throws(IOException::class)

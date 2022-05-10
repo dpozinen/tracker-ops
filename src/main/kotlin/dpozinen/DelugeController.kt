@@ -1,5 +1,7 @@
 package dpozinen
 
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod.POST
 import org.springframework.http.RequestEntity
@@ -12,7 +14,12 @@ import org.springframework.web.client.exchange
 import java.net.URI
 
 @RestController
-class DelugeController(private val rest: RestTemplate = RestTemplate()) {
+@ConditionalOnProperty(value = ["tracker-ops.manual-deluge.enabled"], havingValue = "true")
+class DelugeController(
+    private val rest: RestTemplate = RestTemplate(),
+    @Value("\${tracker-ops.manual-deluge.address}") private val delugeAddress: String,
+    @Value("\${tracker-ops.manual-deluge.download-folder}") private val downloadFolder: String
+) {
 
     @PostMapping("/deluge")
     fun deluge(@RequestBody magnet: String) {
@@ -35,7 +42,7 @@ class DelugeController(private val rest: RestTemplate = RestTemplate()) {
             RequestEntity(
                 body(method, params),
                 headers, POST,
-                URI("http://192.168.0.184:8112/json")
+                URI("http://$delugeAddress/json")
             )
         )
     }
@@ -51,7 +58,7 @@ class DelugeController(private val rest: RestTemplate = RestTemplate()) {
     private fun magnetParams(magnet: String) = """ 
                     [
                         "$magnet",
-                        { "download_location" : "/Downloads/running" }
+                        { "download_location" : "$downloadFolder" }
                     ] 
                 """.trimIndent()
 }

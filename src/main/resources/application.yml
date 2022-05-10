@@ -1,3 +1,9 @@
+tracker-ops:
+  host: 192.168.0.130
+  manual-deluge:
+    enabled: true
+    address: 192.168.0.180:8112
+    download-folder: /Downloads/running
+
 server:
   port: 8133
-  address: 192.168.0.130
