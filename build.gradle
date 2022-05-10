@@ -14,6 +14,8 @@ dependencies {
     implementation 'org.jsoup:jsoup:1.14.3'
     implementation 'org.springframework.boot:spring-boot-starter-web:2.6.7'
     implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.13.2'
+    implementation 'io.github.microutils:kotlin-logging-jvm:2.1.21'
+    implementation 'ch.qos.logback:logback-classic:1.2.11'
 
     runtimeOnly 'org.jetbrains.kotlin:kotlin-reflect:1.6.21'
     runtimeOnly 'org.springframework.boot:spring-boot-devtools:2.6.7'
@@ -23,8 +25,7 @@ dependencies {
     testImplementation 'org.assertj:assertj-core:3.22.0'
     testImplementation 'org.springframework.boot:spring-boot-starter-test:2.6.7'
 
-    testImplementation("com.ninja-squad:springmockk:3.0.1")
-
+    testImplementation 'com.ninja-squad:springmockk:3.1.1'
 }
 
 test {
