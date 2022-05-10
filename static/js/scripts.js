@@ -87,7 +87,7 @@ function search(event) {
 
 function addTorrent(torrent) {
     let card = `
-    <div class="col" id="torrent-${torrent.index}">
+    <div class="col-md" id="torrent-${torrent.index}">
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">${torrent.contributor}</h5>

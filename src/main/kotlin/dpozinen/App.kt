@@ -3,7 +3,7 @@ package dpozinen
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
-@SpringBootApplication()
+@SpringBootApplication
 open class App
 
     fun main(args: Array<String>) {
