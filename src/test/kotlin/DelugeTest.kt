@@ -1,79 +1,87 @@
-import com.ninjasquad.springmockk.MockkBean
-import dpozinen.App
-import dpozinen.deluge.DelugeClientException
-import dpozinen.deluge.DelugeController
-import dpozinen.deluge.DelugeResponse
-import dpozinen.deluge.DelugeService
+import dpozinen.deluge.*
 import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
-import org.hamcrest.Matchers
-import org.hamcrest.Matchers.`is`
-import org.junit.jupiter.api.Disabled
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.boot.test.context.runner.ApplicationContextRunner
-import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.http.HttpHeaders
+import org.springframework.http.ResponseEntity
+import java.net.HttpCookie
 import kotlin.test.Test
 
-// todo deluge controller test
+
 class DelugeTest {
 
-    private val runner = ApplicationContextRunner().withUserConfiguration(App::class.java)
+    @Test
+    fun `should convert`() {
+        val torrent = DelugeTorrentConverter(Data.delugeTorrentResponse).convert()
+
+        assertThat(torrent)
+            .isEqualTo(
+                DelugeTorrent(
+                    id = "ee21ac410a4df9d2a09a97a6890fc74c0d143a0b",
+                    name = "Rick and Morty Season 1  [2160p AI x265 FS100 Joy]",
+                    state = "Seeding",
+                    progress = 100,
+                    size = "8.11 GiB",
+                    ratio = 67.9,
+                    uploaded = "550.96 GiB",
+                    downloaded = "8.11 GiB",
+                    eta = "-",
+                    downloadSpeed = "",
+                    uploadSpeed = "",
+                    date = "28.06.2021"
+                )
+            )
+    }
 
     @Test
-    fun `should disable deluge`() {
-        runner.withPropertyValues(
-            "tracker-ops.manual-deluge.enabled=false"
-        ).run {
-            assertThat(it).doesNotHaveBean(DelugeController::class.java)
-        }
+    fun `should throw if bad response`() {
+        val delugeClient = mock(false)
 
-        runner.run {
-            assertThat(it).doesNotHaveBean(DelugeController::class.java)
+        val service = DelugeService("", delugeClient)
+
+        try {
+            service.torrents()
+        } catch (e: Exception) {
+            assertThat(e)
+                .hasMessage("no torrents")
+                .isInstanceOf(IllegalArgumentException::class.java)
         }
     }
 
     @Test
-    fun `should enable deluge`() {
-        runner.withPropertyValues(
-            "tracker-ops.manual-deluge.enabled=true",
-            "tracker-ops.manual-deluge.download-folder=/",
-            "tracker-ops.manual-deluge.address=192.1.2.3",
-        ).run {
-            assertThat(it).hasSingleBean(DelugeController::class.java)
-        }
+    fun `should login once per active session`() {
+        val delugeClient = mock()
+
+        val service = DelugeService("", delugeClient)
+
+        service.torrents()
+        service.torrents()
+        service.torrents()
+
+        verify(exactly = 1) { delugeClient.login() }
     }
 
-    @WebMvcTest(DelugeController::class)
-    @ContextConfiguration(classes = [App::class])
-    class ControllerTest(@Autowired val mockMvc: MockMvc) {
+    private fun mock(mockTorrents: Boolean = true): DelugeClient {
+        val delugeClient = mockk<DelugeClient>()
+        val response = mockk<ResponseEntity<DelugeResponse>>()
 
-        @MockkBean
-        private lateinit var service: DelugeService
+        every { response.body } returns DelugeResponse(mapOf<String, Any>(), 123, mapOf())
+        every { response.headers } returns httpHeaders()
+        if (mockTorrents)
+            every { response.body.torrents() } returns listOf()
 
-        @Test
-        @Disabled // todo exception garbage
-        fun `should handle deluge response`() {
-            every { service.login() } returns "session"
+        every { delugeClient.login() } returns response
+        every { delugeClient.torrents(DelugeParams.torrents(), Data.sessioIdHttpCookie) } returns response
 
-            try {
-                every {
-                    service.addMagnet("session", Data.magnet)
-                } throws DelugeClientException(DelugeResponse(false, 1, mapOf()))
-            } catch (ignored: Throwable) {}
-
-            mockMvc.perform(post("/deluge").content(Data.magnet))
-                .andExpect {
-                    assertThat(it.response.status).isEqualTo(400)
-                    jsonPath("result", `is`("null"))
-                    jsonPath("id", `is`(1))
-                    jsonPath<Map<*, *>>("error", `is`(Matchers.anEmptyMap()))
-                }
-        }
-
+        return delugeClient
     }
+
+    private fun httpHeaders(): HttpHeaders {
+        val httpHeaders = HttpHeaders()
+        httpHeaders["Set-Cookie"] = Data.sessionIdCookie
+        return httpHeaders
+    }
+
 
 }

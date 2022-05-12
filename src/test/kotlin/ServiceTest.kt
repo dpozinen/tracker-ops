@@ -32,7 +32,7 @@ class ServiceTest {
         val (keywords, parser, ops) = mock()
         val tracker = Tracker(parser, ops)
 
-        val trackers = mutableMapOf(Pair(OneThreeThree, tracker))
+        val trackers = mutableMapOf(OneThreeThree to tracker)
         val service = TrackerService(trackers)
 
         service.search(OneThreeThree, keywords)

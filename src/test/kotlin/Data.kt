@@ -1,4 +1,5 @@
 import dpozinen.model.Torrent
+import java.net.HttpCookie
 
 class Data {
 
@@ -38,6 +39,49 @@ class Data {
     companion object {
         const val magnet =
             "magnet:?xt=urn:btih:004658B2325068E5B75A76DAC63B9F78BA9EE9A2&dn=Robin+Carolan+-+The+Northman+%28Original+Motion+Picture+Soundtrack%29+%282022%29+%5B24Bit-48kHz%5D+FLAC+%5BPMEDIA%5D+%E2%AD%90%EF%B8%8F&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Fretracker.lanta-net.ru%3A2710%2Fannounce&tr=udp%3A%2F%2Ftracker.zerobytes.xyz%3A1337%2Fannounce&tr=udp%3A%2F%2Finferno.demonoid.is%3A3391%2Fannounce&tr=udp%3A%2F%2Fp4p.arenabg.com%3A1337%2Fannounce&tr=udp%3A%2F%2F9.rarbg.me%3A2980%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.moeking.me%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fopentor.org%3A2710%2Fannounce&tr=http%3A%2F%2Ftracker.files.fm%3A6969%2Fannounce&tr=udp%3A%2F%2Ffe.dealclub.de%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=http%3A%2F%2Ftracker.openbittorrent.com%3A80%2Fannounce&tr=udp%3A%2F%2Fopentracker.i2p.rocks%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.internetwarriors.net%3A1337%2Fannounce&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969%2Fannounce&tr=udp%3A%2F%2Fcoppersurfer.tk%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.zer0day.to%3A1337%2Fannounce"
+
+        val delugeTorrentResponse: Map.Entry<String, Map<String, *>> =
+            mapOf(
+                "ee21ac410a4df9d2a09a97a6890fc74c0d143a0b"
+                        to mapOf(
+                    "upload_payload_rate" to 180,
+                    "time_added" to 1624829185,
+                    "max_upload_speed" to -1,
+                    "total_remaining" to 0,
+                    "tracker_host" to "opentrackr.org",
+                    "total_peers" to 14,
+                    "seeds_peers_ratio" to 0.5714285969734192,
+                    "total_seeds" to 8,
+                    "last_seen_complete" to 1652264788,
+                    "name" to "Rick and Morty Season 1  [2160p AI x265 FS100 Joy]",
+                    "eta" to 0,
+                    "is_auto_managed" to true,
+                    "state" to "Seeding",
+                    "num_seeds" to 0,
+                    "download_payload_rate" to 0,
+                    "time_since_transfer" to -893996,
+                    "progress" to 100.0,
+                    "ratio" to 67.9033203125,
+                    "download_location" to "/Downloads/Show",
+                    "queue" to -1,
+                    "max_download_speed" to -1,
+                    "total_wanted" to 8712212443,
+                    "distributed_copies" to 0.0,
+                    "completed_time" to 1624881168,
+                    "num_peers" to 3,
+                    "total_uploaded" to 591588139506,
+                    "total_done" to 8712212443
+                )
+            ).entries.first()
+
+        const val sessionIdCookie = "_session_id=ff9533d4210cb1ebb0062b193f02234a1a7da716b2f7ce7fbea417cd3b35eb954594; Expires=Thu, 12 May 2022 16:11:28 GMT"
+
+        val sessioIdHttpCookie = HttpCookie.parse(
+            sessionIdCookie
+                .substringBefore("Expires")
+                .plus("max-age=60")
+        )[0]
+
     }
 
 

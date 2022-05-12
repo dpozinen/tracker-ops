@@ -16,6 +16,7 @@ dependencies {
     implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.13.2'
     implementation 'io.github.microutils:kotlin-logging-jvm:2.1.21'
     implementation 'ch.qos.logback:logback-classic:1.2.11'
+    implementation 'org.springframework.boot:spring-boot-starter-websocket:2.6.7'
 
     runtimeOnly 'org.jetbrains.kotlin:kotlin-reflect:1.6.21'
     runtimeOnly 'org.springframework.boot:spring-boot-devtools:2.6.7'
