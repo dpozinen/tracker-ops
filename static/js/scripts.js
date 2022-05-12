@@ -1,3 +1,8 @@
+
+let global = {
+    host : "localhost"
+}
+
 window.addEventListener('DOMContentLoaded', event => {
 
     // Navbar shrink function
@@ -54,7 +59,7 @@ function searchSpinner(enable, border, elem, disabledIcon) {
             :
             `
             <div class="col text-center">
-                <div class="spinner-grow text-primary" role="status">
+                <div class="spinner-grow text-danger" role="status">
                     <span class="sr-only">Loading...</span>
                 </div>
             </div>
@@ -71,7 +76,7 @@ function search(event) {
     let tracker = $('#search-form input[checked]').val();
     let keywords = $('#keywords').val();
 
-    let url = `http://192.168.0.130:8133/search/${tracker}/${keywords}`;
+    let url = `http://${global.host}:8133/search/${tracker}/${keywords}`;
     $.ajax({
         type: "GET",
         dataType: "json",
@@ -165,7 +170,7 @@ function fetchLink(elem, link, cardId) {
             $('.manual-magnet', card).click(function () {
                 searchSpinner(true, true, $('.manual-magnet', card))
                 $.ajax({
-                    url: "http://192.168.0.130:8133/deluge",
+                    url: `http://${global.host}:8133/deluge`,
                     method: "POST",
                     contentType: "text/plain",
                     data: torrent.link,
