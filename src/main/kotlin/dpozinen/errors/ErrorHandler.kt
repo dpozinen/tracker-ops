@@ -3,6 +3,7 @@ package dpozinen.errors
 import dpozinen.deluge.DelugeClientException
 import dpozinen.deluge.DelugeResponse
 import mu.KotlinLogging
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -23,7 +24,7 @@ class ErrorHandler {
     @ExceptionHandler(SSLHandshakeException::class)
     fun deluge(ex: SSLHandshakeException) : ResponseEntity<Map<String, String>> {
         log.error(ex.message)
-        return ResponseEntity.internalServerError()
+        return ResponseEntity.status(HttpStatus.I_AM_A_TEAPOT)
             .body(mapOf(
                 "error" to "Tracker's are blocked here, remember?"
             ))
