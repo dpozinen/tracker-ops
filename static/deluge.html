@@ -1,0 +1,119 @@
+ <!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Tracker Ops</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="assets/circle-nodes-solid.svg" />
+        <!-- Font Awesome icons (free version)-->
+        <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+        <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="css/styles.css" rel="stylesheet" />
+    </head>
+    <body id="page-top">
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg bg-secondary text-uppercase fixed-top" id="mainNav">
+            <div class="container">
+                <a class="navbar-brand" href="#page-top">Tracker Ops</a>
+                <button class="navbar-toggler text-uppercase font-weight-bold bg-primary text-white rounded" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    Menu
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/">Search</a></li>
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#results">Torrents</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Masthead-->
+        <header class="masthead bg-primary text-white text-center">
+            <div class="container d-flex align-items-center flex-column">
+                <h2 class="page-section-heading text-center text-uppercase text-secondary mb-0">Torrents</h2>
+                <div class="divider-custom">
+                    <div class="divider-custom-line"></div>
+                    <div class="divider-custom-icon" id="search-divider-icon"><i class="fa-solid fa-circle-nodes"></i></div>
+                    <div class="divider-custom-line"></div>
+                </div>
+            </div>
+        </header>
+        <section class="page-section results" id="results">
+            <div class="container">
+                <div class="row justify-content-center row-cols-md-3 g-4" id="torrents">
+                    <div class="col-md" id="torrent-${torrent.index}">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="card-title">
+                                    <div class="progress" style="height:20px">
+                                        <div class="progress-bar text-center" style="width:70%">70%</div>
+                                    </div>
+                                </div>
+                                <p class="card-text" style="cursor: pointer"
+                                   onclick="fetchLink(this, '${torrent.link}', '${torrent.index}')">
+                                    All.or.Nothing.Manchester.City.S01.2160p.AMZN.WEB-DL.x265.10bit.HDR10Plus.DDP5.1-AKi[rartv]
+                                </p>
+                                <div class="row mb-3">
+                                    <div class="col-4">
+                                        <h6 class="card-subtitle mb-2 text-danger t-size">
+                                            <i class="fa-solid fa-arrow-down"></i>   8.1 GB</h6>
+                                    </div>
+                                    <div class="col-4">
+                                        <h6 class="card-subtitle mb-2 text-warning t-size">
+                                            <i class="fa-solid fa-arrows-up-down"></i> .    67.89</h6>
+                                    </div>
+                                    <div class="col-4">
+                                        <h6 class="card-subtitle mb-2 text-success t-size">
+                                            <i class="fa-solid fa-arrow-up"></i>  35 Gb</h6>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-4">
+                                        <h6 class="card-subtitle mb-2 text-muted t-size">
+                                            <i class="fa-solid fa-arrow-down"></i>   72 Mb/s</h6>
+                                    </div>
+                                    <div class="col-4">
+                                        <h6 class="card-subtitle mb-2 text-muted t-size">
+                                            <i class="fa-solid fa-clock"></i>   5h 6m</h6>
+                                    </div>
+                                    <div class="col-4">
+                                        <h6 class="card-subtitle mb-2 text-muted t-size">
+                                            <i class="fa-solid fa-arrow-up"></i>   2 Mb/s</h6>
+                                    </div>
+                                </div>
+                                <h6 class="card-text text-center t-date"><small class="text-muted">10 sep. 2020</small></h6>
+                                <a hidden class="btn btn-primary"><i class="fa-solid fa-magnet"></i></a>
+                                <button hidden type="button" class="btn btn-outline-primary copy-magnet">
+                                    <i class="fa-solid fa-copy"></i>
+                                    <i class="fa-solid fa-magnet"></i>
+                                </button>
+                                <button hidden type="button" class="btn btn-outline-primary manual-magnet">
+                                    <i class="fa-solid fa-gears"></i>
+                                    <i class="fa-solid fa-magnet"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+        <script src="js/deluge-scripts.js"></script>
+        <script src="js/deluge-constants.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+
+    </body>
+</html>
+
