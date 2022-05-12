@@ -1,7 +1,7 @@
 package dpozinen.deluge
 
 data class DelugeResponse(
-    val result: Map<String, *>?,
+    val result: Any?,
     val id: Long?,
     val error: Map<String, Any>?
 ) {
@@ -11,7 +11,8 @@ data class DelugeResponse(
     @Suppress("UNCHECKED_CAST")
     fun torrents(): List<DelugeTorrent> {
         result ?: throw IllegalArgumentException("no result")
-        result["torrents"] ?: throw IllegalArgumentException("no torrents")
+
+        (result as Map<String, *>)["torrents"] ?: throw IllegalArgumentException("no torrents")
 
         val torrents = result["torrents"] as Map<String, Map<String, *>>
 

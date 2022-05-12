@@ -4,7 +4,6 @@ import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.*
 import org.springframework.stereotype.Component
-import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.exchange
 import java.net.HttpCookie
@@ -18,7 +17,7 @@ class DelugeClient(
 ) {
     private val log = KotlinLogging.logger {}
 
-    fun login() = send("auth.login", DelugeParams(listOf("deluge")), HttpCookie("", ""))
+    fun login() = send("auth.login", DelugeParams(listOf("deluge")), HttpCookie("dummy", ""))
 
     fun addMagnet(magnetParams: DelugeParams, session: HttpCookie) = send("core.add_torrent_magnet", magnetParams, session)
 
@@ -30,7 +29,7 @@ class DelugeClient(
         val response = rest.exchange<DelugeResponse>(
             RequestEntity.method(HttpMethod.POST, URI("http://$delugeAddress/json"))
                 .contentType(MediaType.APPLICATION_JSON)
-                .header(HttpHeaders.COOKIE, session.toString())
+                .header(HttpHeaders.COOKIE, session.asHeader())
                 .body(body(method, params))
         )
 
@@ -49,4 +48,8 @@ class DelugeClient(
                         }
                     """.trimIndent()
 
+}
+
+private fun HttpCookie.asHeader(): String {
+    return "${this.name}=${this.value}"
 }
