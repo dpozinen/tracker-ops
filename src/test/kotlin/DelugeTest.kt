@@ -23,7 +23,7 @@ class DelugeTest {
                     state = "Seeding",
                     progress = 100,
                     size = "8.11 GiB",
-                    ratio = 67.9,
+                    ratio = "67.9",
                     uploaded = "550.96 GiB",
                     downloaded = "8.11 GiB",
                     eta = "-",

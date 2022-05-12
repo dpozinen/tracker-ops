@@ -7,7 +7,7 @@ data class DelugeTorrent(
     val progress: Short,
     val size: String,
     val downloaded: String,
-    val ratio: Double,
+    val ratio: String,
     val uploaded: String,
     val downloadSpeed: String,
     val eta: String,

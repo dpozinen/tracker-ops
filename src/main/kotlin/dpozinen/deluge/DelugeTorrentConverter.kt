@@ -25,7 +25,7 @@ class DelugeTorrentConverter(
         val uploaded = field<Double, String>(fields, "total_uploaded") { bytesToSize(it) }
         val downloaded = field<Double, String>(fields, "total_done") { bytesToSize(it) }
         val size = field<Double, String>(fields, "total_wanted") { bytesToSize(it) }
-        val ratio = field<Double, Double>(fields, "ratio") { it.round(2) }
+        val ratio = field<Double, String>(fields, "ratio") { return@field if (it < 0) "-" else it.round(2).toString() }
 
         val eta = field<Double, String>(fields, "eta") { eta(it) }
         val date = field<Long, String>(fields, "time_added") { date(it) }
@@ -51,8 +51,8 @@ class DelugeTorrentConverter(
     private fun bytesToSize(bytes: Double): String {
         return when {
             bytes <= 0 -> ""
-            bytes / 1024 < 1024 -> "${bytes.round(2)} KiB"
-            bytes / 1024 / 1024 < 1024 -> "${bytes.round(2)} MiB"
+            bytes / 1024 < 1024 -> "${(bytes / 1024).round(2)} KiB"
+            bytes / 1024 / 1024 < 1024 -> "${(bytes / 1024 / 1024).round(2)} MiB"
             else -> "${(bytes / 1024 / 1024 / 1024).round(2)} GiB"
         }
     }
@@ -70,8 +70,8 @@ class DelugeTorrentConverter(
         return when {
             eta <= 0 -> "-"
             time < 60 -> "$time s"
-            time / 60 < 60 -> timePrettyString(time, "m", "s")
-            time / 60 / 60 < 24 -> timePrettyString(time, "h", "m")
+            time / 60 < 60 -> timePrettyString(time / 60, "m", "s")
+            time / 60 / 60 < 24 -> timePrettyString(time / 60 / 60, "h", "m")
             else -> timePrettyString(time / 60 / 60 / 24, "d", "h")
         }
     }
