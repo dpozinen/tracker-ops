@@ -1,4 +1,6 @@
+import dpozinen.deluge.DelugeTorrent
 import dpozinen.model.Torrent
+import org.springframework.http.HttpHeaders
 import java.net.HttpCookie
 
 class Data {
@@ -40,7 +42,7 @@ class Data {
         const val magnet =
             "magnet:?xt=urn:btih:004658B2325068E5B75A76DAC63B9F78BA9EE9A2&dn=Robin+Carolan+-+The+Northman+%28Original+Motion+Picture+Soundtrack%29+%282022%29+%5B24Bit-48kHz%5D+FLAC+%5BPMEDIA%5D+%E2%AD%90%EF%B8%8F&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Fretracker.lanta-net.ru%3A2710%2Fannounce&tr=udp%3A%2F%2Ftracker.zerobytes.xyz%3A1337%2Fannounce&tr=udp%3A%2F%2Finferno.demonoid.is%3A3391%2Fannounce&tr=udp%3A%2F%2Fp4p.arenabg.com%3A1337%2Fannounce&tr=udp%3A%2F%2F9.rarbg.me%3A2980%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.moeking.me%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fopentor.org%3A2710%2Fannounce&tr=http%3A%2F%2Ftracker.files.fm%3A6969%2Fannounce&tr=udp%3A%2F%2Ffe.dealclub.de%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=http%3A%2F%2Ftracker.openbittorrent.com%3A80%2Fannounce&tr=udp%3A%2F%2Fopentracker.i2p.rocks%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.internetwarriors.net%3A1337%2Fannounce&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969%2Fannounce&tr=udp%3A%2F%2Fcoppersurfer.tk%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.zer0day.to%3A1337%2Fannounce"
 
-        val delugeTorrentResponse: Map.Entry<String, Map<String, *>> =
+        val delugeTorrentResponse: Map<String, Map<String, Any>> =
             mapOf(
                 "ee21ac410a4df9d2a09a97a6890fc74c0d143a0b"
                         to mapOf(
@@ -72,15 +74,36 @@ class Data {
                     "total_uploaded" to 591588139506,
                     "total_done" to 8712212443
                 )
-            ).entries.first()
+            )
+
+        val delugeTorrent = DelugeTorrent(
+            id = "ee21ac410a4df9d2a09a97a6890fc74c0d143a0b",
+            name = "Rick and Morty Season 1  [2160p AI x265 FS100 Joy]",
+            state = "Seeding",
+            progress = 100,
+            size = "8.11 GiB",
+            ratio = "67.9",
+            uploaded = "550.96 GiB",
+            downloaded = "8.11 GiB",
+            eta = "-",
+            downloadSpeed = "",
+            uploadSpeed = "",
+            date = "28.06.2021"
+        )
 
         const val sessionIdCookie = "_session_id=ff9533d4210cb1ebb0062b193f02234a1a7da716b2f7ce7fbea417cd3b35eb954594; Expires=Thu, 12 May 2022 16:11:28 GMT"
 
-        val sessioIdHttpCookie = HttpCookie.parse(
+        val sessionIdHttpCookie: HttpCookie = HttpCookie.parse(
             sessionIdCookie
                 .substringBefore("Expires")
                 .plus("max-age=60")
         )[0]
+
+        fun httpHeaders(): HttpHeaders {
+            val httpHeaders = HttpHeaders()
+            httpHeaders["Set-Cookie"] = sessionIdCookie
+            return httpHeaders
+        }
 
     }
 

@@ -1,3 +1,4 @@
+ import Data.Companion.httpHeaders
 import dpozinen.deluge.*
 import io.mockk.every
 import io.mockk.mockk
@@ -5,7 +6,6 @@ import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseEntity
-import java.net.HttpCookie
 import kotlin.test.Test
 
 
@@ -13,25 +13,9 @@ class DelugeTest {
 
     @Test
     fun `should convert`() {
-        val torrent = DelugeTorrentConverter(Data.delugeTorrentResponse).convert()
+        val torrent = DelugeTorrentConverter(Data.delugeTorrentResponse.entries.first()).convert()
 
-        assertThat(torrent)
-            .isEqualTo(
-                DelugeTorrent(
-                    id = "ee21ac410a4df9d2a09a97a6890fc74c0d143a0b",
-                    name = "Rick and Morty Season 1  [2160p AI x265 FS100 Joy]",
-                    state = "Seeding",
-                    progress = 100,
-                    size = "8.11 GiB",
-                    ratio = "67.9",
-                    uploaded = "550.96 GiB",
-                    downloaded = "8.11 GiB",
-                    eta = "-",
-                    downloadSpeed = "",
-                    uploadSpeed = "",
-                    date = "28.06.2021"
-                )
-            )
+        assertThat(torrent).isEqualTo(Data.delugeTorrent)
     }
 
     @Test
@@ -72,15 +56,9 @@ class DelugeTest {
             every { response.body.torrents() } returns listOf()
 
         every { delugeClient.login() } returns response
-        every { delugeClient.torrents(DelugeParams.torrents(), Data.sessioIdHttpCookie) } returns response
+        every { delugeClient.torrents(DelugeParams.torrents(setOf()), Data.sessionIdHttpCookie) } returns response
 
         return delugeClient
-    }
-
-    private fun httpHeaders(): HttpHeaders {
-        val httpHeaders = HttpHeaders()
-        httpHeaders["Set-Cookie"] = Data.sessionIdCookie
-        return httpHeaders
     }
 
 
