@@ -1,7 +1,6 @@
-package dpozinen.model
+package dpozinen.tracker
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import dpozinen.core.TorrentsDeserializer
 
 private const val separator =
     "--------------------------------------------------------------------\n"

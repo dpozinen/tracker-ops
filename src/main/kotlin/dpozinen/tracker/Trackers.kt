@@ -1,4 +1,4 @@
-package dpozinen.core
+package dpozinen.tracker
 
 enum class Trackers {
     OneThreeThree;

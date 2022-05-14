@@ -1,13 +1,12 @@
-import dpozinen.TrackerService
-import dpozinen.core.Tracker
-import dpozinen.core.TrackerOps
-import dpozinen.core.TrackerParser
-import dpozinen.core.Trackers.*
-import dpozinen.model.Torrents
+import dpozinen.tracker.TrackerService
+import dpozinen.tracker.Tracker
+import dpozinen.tracker.TrackerOps
+import dpozinen.tracker.TrackerParser
+import dpozinen.tracker.Trackers.*
+import dpozinen.tracker.Torrents
 import io.mockk.every
 import io.mockk.mockkClass
 import io.mockk.verify
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import kotlin.test.Test
 

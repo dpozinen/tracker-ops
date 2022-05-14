@@ -1,4 +1,4 @@
-package dpozinen.core
+package dpozinen.tracker
 
 class ReadActions {
 

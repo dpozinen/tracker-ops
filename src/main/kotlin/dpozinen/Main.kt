@@ -1,7 +1,7 @@
 package dpozinen
 
-import dpozinen.core.ReadActions
-import dpozinen.core.Tracker
+import dpozinen.tracker.ReadActions
+import dpozinen.tracker.Tracker
 
 fun main() {
     val read = ReadActions()

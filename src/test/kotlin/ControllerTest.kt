@@ -2,10 +2,10 @@ import Data.OneThreeThree.Companion.PAGE_EXPECTED_TORRENT
 import Data.OneThreeThree.Companion.SEARCH_EXPECTED_TORRENT
 import com.ninjasquad.springmockk.MockkBean
 import dpozinen.App
-import dpozinen.TrackerController
-import dpozinen.TrackerService
-import dpozinen.core.Trackers
-import dpozinen.model.Torrents
+import dpozinen.tracker.TrackerController
+import dpozinen.tracker.TrackerService
+import dpozinen.tracker.Trackers
+import dpozinen.tracker.Torrents
 import io.mockk.every
 import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Disabled

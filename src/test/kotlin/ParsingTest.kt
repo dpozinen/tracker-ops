@@ -1,5 +1,5 @@
 import Data.*
-import dpozinen.core.TrackerParser
+import dpozinen.tracker.TrackerParser
 import org.assertj.core.api.Assertions.assertThat
 import kotlin.test.Test
 import java.nio.file.Files

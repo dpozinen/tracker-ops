@@ -1,6 +1,5 @@
-package dpozinen.core
+package dpozinen.tracker
 
-import dpozinen.model.Torrent
 import org.jsoup.Connection
 import org.jsoup.Jsoup
 

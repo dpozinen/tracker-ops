@@ -1,8 +1,5 @@
-package dpozinen
+package dpozinen.tracker
 
-import dpozinen.core.Trackers
-import dpozinen.model.Torrent
-import dpozinen.model.Torrents
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController

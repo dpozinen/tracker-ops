@@ -1,7 +1,4 @@
-package dpozinen.core
-
-import dpozinen.model.Torrent
-import dpozinen.model.Torrents
+package dpozinen.tracker
 
 class Tracker(
     private val parser: TrackerParser,

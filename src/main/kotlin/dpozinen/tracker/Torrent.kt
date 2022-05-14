@@ -1,4 +1,4 @@
-package dpozinen.model
+package dpozinen.tracker
 
 data class Torrent(
     val link: String, val name: String,

@@ -1,9 +1,8 @@
-package dpozinen.core
+package dpozinen.tracker
 
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.SerializerProvider
-import dpozinen.model.Torrents
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.jackson.JsonComponent
 import org.springframework.web.context.request.RequestContextHolder

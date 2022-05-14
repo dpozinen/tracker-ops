@@ -1,7 +1,5 @@
-package dpozinen.core
+package dpozinen.tracker
 
-import dpozinen.model.Torrent
-import dpozinen.model.Torrents
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 

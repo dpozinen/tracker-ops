@@ -1,9 +1,5 @@
-package dpozinen
+package dpozinen.tracker
 
-import dpozinen.core.Tracker
-import dpozinen.core.Trackers
-import dpozinen.model.Torrent
-import dpozinen.model.Torrents
 import org.springframework.stereotype.Service
 
 @Service
