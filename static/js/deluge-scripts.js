@@ -1,10 +1,14 @@
-
+let sock
 let stomp
 let receiving = false
 
+function openSocket() {
+    sock = new WebSocket(`ws://${global.host}:8133/stream`);
+}
+
 function delugeTorrents() {
     searchSpinner(true, false, $('#search-divider-icon'))
-    let sock = new WebSocket(`ws://${global.host}:8133/stream`);
+    openSocket();
     stomp = Stomp.over(sock);
     stomp.connect({},
         function () {
@@ -68,6 +72,11 @@ function searchDeluge(event) {
 }
 
 function playPause() {
+    if (sock.readyState === WebSocket.CLOSED || sock.readyState === WebSocket.CLOSING) {
+        openSocket()
+        receiving = false
+    }
+
     if (receiving) {
         stomp.send("/stream/stop");
         receiving = false

@@ -48,6 +48,7 @@ class DelugeController(private val service: DelugeService,
     private fun <R> catch(block: () -> R): R = try {
         block.invoke()
     } catch (ex: ResourceAccessException) {
+        delugeTorrentsStreamStop()
         throw DelugeServerDownException(ex)
     }
 }
