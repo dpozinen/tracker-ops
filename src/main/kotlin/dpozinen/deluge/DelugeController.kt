@@ -1,57 +1,48 @@
 package dpozinen.deluge
 
 import dpozinen.errors.DelugeServerDownException
+import kotlinx.coroutines.*
+import org.springframework.messaging.handler.annotation.MessageMapping
+import org.springframework.messaging.simp.SimpMessagingTemplate
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
-import mu.KotlinLogging
-import org.springframework.messaging.handler.annotation.MessageMapping
-import org.springframework.messaging.simp.SimpMessagingTemplate
-import org.springframework.scheduling.annotation.Scheduled
-import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.client.ResourceAccessException
 
 @RestController
 class DelugeController(private val service: DelugeService,
                        private val template: SimpMessagingTemplate) {
-    private val log = KotlinLogging.logger {}
+
+    private var launch: Job? = null
 
     @PostMapping("/deluge")
-    fun addMagnet(@RequestBody magnet: String) {
-        catch {
-            log.info("Received magnet for deluge {}", magnet)
-
-            service.addMagnet(magnet)
-
-            log.info("Magnet added to deluge")
-        }
-    }
+    fun addMagnet(@RequestBody magnet: String) = catch { service.addMagnet(magnet) }
 
     @GetMapping("/deluge/torrents")
-    fun delugeTorrents(): List<DelugeTorrent> {
-        return catch { service.torrents() }
-    }
+    fun delugeTorrents() = catch { service.torrents() }
 
-    @Scheduled(fixedRate = 1000)
-    fun delugeTorrentsContinuous() {
-        catch { template.convertAndSend("/topic/torrents", service.torrents()) }
-    }
+    @MessageMapping("/stream/stop")
+    fun delugeTorrentsStreamStop() = runBlocking { launch?.cancelAndJoin() }
+
+    @MessageMapping("/stream/commence")
+    fun delugeTorrentsStreamCommence() = runBlocking { launch = launch { streamTorrents() } }
 
     @MessageMapping("/stream/search")
-    fun delugeTorrentsContinuousSearch(search: Command.Search) {
-        catch { service.mutate(search) }
-    }
+    fun delugeTorrentsStreamSearch(search: Command.Search) = catch { service.mutate(search) }
 
     @MessageMapping("/stream/clear")
-    fun delugeTorrentsContinuousSearch() {
-        catch { service.mutate(Command.Clear()) }
-    }
+    fun delugeTorrentsStreamClear() = catch { service.mutate(Command.Clear()) }
 
-    private fun <R> catch(action : () -> R): R {
-        try {
-            return action.invoke()
-        } catch (ex: ResourceAccessException) {
-            throw DelugeServerDownException(ex)
+    private suspend fun streamTorrents() =
+        (0..900).forEach { _ ->
+            delay(1000)
+            catch { template.convertAndSend("/topic/torrents", service.torrents()) }
         }
+
+    private fun <R> catch(block: () -> R): R = try {
+        block.invoke()
+    } catch (ex: ResourceAccessException) {
+        throw DelugeServerDownException(ex)
     }
 }

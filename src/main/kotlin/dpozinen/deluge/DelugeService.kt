@@ -14,7 +14,7 @@ class DelugeService(
     private val log = KotlinLogging.logger {}
     private var session: HttpCookie = HttpCookie.parse("dummy=dummy; max-age=0")[0]
 
-    private var state: Set<String> = setOf()
+    private var state: Set<String> = setOf("ALL")
     private val cache: MutableMap<Command, Set<String>> = ConcurrentHashMap()
 
     private fun login() {
