@@ -1,10 +1,12 @@
 package dpozinen.deluge
 
+import com.fasterxml.jackson.annotation.JsonProperty
+
 interface Command {
 
     fun perform(torrents: List<DelugeTorrent>): List<DelugeTorrent>
 
-    class Search(private val name: String) : Command {
+    class Search(@JsonProperty("name") private val name: String) : Command {
         override fun perform(torrents: List<DelugeTorrent>): List<DelugeTorrent> {
             return if (name.isEmpty())
                 torrents

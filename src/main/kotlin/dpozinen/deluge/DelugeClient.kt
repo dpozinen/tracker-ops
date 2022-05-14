@@ -2,18 +2,20 @@ package dpozinen.deluge
 
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.http.*
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.exchange
 import java.net.HttpCookie
 import java.net.URI
+import java.time.Duration
 import java.util.concurrent.ThreadLocalRandom
 
 @Component
 class DelugeClient(
     @Value("\${tracker-ops.manual-deluge.address}") private val delugeAddress: String,
-    private val rest: RestTemplate = RestTemplate(),
+    private val rest: RestTemplate = RestTemplateBuilder().setConnectTimeout(Duration.ofSeconds(5)).build(),
 ) {
     private val log = KotlinLogging.logger {}
 
