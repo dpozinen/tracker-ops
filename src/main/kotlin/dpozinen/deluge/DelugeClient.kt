@@ -36,7 +36,7 @@ class DelugeClient(
                 .body(body(method, params))
         )
 
-        log.info("Received from deluge {}", response.body)
+        if ("web.update_ui" != method) log.info("Received from deluge {}", response.body)
 
         response.body.result ?: throw DelugeClientException(response.body)
 

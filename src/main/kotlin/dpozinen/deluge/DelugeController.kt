@@ -42,6 +42,11 @@ class DelugeController(private val service: DelugeService,
         catch { service.mutate(search) }
     }
 
+    @MessageMapping("/stream/clear")
+    fun delugeTorrentsContinuousSearch() {
+        catch { service.mutate(Command.Clear()) }
+    }
+
     private fun <R> catch(action : () -> R): R {
         try {
             return action.invoke()

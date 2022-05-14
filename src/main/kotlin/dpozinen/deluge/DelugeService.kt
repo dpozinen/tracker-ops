@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service
 import java.net.HttpCookie
 import java.util.concurrent.ConcurrentHashMap
 
-@Service
+@Service // todo 'web.connect'
 class DelugeService(
     @Value("\${tracker-ops.manual-deluge.download-folder}") private val downloadFolder: String,
     private val delugeClient: DelugeClient
@@ -24,11 +24,9 @@ class DelugeService(
             val setCookie = delugeClient.login()
                 .headers["Set-Cookie"]!![0]
                 .substringBefore("Expires")
-                .plus("max-age=60") // HttpCookie can't parse the 'Expires' date format deluge sends...
+                .plus("max-age=3500") // HttpCookie can't parse the 'Expires' date format deluge sends...
 
             session = HttpCookie.parse(setCookie)[0]
-        } else {
-            log.info("Session active, not logging in")
         }
     }
 
@@ -39,7 +37,7 @@ class DelugeService(
 
     fun torrents(all: Boolean = false): List<DelugeTorrent> {
         login()
-        val params = if (all) DelugeParams.torrents(setOf()) else DelugeParams.torrents(state)
+        val params = if (all) DelugeParams.torrents(setOf("ALL")) else DelugeParams.torrents(state)
         val response = delugeClient.torrents(params, session)
         return response.body.torrents()
     }

@@ -96,7 +96,7 @@ class Data {
         val sessionIdHttpCookie: HttpCookie = HttpCookie.parse(
             sessionIdCookie
                 .substringBefore("Expires")
-                .plus("max-age=60")
+                .plus("max-age=3500")
         )[0]
 
         fun httpHeaders(): HttpHeaders {
