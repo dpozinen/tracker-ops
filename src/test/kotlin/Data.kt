@@ -85,7 +85,7 @@ class Data {
             ratio = "67.9",
             uploaded = "550.96 GiB",
             downloaded = "8.11 GiB",
-            eta = "-",
+            eta = "",
             downloadSpeed = "",
             uploadSpeed = "",
             date = "28.06.2021"

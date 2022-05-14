@@ -1,13 +1,18 @@
 
 let stomp
+let receiving = false
 
 function delugeTorrents() {
+    searchSpinner(true, false, $('#search-divider-icon'))
     let sock = new WebSocket(`ws://${global.host}:8133/stream`);
     stomp = Stomp.over(sock);
     stomp.connect({},
         function () {
             console.log("Connected")
             stomp.send("/stream/clear");
+            stomp.send("/stream/commence");
+
+            receiving = true
 
             stomp.subscribe('/topic/torrents', function(data) {
                 let torrents = JSON.parse(data.body)
@@ -17,7 +22,7 @@ function delugeTorrents() {
         })
 }
 
-function handleScrollAndLoader(torrents) {
+function handleScrollAndLoader(torrents) { // todo improve
     setTimeout(function () {
             if ($('#search-divider-icon .fa-circle-nodes').length === 0) {
                 searchSpinner(false, false, $('#search-divider-icon'), '<i class="fa-solid fa-circle-nodes">');
@@ -37,8 +42,17 @@ function renderTorrents(torrents) {
         addNoResultsCard()
     } else {
         let torrentCards = [];
+        let i = 3
         $.each(torrents, function (key, value) {
-            torrentCards.push(torrentCard(value))
+            if (i === 3) {
+                // torrentCards.push('<div class="row justify-content-center row-cols-auto g-3 mb-3">')
+            }
+            --i
+            torrentCards.push(torrentCard(value));
+            if (i === 0) {
+                // torrentCards.push('</div>')
+                i = 3
+            }
         });
         $torrents.append(torrentCards.join(""))
     }
@@ -51,4 +65,20 @@ function searchDeluge(event) {
     let keywords = $('#keywords').val();
 
     stomp.send("/stream/search", {}, JSON.stringify({'name': keywords }));
+}
+
+function playPause() {
+    if (receiving) {
+        stomp.send("/stream/stop");
+        receiving = false
+        replaceChildrenOf("#play-pause", '<i class="fa-solid fa-play"></i>')
+    } else {
+        stomp.send("/stream/commence");
+        receiving = true
+        replaceChildrenOf("#play-pause", '<i class="fa-solid fa-pause"></i>')
+    }
+}
+
+function replaceChildrenOf(parent, withChildren) {
+    $(parent).empty().append(withChildren)
 }

@@ -31,6 +31,11 @@
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/">Search</a></li>
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#results">Torrents</a></li>
+                        <li class="nav-item mx-0 mx-lg-1">
+                            <a class="nav-link py-3 px-0 px-lg-3 rounded" id="play-pause" onclick="playPause()">
+                                <i class="fa-solid fa-pause"></i>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -59,53 +64,7 @@
                     <div class="col-md" id="torrent-${torrent.index}">
                         <div class="card">
                             <div class="card-body">
-                                <div class="card-title">
-                                    <div class="progress" style="height:20px">
-                                        <div class="progress-bar text-center" style="width:70%">70%</div>
-                                    </div>
-                                </div>
-                                <p class="card-text" style="cursor: pointer"
-                                   onclick="fetchLink(this, '${torrent.link}', '${torrent.index}')">
-                                    All.or.Nothing.Manchester.City.S01.2160p.AMZN.WEB-DL.x265.10bit.HDR10Plus.DDP5.1-AKi[rartv]
-                                </p>
-                                <div class="row mb-3">
-                                    <div class="col-4">
-                                        <h6 class="card-subtitle mb-2 text-danger t-size">
-                                            <i class="fa-solid fa-arrow-down"></i>   8.1 GB</h6>
-                                    </div>
-                                    <div class="col-4">
-                                        <h6 class="card-subtitle mb-2 text-warning t-size">
-                                            <i class="fa-solid fa-arrows-up-down"></i> .    67.89</h6>
-                                    </div>
-                                    <div class="col-4">
-                                        <h6 class="card-subtitle mb-2 text-success t-size">
-                                            <i class="fa-solid fa-arrow-up"></i>  35 Gb</h6>
-                                    </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-4">
-                                        <h6 class="card-subtitle mb-2 text-muted t-size">
-                                            <i class="fa-solid fa-arrow-down"></i>   72 Mb/s</h6>
-                                    </div>
-                                    <div class="col-4">
-                                        <h6 class="card-subtitle mb-2 text-muted t-size">
-                                            <i class="fa-solid fa-clock"></i>   5h 6m</h6>
-                                    </div>
-                                    <div class="col-4">
-                                        <h6 class="card-subtitle mb-2 text-muted t-size">
-                                            <i class="fa-solid fa-arrow-up"></i>   2 Mb/s</h6>
-                                    </div>
-                                </div>
-                                <h6 class="card-text text-center t-date"><small class="text-muted">10 sep. 2020</small></h6>
-                                <a hidden class="btn btn-primary"><i class="fa-solid fa-magnet"></i></a>
-                                <button hidden type="button" class="btn btn-outline-primary copy-magnet">
-                                    <i class="fa-solid fa-copy"></i>
-                                    <i class="fa-solid fa-magnet"></i>
-                                </button>
-                                <button hidden type="button" class="btn btn-outline-primary manual-magnet">
-                                    <i class="fa-solid fa-gears"></i>
-                                    <i class="fa-solid fa-magnet"></i>
-                                </button>
+                                <h5 class="card-title">Search for something and it will appear!</h5>
                             </div>
                         </div>
                     </div>

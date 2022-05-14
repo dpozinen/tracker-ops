@@ -23,10 +23,15 @@ class DelugeController(private val service: DelugeService,
     fun delugeTorrents() = catch { service.torrents() }
 
     @MessageMapping("/stream/stop")
-    fun delugeTorrentsStreamStop() = runBlocking { launch?.cancelAndJoin() }
+    fun delugeTorrentsStreamStop() {
+        runBlocking { launch?.cancelAndJoin() }
+    }
 
     @MessageMapping("/stream/commence")
-    fun delugeTorrentsStreamCommence() = runBlocking { launch = launch { streamTorrents() } }
+    fun delugeTorrentsStreamCommence() = runBlocking {
+        delugeTorrentsStreamStop()
+        launch = launch { streamTorrents() }
+    }
 
     @MessageMapping("/stream/search")
     fun delugeTorrentsStreamSearch(search: Command.Search) = catch { service.mutate(search) }

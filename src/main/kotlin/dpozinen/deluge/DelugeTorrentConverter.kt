@@ -68,7 +68,7 @@ class DelugeTorrentConverter(
         val time = eta.round(0)
 
         return when {
-            eta <= 0 -> "-"
+            eta <= 0 -> ""
             time < 60 -> "$time s"
             time / 60 < 60 -> timePrettyString(time / 60, "m", "s")
             time / 60 / 60 < 24 -> timePrettyString(time / 60 / 60, "h", "m")
