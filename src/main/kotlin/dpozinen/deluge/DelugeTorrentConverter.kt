@@ -29,8 +29,8 @@ class DelugeTorrentConverter(
 
         val eta = field<Double, String>(fields, "eta") { eta(it) }
         val date = field<Long, String>(fields, "time_added") { date(it) }
-        val downSpeed = field<Double, String>(fields, "max_download_speed") { bytesToSpeed(it) }
-        val upSpeed = field<Double, String>(fields, "max_upload_speed") { bytesToSpeed(it) }
+        val downSpeed = field<Double, String>(fields, "download_payload_rate") { bytesToSpeed(it) }
+        val upSpeed = field<Double, String>(fields, "upload_payload_rate") { bytesToSpeed(it) }
 
         return DelugeTorrent(
             id, name, state, progress, size, downloaded, ratio, uploaded, downSpeed, eta, upSpeed, date
