@@ -18,8 +18,7 @@ class MutationsTest {
         val search = Mutation.Search(name = "F")
         val mutated = state.mutate(search)
 
-        assertThat(mutated.torrents)
-            .containsExactlyInAnyOrder(b, c, a)
+        assertThat(mutated.torrents).containsExactlyInAnyOrder(b, c, a)
     }
 
     @Test
@@ -44,8 +43,7 @@ class MutationsTest {
 
         val mutated = state.mutate(sort)
 
-        assertThat(mutated.torrents)
-            .containsExactly(c, a, b, d)
+        assertThat(mutated.torrents).containsExactly(c, a, b, d)
     }
 
     @Test
@@ -65,5 +63,30 @@ class MutationsTest {
             state.with(linkedSetOf(sortProgress, sortState)).mutate()
         ).isEqualTo(mutatedNamesState)
 
+    }
+
+    @Test
+    fun `should clear by id`() {
+        val sortProgress = Mutation.Sort(By.PROGRESS)
+        val sortMutations = linkedSetOf(sortProgress, Mutation.Sort(By.NAME))
+
+        val mutated = state.with(sortMutations)
+            .mutate()
+            .with(state.torrents)
+            .mutate(Mutation.Clear(sortProgress.id()))
+
+        assertThat(mutated.torrents).containsExactly(c, a, b, d)
+    }
+
+    @Test
+    fun `should clear all`() {
+        val sortMutations = linkedSetOf(Mutation.Sort(By.NAME), Mutation.Search("bob"))
+
+        val mutated = state.with(sortMutations)
+            .mutate()
+            .with(state.torrents)
+            .mutate(Mutation.Clear())
+
+        assertThat(mutated.torrents).containsExactly(a, b, c, d)
     }
 }

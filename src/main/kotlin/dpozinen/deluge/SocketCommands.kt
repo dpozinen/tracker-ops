@@ -12,7 +12,7 @@ interface Mutation {
         override fun perform(state: DelugeState): DelugeState {
             val applied = state.applied
             if (id == 0) applied.clear() else applied.remove(this)
-            return state.with(applied)
+            return state.with(applied).mutate()
         }
     }
 
