@@ -1,5 +1,7 @@
 package dpozinen.deluge
 
+import kotlin.reflect.full.memberProperties
+
 data class DelugeTorrent(
     val id: String,
     val name: String,
@@ -13,5 +15,12 @@ data class DelugeTorrent(
     val eta: String,
     val uploadSpeed: String,
     val date: String
-)
+) {
+    fun value(by: Mutation.By): Comparable<Any> {
+        return this::class.memberProperties
+            .filter { it.name == by.property() }
+            .map { it.getter.call(this) }
+            .first()!! as Comparable<Any>
+    }
+}
 

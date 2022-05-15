@@ -4,7 +4,6 @@ import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.net.HttpCookie
-import java.util.concurrent.ConcurrentHashMap
 
 @Service // todo 'web.connect'
 class DelugeService(
@@ -14,8 +13,7 @@ class DelugeService(
     private val log = KotlinLogging.logger {}
     private var session: HttpCookie = HttpCookie.parse("dummy=dummy; max-age=0")[0]
 
-    private var state: Set<String> = setOf("ALL")
-    private val cache: MutableMap<Command, Set<String>> = ConcurrentHashMap()
+    private var state: DelugeState = DelugeState()
 
     private fun login() {
         if (session.hasExpired()) {
@@ -35,20 +33,17 @@ class DelugeService(
         delugeClient.addMagnet(DelugeParams.addMagnet(magnet, downloadFolder), session)
     }
 
-    fun torrents(all: Boolean = false): List<DelugeTorrent> {
+    fun torrents(): List<DelugeTorrent> {
         login()
-        val params = if (all) DelugeParams.torrents(setOf("ALL")) else DelugeParams.torrents(state)
+        val params = DelugeParams.torrents(setOf("ALL"))
         val response = delugeClient.torrents(params, session)
-        return response.body.torrents()
+        val torrents = response.body.torrents()
+        return state.with(torrents).mutate().torrents
     }
 
-    fun mutate(command: Command) {
-        val torrents = cache.computeIfAbsent(command) {
-            command.perform(torrents(true)).map { it.id }.toSet()
-        }
-
+    fun mutate(mutation: Mutation) {
         synchronized(this) {
-            this.state = torrents
+            state = state.mutate(mutation)
         }
     }
 

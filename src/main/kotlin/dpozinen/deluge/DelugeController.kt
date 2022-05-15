@@ -34,10 +34,10 @@ class DelugeController(private val service: DelugeService,
     }
 
     @MessageMapping("/stream/search")
-    fun delugeTorrentsStreamSearch(search: Command.Search) = catch { service.mutate(search) }
+    fun delugeTorrentsStreamSearch(search: Mutation.Search) = catch { service.mutate(search) }
 
     @MessageMapping("/stream/clear")
-    fun delugeTorrentsStreamClear() = catch { service.mutate(Command.Clear()) }
+    fun delugeTorrentsStreamClear() = catch { service.mutate(Mutation.Clear()) }
 
     private suspend fun streamTorrents() =
         (0..900).forEach { _ ->

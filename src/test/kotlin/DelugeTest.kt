@@ -4,8 +4,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
-import org.springframework.http.HttpHeaders
-import org.springframework.http.ResponseEntity
+ import org.springframework.http.ResponseEntity
 import kotlin.test.Test
 
 
