@@ -4,8 +4,8 @@ function torrentCard(torrent) {
     }
 
     return `
-        <div class="col-md" id="torrent-${torrent.id}">
-            <div class="card">
+        <div class="col-sm" id="torrent-${torrent.id}">
+            <div class="card h-100">
                 <div class="card-body">
                     <div class="card-title">
                         <div class="progress" style="height:20px">
