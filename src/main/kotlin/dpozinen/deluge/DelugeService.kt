@@ -1,6 +1,8 @@
 package dpozinen.deluge
 
-import dpozinen.deluge.Mutation.By
+import dpozinen.deluge.mutations.Mutation
+import dpozinen.deluge.mutations.Mutation.By
+import dpozinen.deluge.mutations.Sort
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -14,7 +16,7 @@ class DelugeService(
     private val log = KotlinLogging.logger {}
     private var session: HttpCookie = HttpCookie.parse("dummy=dummy; max-age=0")[0]
 
-    private var state: DelugeState = DelugeState(_fallbackMutations = linkedSetOf(Mutation.Sort(By.NAME)))
+    private var state: DelugeState = DelugeState()
 
     private fun login() {
         if (session.hasExpired()) {

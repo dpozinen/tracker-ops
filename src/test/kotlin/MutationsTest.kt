@@ -1,6 +1,8 @@
 import dpozinen.deluge.DelugeState
-import dpozinen.deluge.Mutation
-import dpozinen.deluge.Mutation.By
+import dpozinen.deluge.mutations.Clear
+import dpozinen.deluge.mutations.Mutation.By
+import dpozinen.deluge.mutations.Search
+import dpozinen.deluge.mutations.Sort
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -15,7 +17,7 @@ class MutationsTest {
 
     @Test
     fun `mutate should be idempotent`() {
-        val search = Mutation.Search(name = "F")
+        val search = Search(name = "F")
         val mutatedOnce = state.mutate(search)
         val mutated = mutatedOnce.mutate(search).mutate(search).mutate(search).mutate()
 
@@ -24,7 +26,7 @@ class MutationsTest {
 
     @Test
     fun `should search`() {
-        val search = Mutation.Search(name = "F")
+        val search = Search(name = "F")
         val mutated = state.mutate(search)
 
         assertThat(mutated.torrents).containsExactlyInAnyOrder(b, c, a)
@@ -32,8 +34,8 @@ class MutationsTest {
 
     @Test
     fun `should search within`() {
-        val searchOne = Mutation.Search(name = "E")
-        val searchTwo = Mutation.Search(name = "F")
+        val searchOne = Search(name = "E")
+        val searchTwo = Search(name = "F")
 
         val mutatedOnce = state.mutate(searchOne)
         val mutatedTwice = mutatedOnce.mutate(searchTwo)
@@ -48,7 +50,7 @@ class MutationsTest {
 
     @Test
     fun `should sort`() {
-        val sort = Mutation.Sort(By.NAME)
+        val sort = Sort(By.NAME)
 
         val mutated = state.mutate(sort)
 
@@ -57,8 +59,8 @@ class MutationsTest {
 
     @Test
     fun `should sort within`() {
-        val sortProgress = Mutation.Sort(By.PROGRESS)
-        val sortState = Mutation.Sort(By.STATE)
+        val sortProgress = Sort(By.PROGRESS)
+        val sortState = Sort(By.STATE)
 
         val mutatedProgress = state.mutate(sortProgress)
 
@@ -76,25 +78,25 @@ class MutationsTest {
 
     @Test
     fun `should clear by id`() {
-        val sortProgress = Mutation.Sort(By.PROGRESS)
-        val sortMutations = linkedSetOf(sortProgress, Mutation.Sort(By.NAME))
+        val sortProgress = Sort(By.PROGRESS)
+        val sortMutations = linkedSetOf(sortProgress, Sort(By.NAME))
 
         val mutated = state.with(sortMutations)
             .mutate()
             .with(state.torrents)
-            .mutate(Mutation.Clear(sortProgress.id()))
+            .mutate(Clear(sortProgress))
 
         assertThat(mutated.torrents).containsExactly(c, a, b, d)
     }
 
     @Test
     fun `should clear all`() {
-        val sortMutations = linkedSetOf(Mutation.Sort(By.NAME), Mutation.Search("bob"))
+        val sortMutations = linkedSetOf(Sort(By.NAME), Search("bob"))
 
         val mutated = state.with(sortMutations)
             .mutate()
             .with(state.torrents)
-            .mutate(Mutation.Clear())
+            .mutate(Clear())
 
         assertThat(mutated.torrents).containsExactly(a, b, c, d)
     }

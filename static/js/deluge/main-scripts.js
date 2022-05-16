@@ -13,9 +13,10 @@ function delugeTorrents() {
     stomp.connect({},
         function () {
             console.log("Connected")
-            stomp.send("/stream/clear");
-            stomp.send("/stream/commence");
+            stomp.send("/stream/mutate/clear");
+            addSortMutation($('[mu-sort-by=NAME]'))
 
+            stomp.send("/stream/commence");
             receiving = true
 
             stomp.subscribe('/topic/torrents', function(data) {
@@ -68,7 +69,7 @@ function searchDeluge(event) {
     searchSpinner(true, false, $('#search-divider-icon'))
     let keywords = $('#keywords').val();
 
-    stomp.send("/stream/search", {}, JSON.stringify({'name': keywords }));
+    stomp.send("/stream/mutate/search", {}, JSON.stringify({'name': keywords }));
 }
 
 function playPause() {

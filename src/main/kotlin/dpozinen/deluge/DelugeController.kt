@@ -1,5 +1,8 @@
 package dpozinen.deluge
 
+import dpozinen.deluge.mutations.Clear
+import dpozinen.deluge.mutations.Search
+import dpozinen.deluge.mutations.Sort
 import dpozinen.errors.DelugeServerDownException
 import dpozinen.errors.defaultDummyData
 import kotlinx.coroutines.*
@@ -10,7 +13,6 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.client.ResourceAccessException
 
 @RestController
 class DelugeController(private val service: DelugeService,
@@ -25,21 +27,31 @@ class DelugeController(private val service: DelugeService,
     fun delugeTorrents() = service.torrents()
 
     @MessageMapping("/stream/stop")
-    fun delugeTorrentsStreamStop() {
-        runBlocking { if (launch?.isActive == true) launch?.cancel() }
-    }
+    fun streamStop() = runBlocking { if (launch?.isActive == true) launch?.cancel() }
 
     @MessageMapping("/stream/commence")
-    fun delugeTorrentsStreamCommence() = runBlocking {
-        delugeTorrentsStreamStop()
+    fun streamCommence() = runBlocking {
+        streamStop()
         launch = launch { streamTorrents() }
     }
 
-    @MessageMapping("/stream/search")
-    fun delugeTorrentsStreamSearch(search: Mutation.Search) = catch { service.mutate(search) }
+    @MessageMapping("/stream/mutate/search")
+    fun streamSearch(search: Search) = catch { service.mutate(search) }
 
-    @MessageMapping("/stream/clear")
-    fun delugeTorrentsStreamClear() = catch { service.mutate(Mutation.Clear()) }
+    @MessageMapping("/stream/mutate/clear")
+    fun streamClear() = catch { service.mutate(Clear()) }
+
+    @MessageMapping("/stream/mutate/clear/search")
+    fun streamClearSearch(search: Search) = catch { service.mutate(Clear(search)) }
+
+    @MessageMapping("/stream/mutate/clear/sort")
+    fun streamClearSort(sort: Sort) = catch { service.mutate(Clear(sort)) }
+
+    @MessageMapping("/stream/mutate/sort")
+    fun streamSort(sort: Sort) = catch { service.mutate(sort) }
+
+    @MessageMapping("/stream/mutate/sort/reverse")
+    fun streamSortReverse(sort: Sort) = catch { service.mutate(Sort.Reverse(sort)) }
 
     private suspend fun streamTorrents() =
         (0..900).forEach { _ ->
@@ -52,6 +64,6 @@ class DelugeController(private val service: DelugeService,
     } catch (ex: DelugeServerDownException) {
         log.error("${ex.message}. Cause: {}", ex.cause?.message)
         template.convertAndSend("/topic/torrents", defaultDummyData())
-        delugeTorrentsStreamStop()
+        streamStop()
     }
 }

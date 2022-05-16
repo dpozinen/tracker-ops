@@ -1,5 +1,6 @@
 package dpozinen.deluge
 
+import dpozinen.deluge.mutations.Mutation
 import kotlin.reflect.full.memberProperties
 
 data class DelugeTorrent(

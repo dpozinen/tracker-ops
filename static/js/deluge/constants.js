@@ -58,3 +58,34 @@ function torrentCard(torrent) {
             `
          // todo pause/play button on torrent
 }
+
+function sortArrowIcon(arrow, by, newOrder, text) {
+    return `<i class="sort-icon fa-solid fa-arrow-${arrow}-wide-short me-1"
+                            onclick="changeSortOrder('${by}', '${newOrder}', '${text.trim()}')">
+                    </i>`;
+}
+
+function sortPill(arrowIcon, text, by) {
+    return `
+            <a class="text-light fw-lighter nav-link active">
+                        ${arrowIcon}
+                        ${text}
+               <i onclick="clearSortMutation('${by}')" class="fa-solid fa-circle-minus ms-1"></i>
+            </a>
+            `;
+}
+
+
+function sortPillInitial(by, order, $selected) {
+    return `
+        <li class="nav-item border border-light border-1 m-1" id="sort-${by}">
+                <a class="text-light fw-lighter nav-link active">
+                        <i class="sort-icon fa-solid fa-arrow-down-wide-short me-1"
+                            onclick="changeSortOrder('${by}', '${order}', '${$selected.text().trim()}')"
+                        ></i>
+                        ${$selected.text()}   
+                       <i onclick="clearSortMutation('${by}')" class="fa-solid fa-circle-minus ms-1"></i>
+                </a>
+        </li>
+        `;
+}

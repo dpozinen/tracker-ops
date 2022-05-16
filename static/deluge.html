@@ -57,6 +57,52 @@
                     <button type="submit" href="#results" class="mt-3 btn btn-outline-light">Search</button>
                 </form>
             </div>
+            <div class="container mt-5" id="mutation-pills">
+                <ul class="nav nav-pills justify-content-center text-muted text-secondary">
+                    <li class="nav-item border border-light border-1 m-1" id="clear-mutation-pill">
+                        <a class="text-light fw-lighter nav-link active" onclick="clearMutations()">Clear</a>
+                    </li>
+                    <li class="nav-item border border-light border-1 m-1" id="sort-mutation-pill">
+                        <a class="nav-link dropdown-toggle text-light fw-lighter"
+                           data-bs-toggle="dropdown" onclick=""
+                           role="button" aria-expanded="false">Sort</a>
+                        <ul class="dropdown-menu">
+                            <li mu-sort-by="NAME" onclick="addSortMutation(this)">
+                                <a class="dropdown-item">Name</a>
+                            </li>
+                            <li mu-sort-by="STATE" onclick="addSortMutation(this)">
+                                <a class="dropdown-item">State</a>
+                            </li>
+                            <li mu-sort-by="SIZE" onclick="addSortMutation(this)">
+                                <a class="dropdown-item">Size</a>
+                            </li>
+                            <li mu-sort-by="PROGRESS" onclick="addSortMutation(this)">
+                                <a class="dropdown-item">Progress</a>
+                            </li>
+                            <li mu-sort-by="DOWNLOADED" onclick="addSortMutation(this)">
+                                <a class="dropdown-item">Downloaded</a>
+                            </li>
+                            <li mu-sort-by="RATIO" onclick="addSortMutation(this)">
+                                <a class="dropdown-item">Ratio</a>
+                            </li>
+                            <li mu-sort-by="UPLOADED" onclick="addSortMutation(this)">
+                                <a class="dropdown-item">Uploaded</a>
+                            </li>
+                            <li mu-sort-by="ETA" onclick="addSortMutation(this)">
+                                <a class="dropdown-item">Eta</a>
+                            </li>
+                            <li mu-sort-by="DATE" onclick="addSortMutation(this)">
+                                <a class="dropdown-item">Date</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item border border-light border-1 m-1" id="sort-order-mutation-pill" value="ASC">
+                        <a class="text-light fw-lighter nav-link" href="#">
+                            <i class="fa-solid fa-sort"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </header>
         <section class="page-section results" id="results">
             <div class="container">
@@ -75,8 +121,9 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
         <!-- Core theme JS-->
         <script src="js/scripts.js"></script>
-        <script src="js/deluge-scripts.js"></script>
-        <script src="js/deluge-constants.js"></script>
+        <script src="js/deluge/main-scripts.js"></script>
+        <script src="js/deluge/constants.js"></script>
+        <script src="js/deluge/mutation-scripts.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
     <script>
