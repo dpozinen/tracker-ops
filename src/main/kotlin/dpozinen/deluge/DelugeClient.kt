@@ -5,7 +5,12 @@ import dpozinen.errors.DelugeServerDownException
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.web.client.RestTemplateBuilder
-import org.springframework.http.*
+import org.springframework.http.HttpHeaders.COOKIE
+import org.springframework.http.HttpMethod.POST
+import org.springframework.http.MediaType.APPLICATION_JSON
+import org.springframework.http.RequestEntity
+import org.springframework.http.RequestEntity.method
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Component
 import org.springframework.web.client.ResourceAccessException
 import org.springframework.web.client.RestTemplate
@@ -32,14 +37,14 @@ class DelugeClient(
     fun torrents(torrentParams: DelugeParams, session: HttpCookie) = send("web.update_ui", torrentParams, session)
 
     private fun send(method: String, params: DelugeParams, session: HttpCookie): ResponseEntity<DelugeResponse> {
-        log.info("Sending {} to deluge", method)
+        if ("web.update_ui" != method) log.info("Sending {} to deluge", method)
 
         val response = try {
              rest.exchange<DelugeResponse>(
-                RequestEntity.method(HttpMethod.POST, URI("http://$delugeAddress/json"))
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .header(HttpHeaders.COOKIE, session.asHeader())
-                    .body(body(method, params))
+                 method(POST, URI("http://$delugeAddress/json"))
+                     .contentType(APPLICATION_JSON)
+                     .header(COOKIE, session.asHeader())
+                     .body(body(method, params))
             )
         } catch (ex: ResourceAccessException) {
             throw DelugeServerDownException(ex)

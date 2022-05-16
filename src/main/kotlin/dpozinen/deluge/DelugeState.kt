@@ -1,15 +1,17 @@
 package dpozinen.deluge
 
-import kotlinx.collections.immutable.toImmutableList
-
 class DelugeState(
     _torrents: List<DelugeTorrent> = listOf(),
-    _applied: Set<Mutation> = linkedSetOf()
+    _mutations: Set<Mutation> = linkedSetOf(),
+    _fallbackMutations: Set<Mutation> = linkedSetOf()
 ) {
     val torrents: MutableList<DelugeTorrent> = _torrents.toMutableList()
         get() = field.toMutableList()
 
-    val applied: MutableSet<Mutation> = _applied.toMutableSet()
+    val mutations: MutableSet<Mutation> = _mutations.toMutableSet()
+        get() = field.toMutableSet()
+
+    private val fallbackMutations: MutableSet<Mutation> = _fallbackMutations.toMutableSet()
         get() = field.toMutableSet()
 
     fun mutate(mutation: Mutation): DelugeState {
@@ -17,21 +19,27 @@ class DelugeState(
     }
 
     fun with(mutations: Set<Mutation>): DelugeState {
-        return DelugeState(torrents, mutations)
+        return DelugeState(torrents, mutations, fallbackMutations)
     }
 
     fun with(torrents: List<DelugeTorrent>): DelugeState {
-        return DelugeState(torrents.toImmutableList(), applied)
+        return DelugeState(torrents, mutations, fallbackMutations)
     }
 
     fun with(torrents: List<DelugeTorrent>, mutations: Set<Mutation>): DelugeState {
-        return DelugeState(torrents.toImmutableList(), mutations)
+        return DelugeState(torrents, mutations, fallbackMutations)
     }
 
     fun mutate(): DelugeState {
-        var state = DelugeState(torrents, applied)
-        applied.forEach {
-            state = state.mutate(it)
+        var state = DelugeState(torrents, mutations, fallbackMutations)
+        if (mutations.isEmpty()) {
+            fallbackMutations.forEach {
+                state = state.mutate(it)
+            }
+        } else {
+            mutations.forEach {
+                state = state.mutate(it)
+            }
         }
         return state
     }
@@ -43,14 +51,16 @@ class DelugeState(
         other as DelugeState
 
         if (torrents != other.torrents) return false
-        if (applied != other.applied) return false
+        if (mutations != other.mutations) return false
+        if (fallbackMutations != other.fallbackMutations) return false
 
         return true
     }
 
     override fun hashCode(): Int {
         var result = torrents.hashCode()
-        result = 31 * result + applied.hashCode()
+        result = 31 * result + mutations.hashCode()
+        result = 31 * result + fallbackMutations.hashCode()
         return result
     }
 

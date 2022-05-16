@@ -3,6 +3,7 @@ package dpozinen.deluge
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatter.ofPattern
 import java.time.temporal.ChronoUnit.HOURS
 import kotlin.math.floor
 import kotlin.math.round
@@ -10,10 +11,8 @@ import kotlin.math.roundToInt
 
 class DelugeTorrentConverter(
     private val torrent: Map.Entry<String, Map<String, *>>,
-    private val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
-        .withZone(ZoneId.systemDefault()),
+    private val dateTimeFormatter: DateTimeFormatter = ofPattern("dd.MM.yyyy").withZone(ZoneId.of("Europe/Kiev"))
 ) {
-
 
     fun convert(): DelugeTorrent {
         val id = torrent.key
@@ -38,8 +37,7 @@ class DelugeTorrentConverter(
     }
 
     private fun date(timestamp: Long): String {
-        val gmtPlusThree = Instant.ofEpochSecond(timestamp).plus(3, HOURS) // hours
-        return dateTimeFormatter.format(gmtPlusThree)
+        return dateTimeFormatter.format(Instant.ofEpochSecond(timestamp))
     }
 
     @Suppress("UNCHECKED_CAST")
