@@ -1,7 +1,9 @@
 package dpozinen.deluge
 
 import dpozinen.errors.DelugeServerDownException
+import dpozinen.errors.defaultDummyData
 import kotlinx.coroutines.*
+import mu.KotlinLogging
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.web.bind.annotation.GetMapping
@@ -13,18 +15,18 @@ import org.springframework.web.client.ResourceAccessException
 @RestController
 class DelugeController(private val service: DelugeService,
                        private val template: SimpMessagingTemplate) {
-
+    private val log = KotlinLogging.logger {}
     private var launch: Job? = null
 
     @PostMapping("/deluge")
     fun addMagnet(@RequestBody magnet: String) = catch { service.addMagnet(magnet) }
 
     @GetMapping("/deluge/torrents")
-    fun delugeTorrents() = catch { service.torrents() }
+    fun delugeTorrents() = service.torrents()
 
     @MessageMapping("/stream/stop")
     fun delugeTorrentsStreamStop() {
-        runBlocking { launch?.cancelAndJoin() }
+        runBlocking { if (launch?.isActive == true) launch?.cancel() }
     }
 
     @MessageMapping("/stream/commence")
@@ -45,10 +47,11 @@ class DelugeController(private val service: DelugeService,
             catch { template.convertAndSend("/topic/torrents", service.torrents()) }
         }
 
-    private fun <R> catch(block: () -> R): R = try {
+    private fun <R> catch(block: () -> R) = try {
         block.invoke()
-    } catch (ex: ResourceAccessException) {
+    } catch (ex: DelugeServerDownException) {
+        log.error("${ex.message}. Cause: {}", ex.cause?.message)
+        template.convertAndSend("/topic/torrents", defaultDummyData())
         delugeTorrentsStreamStop()
-        throw DelugeServerDownException(ex)
     }
 }

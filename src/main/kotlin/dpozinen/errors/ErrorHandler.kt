@@ -34,7 +34,8 @@ class ErrorHandler {
     fun deluge1(ex: DelugeServerDownException): ResponseEntity<String> {
         log.error("${ex.message} - sending dummy data")
         return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
-            .body(String(File("src/main/resources/dummy-data.json").readBytes()))
+            .body(defaultDummyData())
     }
 
 }
+fun defaultDummyData() = String(File("src/main/resources/dummy-data.json").readBytes())
