@@ -14,6 +14,15 @@ class MutationsTest {
     private val state: DelugeState = DelugeState(_torrents = listOf(a, b, c, d))
 
     @Test
+    fun `mutate should be idempotent`() {
+        val search = Mutation.Search(name = "F")
+        val mutatedOnce = state.mutate(search)
+        val mutated = mutatedOnce.mutate(search).mutate(search).mutate(search).mutate()
+
+        assertThat(mutated).isEqualTo(mutated)
+    }
+
+    @Test
     fun `should search`() {
         val search = Mutation.Search(name = "F")
         val mutated = state.mutate(search)

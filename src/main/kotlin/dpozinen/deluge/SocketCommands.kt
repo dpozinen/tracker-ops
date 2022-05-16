@@ -8,6 +8,12 @@ interface Mutation {
 
     fun perform(state: DelugeState): DelugeState
 
+    fun applySelf(state: DelugeState): MutableSet<Mutation> {
+        val applied = state.applied
+        applied.add(this)
+        return applied
+    }
+
     class Clear(private val id: Int = 0) : Mutation {
         override fun perform(state: DelugeState): DelugeState {
             val applied = state.applied
@@ -25,10 +31,7 @@ interface Mutation {
                     .filter { nameContains(it) }
                     .toList()
 
-                val applied = state.applied
-                applied.add(this)
-
-                state.with(filteredTorrents, applied)
+                state.with(filteredTorrents, applySelf(state))
             }
         }
 
@@ -45,15 +48,14 @@ interface Mutation {
         enum class Order { ASC, DESC }
 
         override fun perform(state: DelugeState): DelugeState {
-            val applied = state.applied
-            applied.add(this)
+            val applied = applySelf(state)
 
-            val comparator = applied
+            val combinedComparator = applied
                 .filterIsInstance<Sort>()
                 .map { it.comparator() }
                 .reduce { acc, sort -> acc.thenComparing(sort) }
 
-            val sortedTorrents = state.torrents.sortedWith(comparator)
+            val sortedTorrents = state.torrents.sortedWith(combinedComparator)
 
             return state.with(sortedTorrents, applied)
         }
