@@ -2,7 +2,7 @@ package dpozinen.deluge
 
 import com.fasterxml.jackson.annotation.JsonProperty
 
-interface Mutation {
+fun interface Mutation {
 
     fun id(): Int = hashCode()
 
