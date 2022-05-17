@@ -74,14 +74,6 @@ function renderTorrents(torrents) {
     console.timeEnd("render");
 }
 
-function searchDeluge(event) {
-    event.preventDefault()
-    searchSpinner(true, false, $('#search-divider-icon'))
-    let keywords = $('#keywords').val();
-
-    stomp.send("/stream/mutate/search", {}, JSON.stringify({'name': keywords }));
-}
-
 function playPause() {
     if (sock.readyState === WebSocket.CLOSED || sock.readyState === WebSocket.CLOSING) {
         openSocket()
