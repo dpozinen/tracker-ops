@@ -8,6 +8,12 @@ function clearSortMutation(by) {
     $(`#sort-${by}`).remove()
 }
 
+function clearSearchMutation(keyword) {
+    stomp.send("/stream/mutate/clear/search", {}, JSON.stringify({ 'name': keyword }));
+
+    $(`#mu-search-${keyword}`).remove()
+}
+
 function addSortMutation(selected) {
     let $selected = $(selected);
     let by = $selected.attr("mu-sort-by");
@@ -18,7 +24,6 @@ function addSortMutation(selected) {
 
     $('#sort-mutation-pill').after(sortPillInitial(by, order, $selected));
 }
-
 
 function changeSortOrder(by, order, text) {
     let payload = { 'by': by, 'order': order }
@@ -33,3 +38,18 @@ function changeSortOrder(by, order, text) {
         .empty()
         .append(sortPill(arrowIcon, text, by))
 }
+
+function searchDeluge(event) {
+    event.preventDefault()
+    searchSpinner(true, false, $('#search-divider-icon'))
+    let keywords = $('#keywords').val();
+
+    stomp.send("/stream/mutate/search", {}, JSON.stringify({'name': keywords }));
+
+    if (keywords.length === 0) {
+        $('[id^="mu-search-"]').remove()
+    } else {
+        $('#sort-mutation-pill').after(searchPill(keywords));
+    }
+}
+

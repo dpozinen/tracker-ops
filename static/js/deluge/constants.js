@@ -89,3 +89,15 @@ function sortPillInitial(by, order, $selected) {
         </li>
         `;
 }
+
+function searchPill(keyword) {
+    return `
+        <li class="nav-item border border-light border-1 m-1" id="mu-search-${keyword}">
+                <a class="text-light fw-lighter nav-link active">
+                       <i class="fa-solid fa-magnifying-glass"></i>
+                        ${keyword}   
+                       <i onclick="clearSearchMutation('${keyword}')" class="fa-solid fa-circle-minus ms-1"></i>
+                </a>
+        </li>
+        `;
+}

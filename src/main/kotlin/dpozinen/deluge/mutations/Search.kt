@@ -7,7 +7,7 @@ import dpozinen.deluge.DelugeTorrent
 class Search(@JsonProperty("name") private val name: String) : Mutation {
     override fun perform(state: DelugeState): DelugeState {
         return if (name.isEmpty()) {
-            state
+            clear(state)
         } else {
             val filteredTorrents = state.torrents.asSequence()
                 .filter { nameContains(it) }
@@ -38,5 +38,6 @@ class Search(@JsonProperty("name") private val name: String) : Mutation {
         return name.hashCode()
     }
 
+    private fun clear(state: DelugeState) = Clear.AllSearches().perform(state)
 
 }
