@@ -5,6 +5,9 @@ import dpozinen.deluge.mutations.Search
 import dpozinen.deluge.mutations.Sort
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.springframework.util.StopWatch
+import java.time.Duration
+import java.time.Instant
 
 class MutationsTest {
 
@@ -99,5 +102,18 @@ class MutationsTest {
             .mutate(Clear())
 
         assertThat(mutated.torrents).containsExactly(a, b, c, d)
+    }
+
+    @Test
+    fun `should perform 5 mutations on 1000 torrents 5 times per second`() {
+        val mutations = By.values().map { Sort(it) }.subList(0, 5).toSet()
+        val torrents = (0..1000).map { Data.delugeTorrent.copy(id = it.toString()) }
+        val state = DelugeState().with(torrents, mutations)
+
+        val now = Instant.now()
+        repeat((0..5).count()) { state.with(torrents).mutate() }
+        val after = Instant.now()
+
+        assertThat(Duration.between(now, after)).isLessThan(Duration.ofSeconds(1))
     }
 }
