@@ -1,17 +1,19 @@
 function clearMutations() {
     stomp.send("/stream/mutate/clear");
+    $('[id^="mu-pill-search-"]').remove()
+    $('[id^="mu-pill-sort-"]').remove()
 }
 
 function clearSortMutation(by) {
     stomp.send("/stream/mutate/clear/sort", {}, JSON.stringify({ 'by': by }));
 
-    $(`#sort-${by}`).remove()
+    $(`#mu-pill-sort-${by}`).remove()
 }
 
 function clearSearchMutation(keyword) {
     stomp.send("/stream/mutate/clear/search", {}, JSON.stringify({ 'name': keyword }));
 
-    $(`#mu-search-${keyword}`).remove()
+    $(`#mu-pill-search-${keyword}`).remove()
 }
 
 function addSortMutation(selected) {
@@ -34,7 +36,7 @@ function changeSortOrder(by, order, text) {
 
     let arrowIcon = sortArrowIcon(arrow, by, newOrder, text)
 
-    $(`#sort-${by}`)
+    $(`#mu-pill-sort-${by}`)
         .empty()
         .append(sortPill(arrowIcon, text, by))
 }
@@ -47,7 +49,7 @@ function searchDeluge(event) {
     stomp.send("/stream/mutate/search", {}, JSON.stringify({'name': keywords }));
 
     if (keywords.length === 0) {
-        $('[id^="mu-search-"]').remove()
+        $('[id^="mu-pill-search-"]').remove()
     } else {
         $('#sort-mutation-pill').after(searchPill(keywords));
     }
