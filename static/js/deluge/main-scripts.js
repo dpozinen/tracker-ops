@@ -45,12 +45,15 @@ function handleScrollAndLoader(torrents) { // todo improve
 }
 
 function renderTorrents(torrents) {
+    console.time("render");
     let $torrents = $('#torrents');
     $torrents.empty()
+
 
     if ($.isEmptyObject(torrents)) {
         addNoResultsCard()
     } else {
+        console.time("gen");
         let torrentCards = [];
         let i = 3
         $.each(torrents, function (key, value) {
@@ -65,8 +68,10 @@ function renderTorrents(torrents) {
             }
         });
         $torrents.append(torrentCards.join(""))
+        console.timeEnd("gen");
     }
     handleScrollAndLoader(torrents);
+    console.timeEnd("render");
 }
 
 function searchDeluge(event) {
