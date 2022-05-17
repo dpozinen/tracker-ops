@@ -2,6 +2,11 @@ let sock
 let stomp
 let receiving = false
 
+window.addEventListener('beforeunload', event => {
+    stomp.send("/stream/stop");
+    sock._close()
+});
+
 function openSocket() {
     sock = new WebSocket(`ws://${global.host}:8133/stream`);
 }

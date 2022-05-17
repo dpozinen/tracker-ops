@@ -5,7 +5,10 @@ import dpozinen.deluge.mutations.Search
 import dpozinen.deluge.mutations.Sort
 import dpozinen.errors.DelugeServerDownException
 import dpozinen.errors.defaultDummyData
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.simp.SimpMessagingTemplate
@@ -27,11 +30,17 @@ class DelugeController(private val service: DelugeService,
     fun delugeTorrents() = service.torrents()
 
     @MessageMapping("/stream/stop")
-    fun streamStop() = runBlocking { if (launch?.isActive == true) launch?.cancel() }
+    fun streamStop() = runBlocking {
+        if (launch?.isActive == true) {
+            launch?.cancel()
+            log.info("Closing torrent stream")
+        }
+    }
 
     @MessageMapping("/stream/commence")
     fun streamCommence() = runBlocking {
         streamStop()
+        log.info("Commencing torrent stream")
         launch = launch { streamTorrents() }
     }
 
