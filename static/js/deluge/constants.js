@@ -78,7 +78,7 @@ function sortPill(arrowIcon, text, by) {
 
 function sortPillInitial(by, order, $selected) {
     return `
-        <li class="nav-item border border-light border-1 m-1" id="sort-${by}">
+        <li class="nav-item border border-light border-1 m-1" id="mu-pill-sort-${by}">
                 <a class="text-light fw-lighter nav-link active">
                         <i class="sort-icon fa-solid fa-arrow-down-wide-short me-1"
                             onclick="changeSortOrder('${by}', '${order}', '${$selected.text().trim()}')"
@@ -92,7 +92,7 @@ function sortPillInitial(by, order, $selected) {
 
 function searchPill(keyword) {
     return `
-        <li class="nav-item border border-light border-1 m-1" id="mu-search-${keyword}">
+        <li class="nav-item border border-light border-1 m-1" id="mu-pill-search-${keyword}">
                 <a class="text-light fw-lighter nav-link active">
                        <i class="fa-solid fa-magnifying-glass"></i>
                         ${keyword}   

@@ -1,6 +1,6 @@
 
 let global = {
-    host : "192.168.0.130"
+    host : "localhost"
 }
 
 window.addEventListener('DOMContentLoaded', event => {
