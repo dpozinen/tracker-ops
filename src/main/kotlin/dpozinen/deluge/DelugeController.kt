@@ -5,10 +5,11 @@ import dpozinen.deluge.mutations.Search
 import dpozinen.deluge.mutations.Sort
 import dpozinen.errors.DelugeServerDownException
 import dpozinen.errors.defaultDummyData
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.consume
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.channels.produce
 import mu.KotlinLogging
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.simp.SimpMessagingTemplate
@@ -41,7 +42,10 @@ class DelugeController(private val service: DelugeService,
     fun streamCommence() = runBlocking {
         streamStop()
         log.info("Commencing torrent stream")
-        launch = launch { streamTorrents() }
+        val channel = produceTorrents()
+        channel.consumeEach {
+            template.convertAndSend("/topic/torrents", it)
+        }
     }
 
     @MessageMapping("/stream/mutate/search")
@@ -62,12 +66,6 @@ class DelugeController(private val service: DelugeService,
     @MessageMapping("/stream/mutate/sort/reverse")
     fun streamSortReverse(sort: Sort) = catch { service.mutate(Sort.Reverse(sort)) }
 
-    private suspend fun streamTorrents() =
-        (0..900).forEach { _ ->
-            delay(1000)
-            catch { template.convertAndSend("/topic/torrents", service.torrents()) }
-        }
-
     private fun <R> catch(block: () -> R) = try {
         block.invoke()
     } catch (ex: DelugeServerDownException) {
@@ -75,4 +73,18 @@ class DelugeController(private val service: DelugeService,
         template.convertAndSend("/topic/torrents", defaultDummyData())
         streamStop()
     }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun CoroutineScope.produceTorrents(): ReceiveChannel<List<DelugeTorrent>> = produce {
+        repeat(900) {
+            val torrents = service.torrents()
+
+            repeat(5) {
+                delay(300)
+                send(torrents)
+                log.info { "After Send" }
+            }
+        }
+    }
+
 }

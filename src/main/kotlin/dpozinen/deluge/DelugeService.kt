@@ -1,8 +1,12 @@
 package dpozinen.deluge
 
 import dpozinen.deluge.mutations.Mutation
-import dpozinen.deluge.mutations.Mutation.By
-import dpozinen.deluge.mutations.Sort
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.produce
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -45,9 +49,11 @@ class DelugeService(
     }
 
     fun mutate(mutation: Mutation) {
+        log.info("Mutating {}", mutation)
         synchronized(this) {
             state = state.mutate(mutation)
         }
+        log.info("Mutated {}", mutation)
     }
 
 }
