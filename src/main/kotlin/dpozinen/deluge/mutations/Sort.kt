@@ -49,6 +49,10 @@ class Sort(private val by: Mutation.By, private var order: Order = Order.ASC) : 
         return by.hashCode()
     }
 
+    override fun toString(): String {
+        return "Sort by $by in $order order"
+    }
+
 
     class Reverse(private val sort: Sort) : Mutation {
 

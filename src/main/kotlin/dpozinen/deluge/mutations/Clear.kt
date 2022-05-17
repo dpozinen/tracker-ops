@@ -27,11 +27,19 @@ class Clear(private val mutation: Mutation? = null) : Mutation {
         return mutation?.hashCode() ?: 0
     }
 
+    override fun toString(): String {
+        return "Clear: ${mutation ?: "all"}"
+    }
+
     class AllSearches: Mutation {
         override fun perform(state: DelugeState): DelugeState {
             val mutations = state.mutations
             mutations.removeIf { it is Search }
             return state.with(mutations)
+        }
+
+        override fun toString(): String {
+            return "Clear all Search Mutations"
         }
     }
 
