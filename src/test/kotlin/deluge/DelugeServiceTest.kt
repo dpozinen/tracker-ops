@@ -11,17 +11,20 @@ import org.assertj.core.api.Assertions.assertThat
 import kotlin.test.Test
 
 
-class DelugeTest {
+class DelugeServiceTest {
 
     @Test
-    fun `should convert`() {
-        val torrent = DelugeTorrentConverter(Data.delugeTorrentResponse.entries.first()).convert()
+    fun `should parse response to torrents`() {
+        val service = DelugeService("", mock())
 
-        assertThat(torrent).isEqualTo(Data.delugeTorrent)
+        assertThat(service.torrents())
+            .hasSize(1)
+            .first()
+            .isEqualTo(Data.delugeTorrent)
     }
 
     @Test
-    fun `should throw if bad response`() {
+    fun `should throw if result has no torrents`() {
         val delugeClient = mock(false)
 
         val service = DelugeService("", delugeClient)
@@ -55,7 +58,7 @@ class DelugeTest {
         every { response.body } returns DelugeResponse(mapOf<String, Any>(), 123, mapOf())
         every { response.headers } returns httpHeaders()
         if (mockTorrents)
-            every { response.body.torrents() } returns listOf()
+            every { response.body.torrents() } returns Data.delugeTorrentResponse
 
         every { delugeClient.login() } returns response
         every { delugeClient.torrents(DelugeParams.torrents(), Data.sessionIdHttpCookie) } returns response
