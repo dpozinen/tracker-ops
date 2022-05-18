@@ -14,7 +14,7 @@ import java.net.HttpCookie
 
 @Service // todo 'web.connect'
 class DelugeService(
-    @Value("\${tracker-ops.manual-deluge.download-folder}") private val downloadFolder: String,
+    @Value("\${tracker-ops.deluge.download-folder}") private val downloadFolder: String,
     private val delugeClient: DelugeClient
 ) {
     private val log = KotlinLogging.logger {}
@@ -44,7 +44,7 @@ class DelugeService(
         login()
         val params = DelugeParams.torrents()
         val response = delugeClient.torrents(params, session)
-        val torrents = response.body.torrents()
+        val torrents = response.body.torrents().map { DelugeTorrentConverter(it).convert() }
         return state.with(torrents).mutate().torrents
     }
 
