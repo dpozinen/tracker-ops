@@ -87,7 +87,7 @@ class Data {
             downloaded = "8.11 GiB",
             eta = "",
             downloadSpeed = "",
-            uploadSpeed = "",
+             uploadSpeed = "0.18 KiB/s",
             date = "28.06.2021"
         )
 

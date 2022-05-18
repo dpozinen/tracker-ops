@@ -10,7 +10,7 @@ class DelugeParams(params: Collection<Any>) : ArrayList<Any>(params) {
 
         private val mapper: ObjectMapper = ObjectMapper()
 
-        fun torrents(ids: Set<String>): DelugeParams {
+        fun torrents(ids: Set<String> = setOf("ALL")): DelugeParams {
             return if (ids == setOf("ALL")) torrentsParams
             else DelugeParams(listOf(torrentFields, mapOf("id" to ids)))
         }

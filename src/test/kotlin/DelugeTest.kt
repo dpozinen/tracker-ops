@@ -55,7 +55,7 @@ class DelugeTest {
             every { response.body.torrents() } returns listOf()
 
         every { delugeClient.login() } returns response
-        every { delugeClient.torrents(DelugeParams.torrents(setOf()), Data.sessionIdHttpCookie) } returns response
+        every { delugeClient.torrents(DelugeParams.torrents(), Data.sessionIdHttpCookie) } returns response
 
         return delugeClient
     }
