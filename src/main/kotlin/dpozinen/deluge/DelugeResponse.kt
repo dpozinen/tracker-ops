@@ -9,13 +9,11 @@ data class DelugeResponse(
     fun errMsg(): String = (error ?: mapOf("message" to "no errors"))["message"] as String
 
     @Suppress("UNCHECKED_CAST")
-    fun torrents(): List<DelugeTorrent> {
+    fun torrents(): Map<String, Map<String, *>> {
         result ?: throw IllegalArgumentException("no result")
 
         (result as Map<String, *>)["torrents"] ?: throw IllegalArgumentException("no torrents")
 
-        val torrents = result["torrents"] as Map<String, Map<String, *>>
-
-        return torrents.map { DelugeTorrentConverter(it) }.map { it.convert() }
+        return result["torrents"] as Map<String, Map<String, *>>
     }
 }

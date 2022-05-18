@@ -8,7 +8,6 @@ import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.http.HttpHeaders.COOKIE
 import org.springframework.http.HttpMethod.POST
 import org.springframework.http.MediaType.APPLICATION_JSON
-import org.springframework.http.RequestEntity
 import org.springframework.http.RequestEntity.method
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Component
@@ -22,7 +21,8 @@ import java.util.concurrent.ThreadLocalRandom
 
 @Component
 class DelugeClient(
-    @Value("\${tracker-ops.manual-deluge.address}") private val delugeAddress: String,
+    @Value("\${tracker-ops.deluge.host}") private val host: String,
+    @Value("\${tracker-ops.deluge.port}") private val port: Int,
     private val rest: RestTemplate = RestTemplateBuilder()
         .setConnectTimeout(Duration.ofSeconds(5))
         .setReadTimeout(Duration.ofSeconds(5))
@@ -41,7 +41,7 @@ class DelugeClient(
 
         val response = try {
              rest.exchange<DelugeResponse>(
-                 method(POST, URI("http://$delugeAddress/json"))
+                 method(POST, URI("http://$host:$port/json"))
                      .contentType(APPLICATION_JSON)
                      .header(COOKIE, session.asHeader())
                      .body(body(method, params))
@@ -61,7 +61,7 @@ class DelugeClient(
                         {
                             "method" : "$method",
                             "params" : $params,
-                            "id" : ${ThreadLocalRandom.current().nextInt()}
+                            "id" : 8888
                         }
                     """.trimIndent()
 
