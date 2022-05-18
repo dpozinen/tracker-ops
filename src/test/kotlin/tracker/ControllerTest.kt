@@ -1,3 +1,6 @@
+package tracker
+
+import Data
 import Data.OneThreeThree.Companion.PAGE_EXPECTED_TORRENT
 import Data.OneThreeThree.Companion.SEARCH_EXPECTED_TORRENT
 import com.ninjasquad.springmockk.MockkBean
