@@ -38,5 +38,9 @@ This might be overkill and useless, but whatever.
 
 # Showcase
 
+### Tracker search
 ![](tracker-ops-showcase.gif)
+
+### Deluge proxy
+![](deluge-showcase.gif)
 
