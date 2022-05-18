@@ -42,7 +42,7 @@ class DelugeService(
 
     fun torrents(): List<DelugeTorrent> {
         login()
-        val params = DelugeParams.torrents(setOf("ALL"))
+        val params = DelugeParams.torrents()
         val response = delugeClient.torrents(params, session)
         val torrents = response.body.torrents()
         return state.with(torrents).mutate().torrents
