@@ -1,3 +1,5 @@
+package tracker
+
 import Data.*
 import dpozinen.tracker.TrackerParser
 import org.assertj.core.api.Assertions.assertThat

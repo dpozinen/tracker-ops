@@ -1,4 +1,7 @@
- import Data.Companion.httpHeaders
+package deluge
+
+import Data
+import Data.Companion.httpHeaders
 import dpozinen.deluge.*
 import io.mockk.every
 import io.mockk.mockk
