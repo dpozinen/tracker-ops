@@ -3,11 +3,14 @@ package deluge
 import Data
 import Data.Companion.httpHeaders
 import dpozinen.deluge.*
+import dpozinen.deluge.mutations.Search
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
- import org.springframework.http.ResponseEntity
+import org.springframework.http.ResponseEntity
 import kotlin.test.Test
 
 
@@ -51,6 +54,22 @@ class DelugeServiceTest {
         verify(exactly = 1) { delugeClient.login() }
     }
 
+    @Test
+    fun `should perform mutations concurrently`() {
+        val service = DelugeService("", mock())
+
+        fun search(range: IntRange) =
+            range.map { Search(it.toString()) }.forEach { service.mutate(it) }
+
+        runBlocking {
+            launch { search(1..100) }
+            launch { search(101..200) }
+            launch { search(201..300) }
+        }
+
+        assertThat(service.reflectExtractState().mutations).hasSize(300)
+    }
+
     private fun mock(mockTorrents: Boolean = true): DelugeClient {
         val delugeClient = mockk<DelugeClient>()
         val response = mockk<ResponseEntity<DelugeResponse>>()
@@ -66,5 +85,11 @@ class DelugeServiceTest {
         return delugeClient
     }
 
+}
 
+private fun DelugeService.reflectExtractState(): DelugeState {
+    return DelugeService::class.java.getDeclaredField("state").let {
+        it.isAccessible = true
+        return@let it.get(this)
+    } as DelugeState
 }
