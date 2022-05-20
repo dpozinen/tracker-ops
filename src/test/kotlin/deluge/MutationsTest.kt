@@ -3,7 +3,7 @@ package deluge
 import Data
 import dpozinen.deluge.DelugeState
 import dpozinen.deluge.mutations.Clear
-import dpozinen.deluge.mutations.Mutation.By
+import dpozinen.deluge.mutations.By
 import dpozinen.deluge.mutations.Search
 import dpozinen.deluge.mutations.Sort
 import org.assertj.core.api.Assertions.assertThat
@@ -13,10 +13,12 @@ import java.time.Instant
 
 class MutationsTest {
 
-    private val a = Data.delugeTorrent.copy(name = "ABCF", state = "Seeding", progress = 10)
-    private val b = Data.delugeTorrent.copy(name = "DEF", state = "Seeding", progress = 10)
-    private val c = Data.delugeTorrent.copy(name = "ABCDEF", state = "Downloading", progress = 10)
-    private val d = Data.delugeTorrent.copy(name = "DEG", state = "Error", progress = 10)
+    private val a = Data.delugeTorrent.copy(name = "ABCF", state = "Seeding", progress = 10, downloaded = "550.96 GiB", date = "07.10.2010")
+    private val b = Data.delugeTorrent.copy(name = "DEF", state = "Seeding", progress = 10, downloaded = "1550.96 GiB", date = "08.09.2010")
+    private val c = Data.delugeTorrent.copy(name = "ABCDEF", state = "Downloading", progress = 10, downloaded = "0 GiB", date = "10.10.2010")
+    private val d = Data.delugeTorrent.copy(name = "DEG", state = "Error", progress = 10, downloaded = "11111 GiB", date = "10.11.2010")
+    private val e = Data.delugeTorrent.copy(name = "DEG", state = "Error", progress = 10, downloaded = "111111 MiB", date = "10.11.2010")
+    private val f = Data.delugeTorrent.copy(name = "DEG", state = "Error", progress = 10, downloaded = "22222111111111 KiB", date = "10.11.2010")
 
     private val state: DelugeState = DelugeState(_torrents = listOf(a, b, c, d))
 
@@ -60,6 +62,28 @@ class MutationsTest {
         val mutated = state.mutate(sort)
 
         assertThat(mutated.torrents).containsExactly(c, a, b, d)
+    }
+
+    @Test
+    fun `should sort by size`() {
+        val sort = Sort(By.DOWNLOADED)
+
+        val mutated = state.with(listOf(a, b, c, d, e, f)).mutate(sort)
+        val reversed = mutated.mutate(sort.reverse())
+
+        assertThat(mutated.torrents).containsExactly(c, e, a, b, d, f)
+        assertThat(reversed.torrents).containsExactly(f, d, b, a, e, c)
+    }
+
+    @Test
+    fun `should sort by date`() {
+        val sort = Sort(By.DATE)
+
+        val mutated = state.mutate(sort)
+        val reversed = mutated.mutate(sort.reverse())
+
+        assertThat(mutated.torrents).containsExactly(b, a, c, d)
+        assertThat(reversed.torrents).containsExactly(d, c, a, b)
     }
 
     @Test

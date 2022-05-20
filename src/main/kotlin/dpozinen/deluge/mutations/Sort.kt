@@ -3,7 +3,7 @@ package dpozinen.deluge.mutations
 import dpozinen.deluge.DelugeState
 import dpozinen.deluge.DelugeTorrent
 
-class Sort(private val by: Mutation.By, private var order: Order = Order.ASC) : Mutation {
+class Sort(private val by: By, private var order: Order = Order.ASC) : Mutation {
     enum class Order { ASC, DESC }
 
     override fun perform(state: DelugeState): DelugeState {
@@ -21,17 +21,18 @@ class Sort(private val by: Mutation.By, private var order: Order = Order.ASC) : 
 
     private fun comparator(): Comparator<DelugeTorrent> {
         return if (this.order == Order.ASC) {
-            compareBy { it.value(this.by) }
+            by.comparator()
         } else {
-            compareBy<DelugeTorrent> { it.value(this.by) }.reversed()
+            by.comparator().reversed()
         }
     }
 
-    fun reverse() {
+    fun reverse(): Sort {
         when (this.order) {
             Order.ASC -> this.order = Order.DESC
             Order.DESC -> this.order = Order.ASC
         }
+        return this
     }
 
     override fun equals(other: Any?): Boolean {

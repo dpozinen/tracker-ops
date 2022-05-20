@@ -4,14 +4,12 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatter.ofPattern
-import java.time.temporal.ChronoUnit.HOURS
 import kotlin.math.floor
 import kotlin.math.round
 import kotlin.math.roundToInt
 
 class DelugeTorrentConverter(
     private val torrent: Map.Entry<String, Map<String, *>>,
-    private val dateTimeFormatter: DateTimeFormatter = ofPattern("dd.MM.yyyy").withZone(ZoneId.of("Europe/Kiev"))
 ) {
 
     fun convert(): DelugeTorrent {
@@ -82,6 +80,10 @@ class DelugeTorrentConverter(
             "$tmpA $aName $tmpB $bName"
         else
             "$tmpA $aName"
+    }
+
+    companion object {
+        val dateTimeFormatter: DateTimeFormatter = ofPattern("dd.MM.yyyy").withZone(ZoneId.of("Europe/Kiev"))
     }
 
 }
