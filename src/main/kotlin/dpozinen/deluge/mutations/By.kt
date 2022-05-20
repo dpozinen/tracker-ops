@@ -3,8 +3,12 @@ package dpozinen.deluge.mutations
 import dpozinen.deluge.DelugeTorrent
 import dpozinen.deluge.DelugeTorrentConverter
 import dpozinen.deluge.mutations.By.ByComparator
+import dpozinen.deluge.sizeToBytes
 import java.time.LocalDate
 import java.util.Comparator
+import kotlin.time.Duration.Companion
+import kotlin.time.DurationUnit.MINUTES
+import kotlin.time.ExperimentalTime
 
 enum class By {
     NAME,
@@ -63,7 +67,10 @@ enum class By {
 
         val uploaded = bySize()
 
-        val eta = by<String>() // todo
+        @OptIn(ExperimentalTime::class)
+        val eta = ByComparator<String, Long> {
+            return@ByComparator if (it.isEmpty()) 0 else kotlin.time.Duration.parse(it).toLong(MINUTES)
+        }
 
         val date = ByComparator<String, LocalDate> { LocalDate.parse(it, DelugeTorrentConverter.dateTimeFormatter) }
 
@@ -81,7 +88,7 @@ enum class By {
                      0.0
                 } else {
                     val size = it.substringBefore(" ").toDouble()
-                    val multiplier = multiplier(it.substringAfter(" "))
+                    val multiplier = sizeToBytes(it.substringAfter(" "))
                     size * multiplier
                 }
             }
@@ -98,13 +105,4 @@ enum class By {
  */
 inline fun <V : Comparable<V>, C : Comparable<C>, reified R : V> ByComparator<V, C>.compareBy(by: By): Comparator<DelugeTorrent>  {
     return compareBy { comparable(it.getterBy<R>(by).call(it)) }
-}
-
-private fun multiplier(it: String):Double {
-    return when {
-        it.contains("KiB") -> 1024.0
-        it.contains("MiB") -> 1024.0 * 1024.0
-        it.contains("GiB") -> 1024.0 * 1024.0 * 1024.0
-        else -> 1.0
-    }
 }
