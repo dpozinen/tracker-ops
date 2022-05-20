@@ -56,7 +56,7 @@ class Data {
                     "total_seeds" to 8,
                     "last_seen_complete" to 1652264788,
                     "name" to "Rick and Morty Season 1  [2160p AI x265 FS100 Joy]",
-                    "eta" to 0,
+                    "eta" to 72600,
                     "is_auto_managed" to true,
                     "state" to "Seeding",
                     "num_seeds" to 0,
@@ -85,7 +85,7 @@ class Data {
             ratio = "67.9",
             uploaded = "550.96 GiB",
             downloaded = "8.11 GiB",
-            eta = "",
+            eta = "20h 10m",
             downloadSpeed = "",
              uploadSpeed = "0.18 KiB/s",
             date = "28.06.2021"

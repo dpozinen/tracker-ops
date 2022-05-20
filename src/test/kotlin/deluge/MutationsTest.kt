@@ -1,6 +1,6 @@
 package deluge
 
-import Data
+import Data.Companion.delugeTorrent
 import dpozinen.deluge.DelugeState
 import dpozinen.deluge.mutations.Clear
 import dpozinen.deluge.mutations.By
@@ -13,12 +13,12 @@ import java.time.Instant
 
 class MutationsTest {
 
-    private val a = Data.delugeTorrent.copy(name = "ABCF", state = "Seeding", progress = 10, downloaded = "550.96 GiB", date = "07.10.2010")
-    private val b = Data.delugeTorrent.copy(name = "DEF", state = "Seeding", progress = 10, downloaded = "1550.96 GiB", date = "08.09.2010")
-    private val c = Data.delugeTorrent.copy(name = "ABCDEF", state = "Downloading", progress = 10, downloaded = "0 GiB", date = "10.10.2010")
-    private val d = Data.delugeTorrent.copy(name = "DEG", state = "Error", progress = 10, downloaded = "11111 GiB", date = "10.11.2010")
-    private val e = Data.delugeTorrent.copy(name = "DEG", state = "Error", progress = 10, downloaded = "111111 MiB", date = "10.11.2010")
-    private val f = Data.delugeTorrent.copy(name = "DEG", state = "Error", progress = 10, downloaded = "22222111111111 KiB", date = "10.11.2010")
+    private val a = delugeTorrent.copy(name = "ABCF", state = "Seeding", progress = 10, downloaded = "550.96 GiB", date = "07.10.2010", eta = "10h 7m")
+    private val b = delugeTorrent.copy(name = "DEF", state = "Seeding", progress = 10, downloaded = "1550.96 GiB", date = "08.09.2010", eta = "12h 7m")
+    private val c = delugeTorrent.copy(name = "ABCDEF", state = "Downloading", progress = 10, downloaded = "0 GiB", date = "10.10.2010", eta = "10m 7s")
+    private val d = delugeTorrent.copy(name = "DEG", state = "Error", progress = 10, downloaded = "11111 GiB", date = "10.11.2010", eta = "1d 4h")
+    private val e = delugeTorrent.copy(name = "DEG", state = "Error", progress = 10, downloaded = "111111 MiB", date = "10.11.2010", eta = "10d 1h")
+    private val f = delugeTorrent.copy(name = "DEG", state = "Error", progress = 10, downloaded = "22222111111111 KiB", date = "10.11.2010", eta = "1s")
 
     private val state: DelugeState = DelugeState(_torrents = listOf(a, b, c, d))
 
@@ -87,6 +87,17 @@ class MutationsTest {
     }
 
     @Test
+    fun `should sort by eta`() {
+        val sort = Sort(By.ETA)
+
+        val mutated = state.with(listOf(a, b, c, d, e, f)).mutate(sort)
+        val reversed = mutated.mutate(sort.reverse())
+
+        assertThat(mutated.torrents).containsExactly(f, c, a, b, d, e)
+        assertThat(reversed.torrents).containsExactly(e, d, b, a, c, f)
+    }
+
+    @Test
     fun `should sort within`() {
         val sortProgress = Sort(By.PROGRESS)
         val sortState = Sort(By.STATE)
@@ -133,7 +144,7 @@ class MutationsTest {
     @Test
     fun `should perform 5 mutations on 1000 torrents 5 times per second`() {
         val mutations = By.values().map { Sort(it) }.subList(0, 5).toSet()
-        val torrents = (0..1000).map { Data.delugeTorrent.copy(id = it.toString()) }
+        val torrents = (0..1000).map { delugeTorrent.copy(id = it.toString()) }
         val state = DelugeState().with(torrents, mutations)
 
         val now = Instant.now()

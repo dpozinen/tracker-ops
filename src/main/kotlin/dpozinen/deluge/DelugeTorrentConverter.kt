@@ -4,9 +4,8 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatter.ofPattern
-import kotlin.math.floor
 import kotlin.math.round
-import kotlin.math.roundToInt
+import kotlin.time.ExperimentalTime
 
 class DelugeTorrentConverter(
     private val torrent: Map.Entry<String, Map<String, *>>,
@@ -60,26 +59,9 @@ class DelugeTorrentConverter(
         }
     }
 
+    @OptIn(ExperimentalTime::class)
     private fun eta(eta: Double): String {
-        val time = eta.round(0)
-
-        return when {
-            eta <= 0 -> ""
-            time < 60 -> "$time s"
-            time / 60 < 60 -> timePrettyString(time / 60, "m", "s")
-            time / 60 / 60 < 24 -> timePrettyString(time / 60 / 60, "h", "m")
-            else -> timePrettyString(time / 60 / 60 / 24, "d", "h")
-        }
-    }
-
-    private fun timePrettyString(time: Double, aName: String, bName: String): String {
-        val tmpA = floor(time)
-        val tmpB = (60 * (time - tmpA)).roundToInt()
-
-        return if (tmpB > 0)
-            "$tmpA $aName $tmpB $bName"
-        else
-            "$tmpA $aName"
+        return kotlin.time.Duration.seconds(eta).toString()
     }
 
     companion object {
@@ -92,4 +74,13 @@ fun Double.round(decimals: Int): Double {
     var multiplier = 1.0
     repeat(decimals) { multiplier *= 10 }
     return round(this * multiplier) / multiplier
+}
+
+fun sizeToBytes(size: String): Double {
+    return when {
+        size.contains("KiB") -> 1024.0
+        size.contains("MiB") -> 1024.0 * 1024.0
+        size.contains("GiB") -> 1024.0 * 1024.0 * 1024.0
+        else -> 0.0
+    }
 }
