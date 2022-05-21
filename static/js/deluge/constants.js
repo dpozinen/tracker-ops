@@ -1,4 +1,4 @@
-function ifEmpty(value) {
+function infinityIfEmpty(value) {
     return value === "" ? '<i class="fa-solid fa-infinity"></i>' : value
 }
 
@@ -9,7 +9,7 @@ function torrentCard(torrent) {
                 <div class="card-body">
                     <div class="card-title">
                         <div class="progress tor-progress" style="height:20px">
-                            ${stateColor(torrent)}
+                            ${progressStateField(torrent)}
                         </div>
                     </div>
                     <p class="card-text tor-name">${torrent.name}</p>
@@ -30,15 +30,15 @@ function torrentCard(torrent) {
                     <div class="row mb-3">
                         <div class="col-4">
                             <h6 class="card-subtitle mb-2 text-muted t-size tor-downloadSpeed">
-                                <i class="fa-solid fa-arrow-down"></i>      ${ifEmpty(torrent.downloadSpeed)}</h6>
+                                <i class="fa-solid fa-arrow-down"></i>      ${infinityIfEmpty(torrent.downloadSpeed)}</h6>
                         </div>
                         <div class="col-4">
                             <h6 class="card-subtitle mb-2 text-muted t-size tor-eta">
-                                <i class="fa-solid fa-clock"></i>      ${ifEmpty(torrent.eta)}</h6>
+                                <i class="fa-solid fa-clock"></i>      ${infinityIfEmpty(torrent.eta)}</h6>
                         </div>
                         <div class="col-4">
                             <h6 class="card-subtitle mb-2 text-muted t-size tor-uploadSpeed">
-                                <i class="fa-solid fa-arrow-up"></i>      ${ifEmpty(torrent.uploadSpeed)}</h6>
+                                <i class="fa-solid fa-arrow-up"></i>      ${infinityIfEmpty(torrent.uploadSpeed)}</h6>
                         </div>
                     </div>
                     <h6 class="card-text text-center t-date"><small class="text-muted tor-date">${torrent.date}</small></h6>
@@ -118,15 +118,15 @@ function uploadedField(torrent) {
 }
 
 function downloadSpeedField(torrent) {
-    return `<i class="fa-solid fa-arrow-down"></i>      ${ifEmpty(torrent.downloadSpeed)}</h6>`
+    return `<i class="fa-solid fa-arrow-down"></i>      ${infinityIfEmpty(torrent.downloadSpeed)}</h6>`
 }
 
 function etaField(torrent) {
-    return `<i class="fa-solid fa-clock"></i>      ${ifEmpty(torrent.eta)}</h6>`
+    return `<i class="fa-solid fa-clock"></i>      ${infinityIfEmpty(torrent.eta)}</h6>`
 }
 
 function uploadSpeedField(torrent) {
-    return `<i class="fa-solid fa-arrow-up"></i>      ${ifEmpty(torrent.uploadSpeed)}</h6>`
+    return `<i class="fa-solid fa-arrow-up"></i>      ${infinityIfEmpty(torrent.uploadSpeed)}</h6>`
 }
 
 function progressStateField(torrent) {
@@ -136,11 +136,11 @@ function progressStateField(torrent) {
 
 function stateColor(torrent) {
     if (torrent.state === 'Seeding') {
-        return "bg-success";
+        return "bg-success progress-bar-striped progress-bar-animated";
     } else if (torrent.state === 'Downloading') {
-        return "bg-warning";
+        return "progress-bar-striped progress-bar-animated";
     } else if (torrent.state === 'Paused') {
-        return "";
+        return "bg-warning";
     } else {
         return "bg-danger";
     }
