@@ -34,7 +34,7 @@ class RandomizedDelugeService : DelugeService {
                 add("name" to delugeTorrent.name.substring(0..Random.nextInt(5, 30)))
                 add("progress" to Random.nextInt(0, 100))
                 add("ratio" to Random.nextDouble(-50.0, 100.0))
-                add("state" to listOf("Seeding", "Paused", "Downloading")[Random.nextInt(0, 2)])
+                add("state" to listOf("Seeding", "Paused", "Downloading", "Error")[Random.nextInt(0, 3)])
                 add("total_uploaded" to Random.nextLong(0, 5949401940790))
                 add("upload_payload_rate" to Random.nextLong(0, 54079000))
                 add("download_payload_rate" to Random.nextLong(0, 54079000))

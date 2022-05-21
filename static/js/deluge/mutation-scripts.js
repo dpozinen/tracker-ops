@@ -1,17 +1,27 @@
+function mutate(mutation) {
+    mutationRequested = true
+    stomp.send(`/stream/mutate/${mutation}`);
+}
+
+function mutateWBody(mutation, body) {
+    mutationRequested = true
+    stomp.send(`/stream/mutate/${mutation}`, {}, JSON.stringify(body));
+}
+
 function clearMutations() {
-    stomp.send("/stream/mutate/clear");
+    mutate();
     $('[id^="mu-pill-search-"]').remove()
     $('[id^="mu-pill-sort-"]').remove()
 }
 
 function clearSortMutation(by) {
-    stomp.send("/stream/mutate/clear/sort", {}, JSON.stringify({ 'by': by }));
+    mutateWBody('clear/sort', {'by': by});
 
     $(`#mu-pill-sort-${by}`).remove()
 }
 
 function clearSearchMutation(keyword) {
-    stomp.send("/stream/mutate/clear/search", {}, JSON.stringify({ 'name': keyword }));
+    mutateWBody('clear/search', { 'name': keyword });
 
     $(`#mu-pill-search-${keyword}`).remove()
 }
@@ -22,14 +32,14 @@ function addSortMutation(selected) {
     let order = 'ASC'
 
     let payload = { 'by': by, 'order': order }
-    stomp.send("/stream/mutate/sort", {}, JSON.stringify(payload));
+    mutateWBody('sort', payload);
 
     $('#sort-mutation-pill').after(sortPillInitial(by, order, $selected));
 }
 
 function changeSortOrder(by, order, text) {
     let payload = { 'by': by, 'order': order }
-    stomp.send("/stream/mutate/sort/reverse", {}, JSON.stringify(payload));
+    mutateWBody("sort/reverse", payload);
 
     let newOrder = order === 'ASC' ? 'DESC' : 'ASC'
     let arrow = newOrder === 'ASC' ? 'down' : 'up'
@@ -46,7 +56,7 @@ function searchDeluge(event) {
     searchSpinner(true, false, $('#search-divider-icon'))
     let keywords = $('#keywords').val();
 
-    stomp.send("/stream/mutate/search", {}, JSON.stringify({'name': keywords }));
+    mutateWBody('search', {'name': keywords});
 
     if (keywords.length === 0) {
         $('[id^="mu-pill-search-"]').remove()

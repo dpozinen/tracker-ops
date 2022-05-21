@@ -107,8 +107,8 @@
         </header>
         <section class="page-section results" id="results">
             <div class="container">
-                <div class="row justify-content-center row-cols-md-3 g-4" id="torrents">
-                    <div class="col-md" id="torrent-${torrent.index}">
+                <div class="row justify-content-center row-cols-md-2 g-4" id="torrents">
+                    <div class="col-md" id="tor-${torrent.index}">
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">Search for something and it will appear!</h5>
@@ -124,6 +124,7 @@
         <script src="js/scripts.js"></script>
         <script src="js/deluge/main-scripts.js"></script>
         <script src="js/deluge/constants.js"></script>
+        <script src="js/deluge/render-scripts.js"></script>
         <script src="js/deluge/mutation-scripts.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>

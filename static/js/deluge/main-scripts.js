@@ -2,6 +2,9 @@ let sock
 let stomp
 let receiving = false
 
+let torrentsState = []
+let mutationRequested = false
+
 window.addEventListener('beforeunload', event => {
     stomp.send("/stream/stop");
     sock._close()
@@ -33,45 +36,21 @@ function delugeTorrents() {
 }
 
 function handleScrollAndLoader(torrents) { // todo improve
-    setTimeout(function () {
-            if ($('#search-divider-icon .fa-circle-nodes').length === 0) {
-                searchSpinner(false, false, $('#search-divider-icon'), '<i class="fa-solid fa-circle-nodes">');
-                if (!$.isEmptyObject(torrents))
-                    $("#results")[0].scrollIntoView()
-            }
-        },
-        5000
-    )
+    if ($('#search-divider-icon .fa-circle-nodes').length === 0) {
+        searchSpinner(false, false, $('#search-divider-icon'), '<i class="fa-solid fa-circle-nodes">');
+        if (!$.isEmptyObject(torrents))
+            $("#results")[0].scrollIntoView()
+    }
 }
 
-function renderTorrents(torrents) {
-    console.time("render");
-    let $torrents = $('#torrents');
-    $torrents.empty()
+function torrentsAsMap(torrents) {
+    let map = {}
 
-
-    if ($.isEmptyObject(torrents)) {
-        addNoResultsCard()
-    } else {
-        console.time("gen");
-        let torrentCards = [];
-        let i = 3
-        $.each(torrents, function (key, value) {
-            if (i === 3) {
-                // torrentCards.push('<div class="row justify-content-center row-cols-auto g-3 mb-3">')
-            }
-            --i
-            torrentCards.push(torrentCard(value));
-            if (i === 0) {
-                // torrentCards.push('</div>')
-                i = 3
-            }
-        });
-        $torrents.append(torrentCards.join(""))
-        console.timeEnd("gen");
-    }
-    handleScrollAndLoader(torrents);
-    console.timeEnd("render");
+    $.each(torrents, function(elem, innerJson) {
+        let id = innerJson.id
+        map[id] = innerJson
+    });
+    return map
 }
 
 function playPause() {

@@ -1,6 +1,6 @@
 
 let global = {
-    host : "192.168.0.130"
+    host : "localhost"
 }
 
 window.addEventListener('DOMContentLoaded', event => {
@@ -99,7 +99,7 @@ function search(event) {
 
 function addTorrent(torrent) {
     let card = `
-    <div class="col-md" id="torrent-${torrent.index}">
+    <div class="col-md" id="tor-${torrent.index}">
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">${torrent.contributor}</h5>
@@ -151,7 +151,7 @@ function addNoResultsCard() {
 }
 
 function fetchLink(elem, link, cardId) {
-    let card = $(`#torrent-${cardId}`)
+    let card = $(`#tor-${cardId}`)
     showSpinner(card);
 
     $.ajax({
@@ -207,55 +207,6 @@ function showSpinner(elem) {
     }
 }
 
-
-// todo fix weird cors issues
-function sendToMyDeluge(magnet) {
-    let addMagnet = function (config) {
-        let location = config.result.download_location
-        sendToDeluge(
-            delugeParams("core.add_torrent_magnet",
-                [ magnet, {"download_location": location} ]
-            )
-        )
-    };
-    let getConfig = function () {
-        sendToDeluge(
-            delugeParams("core.get_config", []),
-            addMagnet
-        )
-    };
-    let auth = function () {
-        sendToDeluge(
-            delugeParams("auth.login", ["deluge"]),
-            getConfig
-        )
-    }
-    auth();
-}
-
-function sendToDeluge(params, onSuccess) {
-    $.ajax({
-        type: "OPTIONS",
-        url: "http://192.168.0.184:8112/json",
-        success: function () {
-            let request = new XMLHttpRequest();
-            request.open("POST", "http://192.168.0.184:8112/json");
-            request.setRequestHeader("Content-Type", "application/json")
-            request.setRequestHeader("Access-Control-Allow-Origin", "*")
-            request.setRequestHeader("Access-Control-Allow-Methods", "POST")
-            request.setRequestHeader("Access-Control-Allow-Headers", "Content-Type")
-            request.send(JSON.stringify(params));
-        },
-    })
-}
-
-function delugeParams(method, params) {
-    return {
-        "method": method,
-        "params": params,
-        "id": 109384
-    }
-}
 
 // dptodo: separate into several files
 // dptodo: add constants

@@ -1,48 +1,47 @@
-function torrentCard(torrent) {
-    let ifEmpty = function (value) {
-        return value === "" ? '<i class="fa-solid fa-infinity"></i>' : value
-    }
+function ifEmpty(value) {
+    return value === "" ? '<i class="fa-solid fa-infinity"></i>' : value
+}
 
+function torrentCard(torrent) {
     return `
-        <div class="col-sm" id="torrent-${torrent.id}">
+        <div class="col-10" id="tor-${torrent.id}">
             <div class="card h-100">
                 <div class="card-body">
                     <div class="card-title">
-                        <div class="progress" style="height:20px">
-                            <div class="progress-bar text-center" 
-                            style="width:${torrent.progress}%">${torrent.state} ${torrent.progress}%</div>
+                        <div class="progress tor-progress" style="height:20px">
+                            ${stateColor(torrent)}
                         </div>
                     </div>
-                    <p class="card-text">${torrent.name}</p>
+                    <p class="card-text tor-name">${torrent.name}</p>
                     <div class="row mb-3">
                         <div class="col-4">
-                            <h6 class="card-subtitle mb-2 text-danger t-size">
+                            <h6 class="card-subtitle mb-2 text-danger t-size tor-size">
                                 <i class="fa-solid fa-arrow-down"></i>      ${torrent.size}</h6>
                         </div>
                         <div class="col-4">
-                            <h6 class="card-subtitle mb-2 text-warning t-size">
+                            <h6 class="card-subtitle mb-2 text-warning t-size tor-ratio">
                                 <i class="fa-solid fa-arrows-up-down"></i>      ${torrent.ratio}</h6>
                         </div>
                         <div class="col-4">
-                            <h6 class="card-subtitle mb-2 text-success t-size">
+                            <h6 class="card-subtitle mb-2 text-success t-size tor-uploaded">
                                 <i class="fa-solid fa-arrow-up"></i>      ${torrent.uploaded}</h6>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-4">
-                            <h6 class="card-subtitle mb-2 text-muted t-size">
+                            <h6 class="card-subtitle mb-2 text-muted t-size tor-downloadSpeed">
                                 <i class="fa-solid fa-arrow-down"></i>      ${ifEmpty(torrent.downloadSpeed)}</h6>
                         </div>
                         <div class="col-4">
-                            <h6 class="card-subtitle mb-2 text-muted t-size">
+                            <h6 class="card-subtitle mb-2 text-muted t-size tor-eta">
                                 <i class="fa-solid fa-clock"></i>      ${ifEmpty(torrent.eta)}</h6>
                         </div>
                         <div class="col-4">
-                            <h6 class="card-subtitle mb-2 text-muted t-size">
+                            <h6 class="card-subtitle mb-2 text-muted t-size tor-uploadSpeed">
                                 <i class="fa-solid fa-arrow-up"></i>      ${ifEmpty(torrent.uploadSpeed)}</h6>
                         </div>
                     </div>
-                    <h6 class="card-text text-center t-date"><small class="text-muted">${torrent.date}</small></h6>
+                    <h6 class="card-text text-center t-date"><small class="text-muted tor-date">${torrent.date}</small></h6>
                     <a hidden class="btn btn-primary"><i class="fa-solid fa-magnet"></i></a>
                     <button hidden type="button" class="btn btn-outline-primary copy-magnet">
                         <i class="fa-solid fa-copy"></i>
@@ -100,4 +99,49 @@ function searchPill(keyword) {
                 </a>
         </li>
         `;
+}
+
+function iconAndText(icon, text) {
+    return `${icon}      ${text}`
+}
+
+function sizeField(torrent) {
+    return `<i class="fa-solid fa-arrow-down"></i>      ${torrent.size}</h6>`
+}
+
+function ratioField(torrent) {
+    return `<i class="fa-solid fa-arrows-up-down"></i>      ${torrent.ratio}</h6>`
+}
+
+function uploadedField(torrent) {
+    return `<i class="fa-solid fa-arrow-up"></i>      ${torrent.uploaded}</h6>`
+}
+
+function downloadSpeedField(torrent) {
+    return `<i class="fa-solid fa-arrow-down"></i>      ${ifEmpty(torrent.downloadSpeed)}</h6>`
+}
+
+function etaField(torrent) {
+    return `<i class="fa-solid fa-clock"></i>      ${ifEmpty(torrent.eta)}</h6>`
+}
+
+function uploadSpeedField(torrent) {
+    return `<i class="fa-solid fa-arrow-up"></i>      ${ifEmpty(torrent.uploadSpeed)}</h6>`
+}
+
+function progressStateField(torrent) {
+    return `<div class="progress-bar ${stateColor(torrent)}" 
+                 style="width:${torrent.progress}%">${torrent.progress}%</div>`
+}
+
+function stateColor(torrent) {
+    if (torrent.state === 'Seeding') {
+        return "bg-success";
+    } else if (torrent.state === 'Downloading') {
+        return "bg-warning";
+    } else if (torrent.state === 'Paused') {
+        return "";
+    } else {
+        return "bg-danger";
+    }
 }
