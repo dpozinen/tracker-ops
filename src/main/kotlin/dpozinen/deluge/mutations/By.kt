@@ -6,7 +6,6 @@ import dpozinen.deluge.mutations.By.ByComparator
 import dpozinen.deluge.sizeToBytes
 import java.time.LocalDate
 import java.util.Comparator
-import kotlin.time.Duration.Companion
 import kotlin.time.DurationUnit.MINUTES
 import kotlin.time.ExperimentalTime
 
@@ -27,17 +26,17 @@ enum class By {
 
     fun comparator(): Comparator<DelugeTorrent> {
         return when (this) {
-            NAME -> By.name.compareBy(this)
-            STATE -> state.compareBy(this)
-            SIZE -> size.compareBy(this)
-            PROGRESS -> progress.compareBy(this)
-            DOWNLOADED -> downloaded.compareBy(this)
-            RATIO -> ratio.compareBy(this)
-            UPLOADED -> uploaded.compareBy(this)
-            ETA -> eta.compareBy(this)
-            DATE -> date.compareBy(this)
-            DOWNLOAD_SPEED -> downloadSpeed.compareBy(this)
-            UPLOAD_SPEED -> uploadSpeed.compareBy(this)
+            NAME -> comparedBy(By.name)
+            STATE -> comparedBy(state)
+            SIZE -> comparedBy(size)
+            PROGRESS -> comparedBy(progress)
+            DOWNLOADED -> comparedBy(downloaded)
+            RATIO -> comparedBy(ratio)
+            UPLOADED -> comparedBy(uploaded)
+            ETA -> comparedBy(eta)
+            DATE -> comparedBy(date)
+            DOWNLOAD_SPEED -> comparedBy(downloadSpeed)
+            UPLOAD_SPEED -> comparedBy(uploadSpeed)
         }
     }
 
@@ -103,6 +102,6 @@ enum class By {
  * @param C the resulting comparable type
  * @see DelugeTorrent.getterBy
  */
-inline fun <V : Comparable<V>, C : Comparable<C>, reified R : V> ByComparator<V, C>.compareBy(by: By): Comparator<DelugeTorrent>  {
-    return compareBy { comparable(it.getterBy<R>(by).call(it)) }
+inline fun <V : Comparable<V>, C : Comparable<C>, reified R : V> By.comparedBy(comparator: ByComparator<V, C>): Comparator<DelugeTorrent>  {
+    return compareBy<DelugeTorrent> { comparator.comparable(it.getterBy<R>(this).call(it)) }
 }
