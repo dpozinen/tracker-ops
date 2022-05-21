@@ -13,7 +13,7 @@ class Search(@JsonProperty("name") private val name: String) : Mutation {
                 .filter { nameContains(it) }
                 .toList()
 
-            state.with(filteredTorrents, applySelf(state))
+            state.with(filteredTorrents, addSelf(state))
         }
     }
 

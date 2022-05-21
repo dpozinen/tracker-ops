@@ -2,10 +2,7 @@ package deluge
 
 import Data.Companion.delugeTorrent
 import dpozinen.deluge.DelugeState
-import dpozinen.deluge.mutations.Clear
-import dpozinen.deluge.mutations.By
-import dpozinen.deluge.mutations.Search
-import dpozinen.deluge.mutations.Sort
+import dpozinen.deluge.mutations.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.Duration
@@ -139,6 +136,30 @@ class MutationsTest {
             .mutate(Clear())
 
         assertThat(mutated.torrents).containsExactly(a, b, c, d)
+    }
+
+    @Test
+    fun `should filter by date`() {
+        val filter = Filter(By.DATE, "08.09.2010")
+
+        val mutated = state.mutate(filter)
+        val mutatedNot = state.mutate(filter.negate())
+
+        assertThat(mutated.torrents).containsExactly(b)
+        assertThat(mutatedNot.torrents).containsExactly(a, c, d)
+    }
+
+
+    @Test
+    fun `should filter by state`() {
+        val state = DelugeState(listOf(a, b, c, d, e, f))
+        val filter = Filter(By.STATE, "Error")
+
+        val mutated = state.mutate(filter)
+        val mutatedNot = state.mutate(filter.negate())
+
+        assertThat(mutated.torrents).containsExactly(d,e,f)
+        assertThat(mutatedNot.torrents).containsExactly(a, b, c)
     }
 
     @Test
