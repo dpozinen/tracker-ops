@@ -14,11 +14,11 @@ import org.springframework.http.ResponseEntity
 import kotlin.test.Test
 
 
-class DelugeServiceTest {
+class RealDelugeServiceTest {
 
     @Test
     fun `should parse response to torrents`() {
-        val service = DelugeService("", mock())
+        val service = RealDelugeService("", mock())
 
         assertThat(service.torrents())
             .hasSize(1)
@@ -30,7 +30,7 @@ class DelugeServiceTest {
     fun `should throw if result has no torrents`() {
         val delugeClient = mock(false)
 
-        val service = DelugeService("", delugeClient)
+        val service = RealDelugeService("", delugeClient)
 
         try {
             service.torrents()
@@ -45,7 +45,7 @@ class DelugeServiceTest {
     fun `should login once per active session`() {
         val delugeClient = mock()
 
-        val service = DelugeService("", delugeClient)
+        val service = RealDelugeService("", delugeClient)
 
         service.torrents()
         service.torrents()
@@ -56,7 +56,7 @@ class DelugeServiceTest {
 
     @Test
     fun `should perform mutations concurrently`() {
-        val service = DelugeService("", mock())
+        val service = RealDelugeService("", mock())
 
         fun search(range: IntRange) =
             range.map { Search(it.toString()) }.forEach { service.mutate(it) }
@@ -87,8 +87,8 @@ class DelugeServiceTest {
 
 }
 
-private fun DelugeService.reflectExtractState(): DelugeState {
-    return DelugeService::class.java.getDeclaredField("state").let {
+private fun RealDelugeService.reflectExtractState(): DelugeState {
+    return RealDelugeService::class.java.getDeclaredField("state").let {
         it.isAccessible = true
         return@let it.get(this)
     } as DelugeState
