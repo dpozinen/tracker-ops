@@ -6,7 +6,7 @@ fun interface Mutation {
 
     fun perform(state: DelugeState): DelugeState
 
-    fun applySelf(state: DelugeState): MutableSet<Mutation> {
+    fun addSelf(state: DelugeState): MutableSet<Mutation> {
         val mutations = state.mutations
         mutations.add(this)
         return mutations

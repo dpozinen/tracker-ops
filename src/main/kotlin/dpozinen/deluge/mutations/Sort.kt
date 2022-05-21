@@ -7,7 +7,7 @@ class Sort(private val by: By, private var order: Order = Order.ASC) : Mutation 
     enum class Order { ASC, DESC }
 
     override fun perform(state: DelugeState): DelugeState {
-        val mutations = applySelf(state)
+        val mutations = addSelf(state)
 
         val combinedComparator = mutations
             .filterIsInstance<Sort>()
