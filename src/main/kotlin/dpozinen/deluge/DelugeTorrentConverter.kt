@@ -17,7 +17,7 @@ class DelugeTorrentConverter(
 
         val name = field<String>(fields, "name")
         val state = field<String>(fields, "state")
-        val progress = field<Short>(fields, "progress")
+        val progress = field<String>(fields, "progress")
         val uploaded = field<Double, String>(fields, "total_uploaded") { bytesToSize(it) }
         val downloaded = field<Double, String>(fields, "total_done") { bytesToSize(it) }
         val size = field<Double, String>(fields, "total_wanted") { bytesToSize(it) }
@@ -81,6 +81,6 @@ fun sizeToBytes(size: String): Double {
         size.contains("KiB") -> 1024.0
         size.contains("MiB") -> 1024.0 * 1024.0
         size.contains("GiB") -> 1024.0 * 1024.0 * 1024.0
-        else -> 0.0
+        else -> 1.0
     }
 }

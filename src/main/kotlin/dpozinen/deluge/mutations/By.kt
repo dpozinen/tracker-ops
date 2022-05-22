@@ -2,10 +2,10 @@ package dpozinen.deluge.mutations
 
 import dpozinen.deluge.DelugeTorrent
 import dpozinen.deluge.DelugeTorrentConverter
-import dpozinen.deluge.mutations.By.ByComparator
+import dpozinen.deluge.mutations.By.ByComparable
+import dpozinen.deluge.mutations.By.ByPredicate
 import dpozinen.deluge.sizeToBytes
 import java.time.LocalDate
-import java.util.Comparator
 import kotlin.time.DurationUnit.MINUTES
 import kotlin.time.ExperimentalTime
 
@@ -46,19 +46,27 @@ enum class By {
      * causes sorting issues. This interface is a means to provide custom sorting for each
      * field, if necessary.
      */
-    fun interface ByComparator<V : Comparable<V>, C : Comparable<C>> {
-        fun comparable(value: V): Comparable<C>
+    fun interface ByComparable<C : Comparable<C>> {
+        fun comparable(value: String): C
+    }
+
+    fun interface ByPredicate {
+        fun test(torrent: DelugeTorrent): Boolean
+
+        fun or(other: ByPredicate) : ByPredicate {
+            return ByPredicate { this.test(it) || other.test(it) }
+        }
     }
 
     companion object {
 
-        val name = by<String>()
+        val name = by()
 
-        val state = by<String>()
+        val state = by()
 
         val size = bySize()
 
-        val progress = by<Short>()
+        val progress = by()
 
         val downloaded = bySize()
 
@@ -67,23 +75,23 @@ enum class By {
         val uploaded = bySize()
 
         @OptIn(ExperimentalTime::class)
-        val eta = ByComparator<String, Long> {
-            return@ByComparator if (it.isEmpty()) 0 else kotlin.time.Duration.parse(it).toLong(MINUTES)
+        val eta = ByComparable {
+            return@ByComparable if (it.isEmpty()) 0 else kotlin.time.Duration.parse(it).toLong(MINUTES)
         }
 
-        val date = ByComparator<String, LocalDate> { LocalDate.parse(it, DelugeTorrentConverter.dateTimeFormatter) }
+        val date = ByComparable { LocalDate.parse(it, DelugeTorrentConverter.dateTimeFormatter) }
 
         val downloadSpeed = bySize()
 
         val uploadSpeed = bySize()
 
-        private fun <V: Comparable<V>> by(): ByComparator<V, V> {
-            return ByComparator { it }
+        private fun by(): ByComparable<String> {
+            return ByComparable { it }
         }
 
-        private fun bySize(): ByComparator<String, Double> {
-            return ByComparator {
-                return@ByComparator if (it.isEmpty()) {
+        private fun bySize(): ByComparable<Double> {
+            return ByComparable {
+                return@ByComparable if (it.isEmpty()) {
                      0.0
                 } else {
                     val size = it.substringBefore(" ").toDouble()
@@ -98,10 +106,16 @@ enum class By {
 /**
  * @return a [DelugeTorrent] comparator based on the field corresponding to the provided [By]
  * @param V the `in` type, or the type the [DelugeTorrent] field
- * @param R the reified [V] type for convenience
  * @param C the resulting comparable type
  * @see DelugeTorrent.getterBy
  */
-inline fun <V : Comparable<V>, C : Comparable<C>, reified R : V> By.comparedBy(comparator: ByComparator<V, C>): Comparator<DelugeTorrent>  {
-    return compareBy<DelugeTorrent> { comparator.comparable(it.getterBy<R>(this).call(it)) }
+fun <C : Comparable<C>> By.comparedBy(comparator: ByComparable<C>): Comparator<DelugeTorrent>  {
+    return compareBy { comparator.comparable(it.getterBy(this).call(it)) }
+}
+
+inline fun <C : Comparable<C>> By.predicateBy(
+    comparator: ByComparable<C>,
+    crossinline predicate: (C) -> Boolean
+): ByPredicate  {
+    return ByPredicate { predicate.invoke(comparator.comparable(it.getterBy(this).call(it))) }
 }
