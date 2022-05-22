@@ -8,6 +8,7 @@ fun interface Mutation {
 
     fun addSelf(state: DelugeState): MutableSet<Mutation> {
         val mutations = state.mutations
+        mutations.remove(this)
         mutations.add(this)
         return mutations
     }
