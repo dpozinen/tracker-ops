@@ -32,6 +32,10 @@ function delugeTorrents() {
 
                 renderTorrents(torrents)
             });
+            stomp.subscribe('/topic/torrents/stop', function() {
+                receiving = false
+                replaceChildrenOf("#play-pause", '<i class="fa-solid fa-play"></i>')
+            });
         })
 }
 
