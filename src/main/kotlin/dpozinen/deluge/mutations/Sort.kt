@@ -75,5 +75,7 @@ class Sort(private val by: By, private var order: Order = ASC) : Mutation {
             return state
         }
 
+        override fun toString() = "Reverse: $sort"
+
     }
 }
