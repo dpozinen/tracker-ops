@@ -60,12 +60,23 @@
             <div class="container mt-5" id="mutation-pills">
                 <ul class="nav nav-pills justify-content-center text-muted text-secondary">
                     <li class="nav-item border border-light border-1 m-1" id="clear-mutation-pill">
-                        <a class="text-light fw-lighter nav-link active" onclick="clearMutations()">Clear</a>
+                        <a class="text-light fw-lighter nav-link active" onclick="clearMutations()">
+                            <i class="fa-solid fa-trash"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item border border-light border-1 m-1" id="filter-mutation-pill">
+                        <a class="nav-link dropdown-toggle text-light fw-lighter"
+                           data-bs-toggle="dropdown" onclick=""
+                           role="button" aria-expanded="false">
+                            <i class="fa-solid fa-filter"></i>
+                        </a>
                     </li>
                     <li class="nav-item border border-light border-1 m-1" id="sort-mutation-pill">
                         <a class="nav-link dropdown-toggle text-light fw-lighter"
                            data-bs-toggle="dropdown" onclick=""
-                           role="button" aria-expanded="false">Sort</a>
+                           role="button" aria-expanded="false">
+                            <i class="fas fa-sort"></i>
+                        </a>
                         <ul class="dropdown-menu">
                             <li mu-sort-by="NAME" onclick="addSortMutation(this)">
                                 <a class="dropdown-item">Name</a>

@@ -11510,3 +11510,7 @@ html {
 .tor-progress .bg-warning {
   background-color: #DCD8A1 !important;
 }
+
+.nav-pills .dropdown-toggle::after {
+  content: none !important;
+}
