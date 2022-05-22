@@ -17,11 +17,11 @@ class DelugeTorrentConverter(
 
         val name = field<String>(fields, "name")
         val state = field<String>(fields, "state")
-        val progress = field<Double, String>(fields, "progress") { it.toString() }
+        val progress = field<Double, String>(fields, "progress") { roundDouble(it) }
         val uploaded = field<Double, String>(fields, "total_uploaded") { bytesToSize(it) }
         val downloaded = field<Double, String>(fields, "total_done") { bytesToSize(it) }
         val size = field<Double, String>(fields, "total_wanted") { bytesToSize(it) }
-        val ratio = field<Double, String>(fields, "ratio") { return@field if (it < 0) "-" else it.round(2).toString() }
+        val ratio = field<Double, String>(fields, "ratio") { ratio(it, fields) }
 
         val eta = field<Double, String>(fields, "eta") { eta(it) }
         val date = field<Long, String>(fields, "time_added") { date(it) }
@@ -32,6 +32,14 @@ class DelugeTorrentConverter(
             id, name, state, progress, size, downloaded, ratio, uploaded, downSpeed, eta, upSpeed, date
         )
     }
+
+    private fun ratio(it: Double, fields: Map<String, *>) =
+        if (it == -1.0)
+            roundDouble((fields["total_uploaded"] as Long / fields["total_wanted"] as Long).toDouble())
+        else
+            roundDouble(it)
+
+    private fun roundDouble(it: Double) = if (it < 0) "-" else it.round(2).toString()
 
     private fun date(timestamp: Long): String {
         return dateTimeFormatter.format(Instant.ofEpochSecond(timestamp))

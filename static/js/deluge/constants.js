@@ -1,5 +1,6 @@
 function infinityIfEmpty(value) {
-    return value === "" ? '<i class="fa-solid fa-infinity"></i>' : value
+    let empty = value === "" || value === "-" || value === "0s"
+    return empty ? '<i class="fa-solid fa-infinity"></i>' : value
 }
 
 function torrentCard(torrent) {
