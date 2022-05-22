@@ -2,8 +2,11 @@ package dpozinen.deluge.mutations
 
 import dpozinen.deluge.DelugeState
 import dpozinen.deluge.DelugeTorrent
+import dpozinen.deluge.mutations.By.*
+import dpozinen.deluge.mutations.Sort.Order.ASC
+import dpozinen.deluge.mutations.Sort.Order.DESC
 
-class Sort(private val by: By, private var order: Order = Order.ASC) : Mutation {
+class Sort(private val by: By, private var order: Order = ASC) : Mutation {
     enum class Order { ASC, DESC }
 
     override fun perform(state: DelugeState): DelugeState {
@@ -11,26 +14,37 @@ class Sort(private val by: By, private var order: Order = Order.ASC) : Mutation 
 
         val combinedComparator = mutations
             .filterIsInstance<Sort>()
-            .map { it.comparator() }
-            .reduce { acc, sort -> acc.thenComparing(sort) }
+            .map {
+                if (order == ASC) it.comparator() else it.comparator().reversed()
+            }.reduce { acc, sort -> acc.thenComparing(sort) }
 
         val sortedTorrents = state.torrents.sortedWith(combinedComparator)
 
         return state.with(sortedTorrents, mutations)
     }
 
-    private fun comparator(): Comparator<DelugeTorrent> {
-        return if (this.order == Order.ASC) {
-            by.comparator()
-        } else {
-            by.comparator().reversed()
+    private fun comparator() =
+        when (by) {
+            NAME -> comparator(By.name)
+            STATE -> comparator(By.state)
+            SIZE -> comparator(By.size)
+            PROGRESS -> comparator(By.progress)
+            DOWNLOADED -> comparator(By.downloaded)
+            RATIO -> comparator(By.ratio)
+            UPLOADED -> comparator(By.uploaded)
+            ETA -> comparator(By.eta)
+            DATE -> comparator(By.date)
+            DOWNLOAD_SPEED -> comparator(By.downloadSpeed)
+            UPLOAD_SPEED -> comparator(By.uploadSpeed)
         }
-    }
+
+    private fun <C : Comparable<C>> comparator(comparator: ByComparable<C>)=
+        compareBy<DelugeTorrent> { comparator.comparable(it.getterBy(by).call(it)) }
 
     fun reverse(): Sort {
         when (this.order) {
-            Order.ASC -> this.order = Order.DESC
-            Order.DESC -> this.order = Order.ASC
+            ASC -> this.order = DESC
+            DESC -> this.order = ASC
         }
         return this
     }
@@ -46,23 +60,19 @@ class Sort(private val by: By, private var order: Order = Order.ASC) : Mutation 
         return true
     }
 
-    override fun hashCode(): Int {
-        return by.hashCode()
-    }
+    override fun hashCode() = by.hashCode()
 
-    override fun toString(): String {
-        return "Sort by $by in $order order"
-    }
+    override fun toString() = "Sort by $by in $order order"
 
 
     class Reverse(private val sort: Sort) : Mutation {
 
         override fun perform(state: DelugeState): DelugeState {
-            val mutations = state.mutations
+            state.mutations
+                .filterIsInstance<Sort>()
+                .firstOrNull { it == sort }?.reverse()
 
-            (mutations.first { it == sort } as Sort).reverse()
-
-            return state.with(mutations)
+            return state
         }
 
     }

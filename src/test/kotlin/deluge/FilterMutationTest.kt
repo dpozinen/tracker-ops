@@ -79,4 +79,22 @@ class FilterMutationTest {
         assertThat(mutated.torrents).containsExactly(d, e, f)
     }
 
+    @Test
+    fun `should filter by date`() {
+        val filter = Filter(By.DATE, "10.10.2010", listOf(GREATER))
+
+        val mutated = state.mutate(filter)
+
+        assertThat(mutated.torrents).containsExactlyInAnyOrder(d, e, f)
+    }
+
+    @Test
+    fun `should filter by eta`() {
+        val filter = Filter(By.ETA, "1d 3h 59m", listOf(LESS))
+
+        val mutated = state.mutate(filter)
+
+        assertThat(mutated.torrents).containsExactlyInAnyOrder(c, b, a, f)
+    }
+
 }

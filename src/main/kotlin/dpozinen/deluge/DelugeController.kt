@@ -63,7 +63,7 @@ class DelugeController(private val service: DelugeService,
     @MessageMapping("/stream/mutate/sort/reverse")
     fun streamSortReverse(sort: Sort) = mutateAndSend(Sort.Reverse(sort))
 
-    @MessageMapping("/stream/mutate/sort")
+    @MessageMapping("/stream/mutate/filter")
     fun streamSort(dto: Filter.Dto) {
         val (valid, filter) = validator.validate(dto)
         if (valid) mutateAndSend(filter!!)
