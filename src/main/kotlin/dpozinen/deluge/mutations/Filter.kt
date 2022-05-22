@@ -2,7 +2,8 @@ package dpozinen.deluge.mutations
 
 import dpozinen.deluge.DelugeState
 import dpozinen.deluge.mutations.By.*
-import kotlin.reflect.full.isSubclassOf
+import mu.KotlinLogging
+import java.time.LocalDate
 
 class Filter(
     private val by: By,
@@ -10,12 +11,18 @@ class Filter(
     private val operators: List<Operator> = listOf(Operator.IS)
 ) : Mutation {
 
-    private lateinit var comparabale: Comparable<*>
+    private val log = KotlinLogging.logger {  }
+
+    private lateinit var comparable: Comparable<*>
 
     override fun perform(state: DelugeState): DelugeState {
         val mutations = addSelf(state)
 
-        val filteredTorrents = state.torrents.filter { predicate().test(it) }
+        val filteredTorrents = runCatching {
+             state.torrents.filter { predicate().test(it) }
+        }.onFailure {
+            log.warn { "Failed to apply '$this' due to $it. Previous state preserved." }
+        }.getOrDefault(state.torrents)
 
         return state.with(filteredTorrents, mutations)
     }
@@ -37,59 +44,44 @@ class Filter(
     }
 
     private inline fun <reified C : Comparable<C>> predicate(comparable: ByComparable<C>): ByPredicate {
-        this.comparabale = comparable.comparable(value)
-        return operators.map { choose(it, comparable) }.reduce { a, b -> a.or(b) }
+        this.comparable = comparable.comparable(value)
+        return operators.map { predicate(it, comparable) }.reduce { a, b -> a.or(b) }
     }
 
-    private inline fun <reified C : Comparable<C>> choose(
-        operator: Operator,
-        comparable: ByComparable<C>
-    ) = if (C::class == String::class)
-        stringOperator(operator, comparable)
-    else if (C::class.isSubclassOf(Number::class))
-        numberOperator(operator, comparable)
-    else throw IllegalArgumentException("todo")
+    private inline fun <reified C : Comparable<C>> predicate(operator: Operator, comparable: ByComparable<C>) =
+        when (operator) {
+            Operator.IS -> predicateBy(comparable) { eq(it) }
+            Operator.IS_NOT -> predicateBy(comparable) { !eq(it) }
+            Operator.CONTAINS -> predicateBy(comparable) { contains(it) }
+            Operator.NOT_CONTAINS -> predicateBy(comparable) { !contains(it) }
+            Operator.GREATER -> predicateBy(comparable) { greater(it) }
+            Operator.LESS -> predicateBy(comparable) { less(it) }
+        }
 
-    private inline fun <reified C : Comparable<C>> stringOperator(
-        operator: Operator,
-        comparable: ByComparable<C>
-    ) = when (operator) {
-        Operator.IS -> by.predicateBy(comparable) { eq(it) }
-        Operator.IS_NOT -> by.predicateBy(comparable) { !eq(it) }
-        Operator.CONTAINS -> by.predicateBy(comparable) { contains(it) }
-        Operator.NOT_CONTAINS -> by.predicateBy(comparable) { !contains(it) }
-        else -> throw IllegalArgumentException("")
+    private fun <C : Comparable<C>> predicateBy(comparator: ByComparable<C>, predicate: (C) -> Boolean): ByPredicate  {
+        return ByPredicate { predicate.invoke(comparator.comparable(it.getterBy(by).call(it))) }
     }
 
-    private inline fun <reified C : Comparable<C>> numberOperator(
-        operator: Operator,
-        comparable: ByComparable<C>
-    ) = when (operator) {
-        Operator.IS -> by.predicateBy(comparable) { eq(it) }
-        Operator.IS_NOT -> by.predicateBy(comparable) { !eq(it) }
-        Operator.GREATER -> by.predicateBy(comparable) { greater(it) }
-        Operator.LESS -> by.predicateBy(comparable) { less(it) }
-        else -> throw IllegalArgumentException("")
+    private fun eq(any: Any?) = any == comparable
+
+    private fun contains(string: Any) = (string as String).contains(comparable as String)
+
+    private fun greater(any: Any) = when (any) {
+        is Double -> any > (comparable as Double)
+        is Int -> any > (comparable as Int)
+        is Short -> any > (comparable as Short)
+        is Long -> any > (comparable as Long)
+        is LocalDate -> any.isAfter(comparable as LocalDate)
+        else -> (any as Number).toLong() > (comparable as Number).toLong()
     }
 
-    private fun eq(any: Any?) = any == comparabale
-
-    private fun contains(string: Any) = (string as String).contains(comparabale as String)
-
-    private fun greater(number: Any) = when (number) {
-        is Double -> number > (comparabale as Double)
-        is Int -> number > (comparabale as Int)
-        is Short -> number > (comparabale as Short)
-        is Long -> number > (comparabale as Long)
-        else -> (number as Number).toLong() > (comparabale as Number).toLong()
-    }
-
-    private fun less(number: Any) = when (number) {
-        is Double -> number < (comparabale as Double)
-        is Int -> number < (comparabale as Int)
-        is Short -> number < (comparabale as Short)
-        is Long -> number < (comparabale as Long)
-        else -> (number as Number).toLong() < (comparabale as Number).toLong()
+    private fun less(any: Any) = when (any) {
+        is Double -> any < (comparable as Double)
+        is Int -> any < (comparable as Int)
+        is Short -> any < (comparable as Short)
+        is Long -> any < (comparable as Long)
+        is LocalDate -> any.isBefore(comparable as LocalDate)
+        else -> (any as Number).toLong() < (comparable as Number).toLong()
     }
 
     enum class Operator {
@@ -118,9 +110,8 @@ class Filter(
         return by.hashCode()
     }
 
-    override fun toString(): String {
-        return "Filter where $by ${operators.joinToString(separator = " or ")} $value"
-    }
+    override fun toString() =
+        "Filter where $by ${operators.joinToString(separator = " or ") { it.name }} $value"
 
     data class Dto(val by: By, val value: String, val operators: List<Operator> = listOf(Operator.IS))
 

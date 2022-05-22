@@ -80,7 +80,7 @@ class Data {
             id = "ee21ac410a4df9d2a09a97a6890fc74c0d143a0b",
             name = "Rick and Morty Season 1  [2160p AI x265 FS100 Joy]",
             state = "Seeding",
-            progress = "100",
+            progress = "100.0",
             size = "8.11 GiB",
             ratio = "67.9",
             uploaded = "550.96 GiB",

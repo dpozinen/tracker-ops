@@ -59,10 +59,4 @@ class ControllerTest(@Autowired val mockMvc: MockMvc) {
             }
     }
 
-    @Test @Disabled
-    fun `should deluge`() {
-        mockMvc.perform(
-            MockMvcRequestBuilders.post("/deluge").content(Data.magnet)
-        ).andReturn()
-    }
 }
