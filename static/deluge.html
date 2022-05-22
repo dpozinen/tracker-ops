@@ -70,6 +70,28 @@
                            role="button" aria-expanded="false">
                             <i class="fa-solid fa-filter"></i>
                         </a>
+                        <ul class="dropdown-menu">
+                            <li onclick="addQuickFilterMutation(this)"
+                                mu-quick-filter-by="DOWNLOADING" mu-by="STATE" mu-value="Downloading" mu-op="IS">
+                                <a class="dropdown-item">Downloading</a>
+                            </li>
+                            <li onclick="addQuickFilterMutation(this)"
+                                mu-quick-filter-by="SEEDING" mu-by="STATE" mu-value="Seeding" mu-op="IS">
+                                <a class="dropdown-item">Seeding</a>
+                            </li>
+                            <li onclick="addQuickFilterMutation(this)"
+                                mu-quick-filter-by="UPLOADING" mu-by="UPLOAD_SPEED" mu-value="0 KiB/s" mu-op="GREATER">
+                                <a class="dropdown-item">Uploading</a>
+                            </li>
+                            <li onclick="addQuickFilterMutation(this)"
+                                mu-quick-filter-by="PAUSED" mu-by="STATE" mu-value="Paused" mu-op="IS">
+                                <a class="dropdown-item">Paused</a>
+                            </li>
+                            <li onclick="addQuickFilterMutation(this)"
+                                mu-quick-filter-by="POSITIVE" mu-by="RATIO" mu-value="1" mu-op="GREATER">
+                                <a class="dropdown-item">Positive</a>
+                            </li>
+                        </ul>
                     </li>
                     <li class="nav-item border border-light border-1 m-1" id="sort-mutation-pill">
                         <a class="nav-link dropdown-toggle text-light fw-lighter"

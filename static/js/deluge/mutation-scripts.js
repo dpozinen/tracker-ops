@@ -12,6 +12,7 @@ function clearMutations() {
     mutate('clear');
     $('[id^="mu-pill-search-"]').remove()
     $('[id^="mu-pill-sort-"]').remove()
+    $('[id^="mu-pill-quick-filter-"]').remove()
 }
 
 function clearSortMutation(by) {
@@ -63,5 +64,27 @@ function searchDeluge(event) {
     } else {
         $('#sort-mutation-pill').after(searchPill(keywords));
     }
+}
+
+function addQuickFilterMutation(selected) {
+    let $selected = $(selected);
+    let by = $selected.attr('mu-by');
+    let value = $selected.attr('mu-value');
+    let operator = $selected.attr('mu-op');
+
+    let filter = {
+        by: by,
+        value: value,
+        operators: [operator]
+    }
+
+    mutateWBody('filter', filter)
+    $('#sort-mutation-pill').after(quickFilterPill(by, $selected));
+}
+
+function clearFilterMutation(by) {
+    mutateWBody('filter/clear', {'by': by});
+
+    $(`#mu-pill-quick-filter-${by}`).remove()
 }
 

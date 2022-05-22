@@ -45,7 +45,6 @@ class RealDelugeService(
     }
 
     override fun mutate(mutation: Mutation) {
-        log.info("Mutating {}", mutation)
         synchronized(this) {
             state = state.mutate(mutation)
         }
