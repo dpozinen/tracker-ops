@@ -113,6 +113,6 @@ class Filter(
     override fun toString() =
         "Filter where $by ${operators.joinToString(separator = " or ") { it.name }} $value"
 
-    data class Dto(val by: By, val value: String, val operators: List<Operator> = listOf(Operator.IS))
+    data class Dto(val by: By, val value: String = "", val operators: List<Operator> = listOf(Operator.IS))
 
 }

@@ -12,7 +12,7 @@ class Validator {
 
         if (hasOpposingOperators) return false to null
 
-        return true to Filter(dto.by, dto.value)
+        return true to Filter(dto.by, dto.value, dto.operators)
     }
 
 }
