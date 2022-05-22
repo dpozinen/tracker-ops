@@ -9,7 +9,7 @@ function mutateWBody(mutation, body) {
 }
 
 function clearMutations() {
-    mutate();
+    mutate('clear');
     $('[id^="mu-pill-search-"]').remove()
     $('[id^="mu-pill-sort-"]').remove()
 }
