@@ -31,8 +31,9 @@ function addSortMutation(selected) {
     let $selected = $(selected);
     let by = $selected.attr("mu-sort-by");
     let order = 'ASC'
-
     let payload = { 'by': by, 'order': order }
+
+    $(`#mu-pill-sort-${by}`).remove()
     mutateWBody('sort', payload);
 
     $('#sort-mutation-pill').after(sortPillInitial(by, order, $selected));
@@ -78,6 +79,7 @@ function addQuickFilterMutation(selected) {
         operators: [operator]
     }
 
+    $(`#mu-pill-quick-filter-${by}`).remove()
     mutateWBody('filter', filter)
     $('#sort-mutation-pill').after(quickFilterPill(by, $selected));
 }

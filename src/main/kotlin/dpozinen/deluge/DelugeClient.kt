@@ -17,7 +17,6 @@ import org.springframework.web.client.exchange
 import java.net.HttpCookie
 import java.net.URI
 import java.time.Duration
-import java.util.concurrent.ThreadLocalRandom
 
 @Component
 class DelugeClient(

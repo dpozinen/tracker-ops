@@ -146,7 +146,7 @@ function quickFilterPill(by, $selected) {
     return `
         <li class="nav-item border border-light border-1 m-1" id="mu-pill-quick-filter-${by}">
                 <a class="text-light fw-lighter nav-link active">
-                        <i class="sort-icon fa-solid fa-arrow-down-wide-short me-1"></i>
+                        <i class="fa-solid fa-bars-staggered me-1"></i>
                         ${$selected.text()}   
                        <i onclick="clearFilterMutation('${by}')" class="fa-solid fa-circle-minus ms-1"></i>
                 </a>
