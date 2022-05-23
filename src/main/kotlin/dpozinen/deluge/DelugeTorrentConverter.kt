@@ -35,7 +35,9 @@ class DelugeTorrentConverter(
 
     private fun ratio(it: Double, fields: Map<String, *>) =
         if (it == -1.0)
-            roundDouble((fields["total_uploaded"] as Long / fields["total_wanted"] as Long).toDouble())
+            roundDouble(
+                field<Double>(fields, "total_uploaded") / field<Double>(fields, "total_wanted")
+            )
         else
             roundDouble(it)
 
@@ -67,6 +69,8 @@ class DelugeTorrentConverter(
         }
     }
 
+
+    @Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
     @OptIn(ExperimentalTime::class)
     private fun eta(eta: Double): String {
         return kotlin.time.Duration.seconds(eta).toString()
