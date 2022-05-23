@@ -95,7 +95,7 @@ class DelugeController(private val service: DelugeService,
             send(torrents)
             delay(1000)
         }
-        template.convertAndSend("/topic/torrents/stop")
+        template.convertAndSend("/topic/torrents/stop", "")
     }
 
 }
