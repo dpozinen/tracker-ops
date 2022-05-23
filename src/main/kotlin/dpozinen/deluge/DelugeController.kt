@@ -88,6 +88,7 @@ class DelugeController(private val service: DelugeService,
         template.convertAndSend("/topic/torrents", torrents.invoke())
     }
 
+    @Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
     @OptIn(ExperimentalCoroutinesApi::class)
     fun CoroutineScope.produceTorrents(): ReceiveChannel<List<DelugeTorrent>> = produce {
         repeat(900) {
