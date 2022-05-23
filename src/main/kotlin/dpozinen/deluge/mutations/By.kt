@@ -54,6 +54,7 @@ enum class By {
         val downloadSpeed = bySize()
         val uploadSpeed = bySize()
 
+        @Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
         @OptIn(ExperimentalTime::class)
         val eta = ByComparable { if (it.isEmpty()) 0 else kotlin.time.Duration.parse(it).toLong(MINUTES) }
 

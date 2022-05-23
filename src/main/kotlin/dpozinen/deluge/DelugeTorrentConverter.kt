@@ -69,7 +69,6 @@ class DelugeTorrentConverter(
         }
     }
 
-
     @Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
     @OptIn(ExperimentalTime::class)
     private fun eta(eta: Double): String {
