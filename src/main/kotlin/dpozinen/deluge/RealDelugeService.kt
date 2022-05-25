@@ -12,14 +12,14 @@ import java.net.HttpCookie
 class RealDelugeService(
     @Value("\${tracker-ops.deluge.download-folder}") private val downloadFolder: String,
     private val delugeClient: DelugeClient
-):DelugeService {
+) : DelugeService {
     private val log = KotlinLogging.logger {}
     private var session: HttpCookie = HttpCookie.parse("dummy=dummy; max-age=0")[0]
 
     private var state: DelugeState = DelugeState()
 
-    private fun login() {
-        if (session.hasExpired()) {
+    private fun login(force: Boolean = false) {
+        if (session.hasExpired() || force) {
             log.info("Session expired, logging in")
 
             val setCookie = delugeClient.login()
@@ -39,8 +39,15 @@ class RealDelugeService(
     override fun torrents(): List<DelugeTorrent> {
         login()
         val params = DelugeParams.torrents()
-        val response = delugeClient.torrents(params, session)
-        val torrents = response.body.torrents().map { DelugeTorrentConverter(it).convert() }
+        var response = delugeClient.torrents(params, session).body
+
+        if (!response.isConnected()) {
+            delugeClient.connect(session)
+            login(true)
+            response = delugeClient.torrents(params, session).body
+        }
+
+        val torrents = response.torrents().map { DelugeTorrentConverter(it).convert() }
         return state.with(torrents).mutate().torrents
     }
 
