@@ -3,6 +3,7 @@ package dpozinen.errors
 import dpozinen.deluge.rest.DelugeResponse
 import mu.KotlinLogging
 import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -31,11 +32,9 @@ class ErrorHandler {
     }
 
     @ExceptionHandler(DelugeServerDownException::class)
-    fun deluge1(ex: DelugeServerDownException): ResponseEntity<String> {
-        log.error("${ex.message} - sending dummy data")
-        return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
-            .body(defaultDummyData())
+    fun delugeServerDown(ex: DelugeServerDownException): ResponseEntity<Any> {
+        log.error("${ex.message}")
+        return ResponseEntity.status(SERVICE_UNAVAILABLE).build()
     }
 
 }
-fun defaultDummyData() = String(File("src/main/resources/dummy-data.json").readBytes())

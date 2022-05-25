@@ -76,3 +76,17 @@ function findOrReturnTorrentCard(torrent, $card) {
         return $card
     }
 }
+
+function addErrCard(msg) {
+    let card = `
+    <div class="col">
+        <div class="card text-center border-danger">
+            <div class="card-body">
+                <h5 class="card-title">${msg}</h5>
+            </div>
+        </div>
+    </div>
+    `
+
+    $('#torrents').empty().append(card)
+}
