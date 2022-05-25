@@ -117,7 +117,7 @@ class Filter(
 
     data class Dto(val by: By, val value: String = "", val operators: List<Operator> = listOf(Operator.IS))
 
-    fun invalid(): Boolean {
+    private fun invalid(): Boolean {
         return operators.any { operators.contains(it.opposite()) }
     }
 }

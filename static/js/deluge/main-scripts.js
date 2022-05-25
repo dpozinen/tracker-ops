@@ -22,7 +22,7 @@ function delugeTorrents() {
         function () {
             console.log("Connected")
             stomp.send("/stream/mutate/clear");
-            addSortMutation($('[mu-sort-by=NAME]'))
+            initMutations();
 
             stomp.send("/stream/commence");
             receiving = true
