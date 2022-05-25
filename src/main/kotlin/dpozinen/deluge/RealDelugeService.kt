@@ -1,6 +1,9 @@
 package dpozinen.deluge
 
 import dpozinen.deluge.mutations.Mutation
+import dpozinen.deluge.rest.DelugeClient
+import dpozinen.deluge.rest.DelugeParams
+import dpozinen.deluge.rest.DelugeTorrentConverter
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Profile

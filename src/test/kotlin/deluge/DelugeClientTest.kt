@@ -5,8 +5,8 @@ import com.github.tomakehurst.wiremock.http.Fault
 import com.github.tomakehurst.wiremock.junit5.WireMockTest
 import com.marcinziolo.kotlin.wiremock.*
 import dpozinen.App
-import dpozinen.deluge.DelugeClient
-import dpozinen.deluge.DelugeResponse
+import dpozinen.deluge.rest.DelugeClient
+import dpozinen.deluge.rest.DelugeResponse
 import dpozinen.errors.DelugeClientException
 import dpozinen.errors.DelugeServerDownException
 import org.assertj.core.api.Assertions.assertThat

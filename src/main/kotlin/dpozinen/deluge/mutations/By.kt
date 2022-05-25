@@ -1,10 +1,10 @@
 package dpozinen.deluge.mutations
 
 import dpozinen.deluge.DelugeTorrent
-import dpozinen.deluge.DelugeTorrentConverter
+import dpozinen.deluge.rest.DelugeTorrentConverter
 import dpozinen.deluge.mutations.By.ByComparable
 import dpozinen.deluge.mutations.By.ByPredicate
-import dpozinen.deluge.sizeToBytes
+import dpozinen.deluge.rest.sizeToBytes
 import java.time.LocalDate
 import kotlin.time.DurationUnit.MINUTES
 import kotlin.time.ExperimentalTime
