@@ -5,6 +5,7 @@ import dpozinen.deluge.DelugeState
 import dpozinen.deluge.mutations.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable
 import java.time.Duration
 import java.time.Instant
 
@@ -138,14 +139,14 @@ class MutationsTest {
         assertThat(mutated.torrents).containsExactly(a, b, c, d)
     }
 
-    @Test
+    @Test @DisabledIfEnvironmentVariable(named = "CI", matches = "true", disabledReason = "GitHub too slow")
     fun `should perform 5 mutations on 1000 torrents 3 times per second`() {
         val mutations = By.values().map { Sort(it) }.subList(0, 5).toSet()
         val torrents = (0..1000).map { delugeTorrent.copy(id = it.toString()) }
         val state = DelugeState().with(torrents, mutations)
 
         val now = Instant.now()
-        repeat((0..3).count()) { state.with(torrents).mutate() }
+        repeat((0..5).count()) { state.with(torrents).mutate() }
         val after = Instant.now()
 
         assertThat(Duration.between(now, after)).isLessThan(Duration.ofSeconds(1))
