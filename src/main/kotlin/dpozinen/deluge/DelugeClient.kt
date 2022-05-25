@@ -35,6 +35,15 @@ class DelugeClient(
 
     fun torrents(torrentParams: DelugeParams, session: HttpCookie) = send("web.update_ui", torrentParams, session)
 
+    fun connect(session: HttpCookie) {
+        val response = send("web.get_hosts", DelugeParams.empty(), session)
+
+        val hosts = response.body.hosts()
+        if (hosts.isEmpty()) throw IllegalStateException("no hosts")
+
+        send("web.connect", DelugeParams.connect(hosts[0].id), session)
+    }
+
     private fun send(method: String, params: DelugeParams, session: HttpCookie): ResponseEntity<DelugeResponse> {
         if ("web.update_ui" != method) log.info("Sending {} to deluge", method)
 

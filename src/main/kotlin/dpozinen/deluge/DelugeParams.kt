@@ -23,6 +23,10 @@ class DelugeParams(params: Collection<Any>) : ArrayList<Any>(params) {
                 )
             )
         }
+
+        fun empty() = DelugeParams(listOf())
+
+        fun connect(id: String) = DelugeParams(listOf(id))
     }
 
 }
