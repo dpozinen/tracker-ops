@@ -1,4 +1,5 @@
 import dpozinen.deluge.DelugeTorrent
+import dpozinen.deluge.DelugeTorrents
 import dpozinen.tracker.Torrent
 import org.springframework.http.HttpHeaders
 import java.net.HttpCookie
@@ -39,8 +40,9 @@ class Data {
 
 
     companion object {
-        const val magnet =
-            "magnet:?xt=urn:btih:004658B2325068E5B75A76DAC63B9F78BA9EE9A2&dn=Robin+Carolan+-+The+Northman+%28Original+Motion+Picture+Soundtrack%29+%282022%29+%5B24Bit-48kHz%5D+FLAC+%5BPMEDIA%5D+%E2%AD%90%EF%B8%8F&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Fretracker.lanta-net.ru%3A2710%2Fannounce&tr=udp%3A%2F%2Ftracker.zerobytes.xyz%3A1337%2Fannounce&tr=udp%3A%2F%2Finferno.demonoid.is%3A3391%2Fannounce&tr=udp%3A%2F%2Fp4p.arenabg.com%3A1337%2Fannounce&tr=udp%3A%2F%2F9.rarbg.me%3A2980%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.moeking.me%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fopentor.org%3A2710%2Fannounce&tr=http%3A%2F%2Ftracker.files.fm%3A6969%2Fannounce&tr=udp%3A%2F%2Ffe.dealclub.de%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=http%3A%2F%2Ftracker.openbittorrent.com%3A80%2Fannounce&tr=udp%3A%2F%2Fopentracker.i2p.rocks%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.internetwarriors.net%3A1337%2Fannounce&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969%2Fannounce&tr=udp%3A%2F%2Fcoppersurfer.tk%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.zer0day.to%3A1337%2Fannounce"
+        val stats: DelugeTorrents.Stats = DelugeTorrents.Stats(
+            100, 100, 0, 0, 100, 0, 100, 67.94, "53.8 TiB", "811.0 GiB"
+        )
 
         val delugeTorrentResponse: Map<String, Map<String, Any>> =
             mapOf(
@@ -87,7 +89,7 @@ class Data {
             downloaded = "8.11 GiB",
             eta = "20h 10m",
             downloadSpeed = "",
-             uploadSpeed = "0.18 KiB/s",
+            uploadSpeed = "0.18 KiB/s",
             date = "28.06.2021"
         )
 
