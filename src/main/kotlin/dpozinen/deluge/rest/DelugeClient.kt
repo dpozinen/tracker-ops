@@ -1,4 +1,4 @@
-package dpozinen.deluge
+package dpozinen.deluge.rest
 
 import dpozinen.errors.DelugeClientException
 import dpozinen.errors.DelugeServerDownException

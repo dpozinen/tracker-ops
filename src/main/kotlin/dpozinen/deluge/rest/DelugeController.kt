@@ -1,5 +1,7 @@
-package dpozinen.deluge
+package dpozinen.deluge.rest
 
+import dpozinen.deluge.DelugeService
+import dpozinen.deluge.DelugeTorrent
 import dpozinen.deluge.mutations.*
 import dpozinen.errors.defaultDummyData
 import kotlinx.coroutines.*
@@ -16,8 +18,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class DelugeController(private val service: DelugeService,
-                       private val template: SimpMessagingTemplate,
-                       private val validator: Validator) {
+                       private val template: SimpMessagingTemplate) {
     private val log = KotlinLogging.logger {}
     private var stream: Job? = null
 
@@ -64,14 +65,11 @@ class DelugeController(private val service: DelugeService,
     fun streamSortReverse(sort: Sort) = mutateAndSend(Sort.Reverse(sort))
 
     @MessageMapping("/stream/mutate/filter")
-    fun streamFilter(dto: Filter.Dto) {
-        val (valid, filter) = validator.validate(dto)
-        if (valid) mutateAndSend(filter!!)
-    }
+    fun streamFilter(filter: Filter) = mutateAndSend(filter)
 
     @MessageMapping("/stream/mutate/filter/clear")
-    fun streamClearFilter(dto: Filter.Dto) {
-        mutateAndSend(Clear(validator.validate(dto).second))
+    fun streamClearFilter(filter: Filter) {
+        mutateAndSend(Clear(filter))
     }
 
     private fun mutateAndSend(mutation: Mutation) {

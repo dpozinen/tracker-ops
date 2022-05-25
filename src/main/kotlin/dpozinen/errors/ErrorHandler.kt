@@ -1,6 +1,6 @@
 package dpozinen.errors
 
-import dpozinen.deluge.DelugeResponse
+import dpozinen.deluge.rest.DelugeResponse
 import mu.KotlinLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity

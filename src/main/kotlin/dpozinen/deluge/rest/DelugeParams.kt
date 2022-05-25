@@ -1,4 +1,4 @@
-package dpozinen.deluge
+package dpozinen.deluge.rest
 
 import com.fasterxml.jackson.databind.ObjectMapper
 

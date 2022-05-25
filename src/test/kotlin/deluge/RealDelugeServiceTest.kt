@@ -4,6 +4,9 @@ import Data
 import Data.Companion.httpHeaders
 import dpozinen.deluge.*
 import dpozinen.deluge.mutations.Search
+import dpozinen.deluge.rest.DelugeClient
+import dpozinen.deluge.rest.DelugeParams
+import dpozinen.deluge.rest.DelugeResponse
 import io.mockk.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -92,6 +95,8 @@ class RealDelugeServiceTest {
 
         if (mockTorrents)
             every { response.body.torrents() } returns Data.delugeTorrentResponse
+        else
+            every { response.body.torrents() } returns emptyMap()
 
         every { delugeClient.login() } returns response
         every { delugeClient.torrents(DelugeParams.torrents(), Data.sessionIdHttpCookie) } returns response

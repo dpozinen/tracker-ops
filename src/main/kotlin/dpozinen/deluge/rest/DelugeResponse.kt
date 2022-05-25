@@ -1,4 +1,4 @@
-package dpozinen.deluge
+package dpozinen.deluge.rest
 
 @Suppress("UNCHECKED_CAST")
 data class DelugeResponse(

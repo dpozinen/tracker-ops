@@ -16,6 +16,8 @@ class Filter(
     private lateinit var comparable: Comparable<*>
 
     override fun perform(state: DelugeState): DelugeState {
+        if (invalid()) return state
+
         val mutations = addSelf(state)
 
         val filteredTorrents = runCatching {
@@ -115,4 +117,7 @@ class Filter(
 
     data class Dto(val by: By, val value: String = "", val operators: List<Operator> = listOf(Operator.IS))
 
+    fun invalid(): Boolean {
+        return operators.any { operators.contains(it.opposite()) }
+    }
 }

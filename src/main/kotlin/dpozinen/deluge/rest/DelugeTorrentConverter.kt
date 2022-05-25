@@ -1,5 +1,6 @@
-package dpozinen.deluge
+package dpozinen.deluge.rest
 
+import dpozinen.deluge.DelugeTorrent
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter

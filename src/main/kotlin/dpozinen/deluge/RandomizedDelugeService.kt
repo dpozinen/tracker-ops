@@ -1,6 +1,7 @@
 package dpozinen.deluge
 
 import dpozinen.deluge.mutations.Mutation
+import dpozinen.deluge.rest.DelugeTorrentConverter
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 import kotlin.random.Random

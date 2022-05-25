@@ -2,7 +2,6 @@ package deluge
 
 import Data.Companion.delugeTorrent
 import dpozinen.deluge.DelugeState
-import dpozinen.deluge.Validator
 import dpozinen.deluge.mutations.By
 import dpozinen.deluge.mutations.Filter
 import dpozinen.deluge.mutations.Filter.Operator.*
@@ -18,19 +17,14 @@ class FilterMutationTest {
     private val e = delugeTorrent.copy(state = "Error", downloaded = "111111 MiB", date = "10.11.2010", eta = "10d 1h")
     private val f = delugeTorrent.copy(state = "Error", downloaded = "22222111111111 KiB", date = "10.11.2010", eta = "1s")
 
-    private val validator = Validator()
     private val state: DelugeState = DelugeState(_torrents = listOf(a, b, c, d, e, f))
 
     @Test
-    fun `should invalidate if opposite operators`() {
-        val (valid, _) = validator.validate(Filter.Dto(By.STATE, "Downloading", listOf(IS, IS_NOT)))
-        assertThat(valid).isFalse
-    }
+    fun `should do nothing if opposite operators (invalid filter)`() {
+        val filter = Filter(By.STATE, "Downloading", listOf(IS, IS_NOT))
+        val mutated = state.mutate(filter)
 
-    @Test
-    fun `should validate if By doesn't match Operator type`() {
-        val (valid, _) = validator.validate(Filter.Dto(By.STATE, "Downloading", listOf(IS)))
-        assertThat(valid).isTrue
+        assertThat(mutated.mutations).doesNotContain(filter)
     }
 
     @Test
