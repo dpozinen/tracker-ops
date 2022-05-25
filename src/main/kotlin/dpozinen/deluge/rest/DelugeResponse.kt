@@ -17,11 +17,11 @@ data class DelugeResponse(
         return result["torrents"] as Map<String, Map<String, *>>
     }
 
-    fun isConnected(): Boolean {
+    fun disconnected(): Boolean {
         result ?: throw IllegalArgumentException("no result")
         val connected = (result as Map<String, *>)["connected"] as Boolean?
 
-        return connected ?: false
+        return !(connected ?: false)
     }
 
     fun hosts(): List<DelugeHost> {

@@ -1,6 +1,7 @@
 package dpozinen.deluge.rest
 
 import dpozinen.deluge.DelugeTorrent
+import org.springframework.stereotype.Component
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -8,11 +9,10 @@ import java.time.format.DateTimeFormatter.ofPattern
 import kotlin.math.round
 import kotlin.time.ExperimentalTime
 
-class DelugeTorrentConverter(
-    private val torrent: Map.Entry<String, Map<String, *>>,
-) {
+@Component
+class DelugeTorrentConverter {
 
-    fun convert(): DelugeTorrent {
+    fun convert(torrent: Map.Entry<String, Map<String, *>>): DelugeTorrent {
         val id = torrent.key
         val fields = torrent.value
 
@@ -54,15 +54,6 @@ class DelugeTorrentConverter(
     @Suppress("UNCHECKED_CAST")
     fun <T, R> field(map: Map<String, *>, key: String, covert: (T) -> R): R = covert.invoke(map[key] as T)
 
-    private fun bytesToSize(bytes: Double): String {
-        return when {
-            bytes <= 0 -> ""
-            bytes / 1024 < 1024 -> "${(bytes / 1024).round(2)} KiB"
-            bytes / 1024 / 1024 < 1024 -> "${(bytes / 1024 / 1024).round(2)} MiB"
-            else -> "${(bytes / 1024 / 1024 / 1024).round(2)} GiB"
-        }
-    }
-
     private fun bytesToSpeed(bytes: Double): String {
         return when (val size = bytesToSize(bytes)) {
             "" -> size
@@ -94,5 +85,25 @@ fun sizeToBytes(size: String): Double {
         size.contains("MiB") -> 1024.0 * 1024.0
         size.contains("GiB") -> 1024.0 * 1024.0 * 1024.0
         else -> 1.0
+    }
+}
+//
+//fun bytesToSize(bytes: Double): String {
+//    return when {
+//        bytes <= 0 -> ""
+//        bytes / 1024 < 1024 -> "${(bytes / 1024).round(2)} KiB"
+//        bytes / 1024 / 1024 < 1024 -> "${(bytes / 1024 / 1024).round(2)} MiB"
+//        else -> "${(bytes / 1024 / 1024 / 1024).round(2)} GiB"
+//    }
+//}
+
+
+fun bytesToSize(bytes: Double): String {
+    return when {
+        bytes <= 0 -> ""
+        bytes / 1024 < 1024 -> "${(bytes / 1024).round(2)} KiB"
+        bytes / 1024 / 1024 < 1024 -> "${(bytes / 1024 / 1024).round(2)} MiB"
+        bytes / 1024 / 1024 / 1024 < 1024 -> "${(bytes / 1024 / 1024 / 1024).round(2)} GiB"
+        else -> "${(bytes / 1024 / 1024 / 1024 / 1024).round(2)} TiB"
     }
 }

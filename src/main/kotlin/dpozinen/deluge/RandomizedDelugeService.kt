@@ -8,14 +8,15 @@ import kotlin.random.Random
 
 @Profile("dev")
 @Service
-class RandomizedDelugeService : DelugeService {
+class RandomizedDelugeService(private val converter: DelugeTorrentConverter) : DelugeService {
     private var state: DelugeState = DelugeState()
 
     override fun addMagnet(magnet: String) {}
 
-    override fun torrents(): List<DelugeTorrent> {
+    override fun torrents(): DelugeTorrents {
         val torrents = generateTorrents()
-        return state.with(torrents).mutate().torrents
+        val mutated = state.with(torrents).mutate().torrents
+        return DelugeTorrents(mutated, statsFrom(torrents, mutated))
     }
 
     override fun mutate(mutation: Mutation) {
@@ -25,7 +26,7 @@ class RandomizedDelugeService : DelugeService {
     }
 
     private fun generateTorrents(): List<DelugeTorrent> {
-        return (0..100).map { DelugeTorrentConverter(randomize(it)).convert() }
+        return (0..100).map { converter.convert(randomize(it)) }
     }
 
     private fun randomize(id: Int): Map.Entry<String, Map<String, Any>> {

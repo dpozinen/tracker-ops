@@ -7,6 +7,7 @@ import dpozinen.deluge.mutations.Search
 import dpozinen.deluge.rest.DelugeClient
 import dpozinen.deluge.rest.DelugeParams
 import dpozinen.deluge.rest.DelugeResponse
+import dpozinen.deluge.rest.DelugeTorrentConverter
 import io.mockk.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -19,7 +20,8 @@ class RealDelugeServiceTest {
 
     @Test
     fun `should parse response to torrents`() {
-        val service = RealDelugeService("", mock())
+        val (client, converter) = mock()
+        val service = RealDelugeService("", client, converter)
 
         assertThat(service.torrents())
             .hasSize(1)
@@ -29,9 +31,8 @@ class RealDelugeServiceTest {
 
     @Test
     fun `should throw if result has no torrents`() {
-        val delugeClient = mock(mockTorrents = false)
-
-        val service = RealDelugeService("", delugeClient)
+        val (client, converter) = mock(mockTorrents = false)
+        val service = RealDelugeService("", client, converter)
 
         try {
             service.torrents()
@@ -44,20 +45,20 @@ class RealDelugeServiceTest {
 
     @Test
     fun `should login once per active session`() {
-        val delugeClient = mock()
-
-        val service = RealDelugeService("", delugeClient)
+        val (client, converter) = mock()
+        val service = RealDelugeService("", client, converter)
 
         service.torrents()
         service.torrents()
         service.torrents()
 
-        verify(exactly = 1) { delugeClient.login() }
+        verify(exactly = 1) { client.login() }
     }
 
     @Test
     fun `should perform mutations concurrently`() {
-        val service = RealDelugeService("", mock())
+        val (client, converter) = mock()
+        val service = RealDelugeService("", client, converter)
 
         fun search(range: IntRange) =
             range.map { Search(it.toString()) }.forEach { service.mutate(it) }
@@ -73,24 +74,39 @@ class RealDelugeServiceTest {
 
     @Test
     fun `should re connect to deluge`() {
-        val client = mock(mockTorrents = true, connected = false)
-        val service = RealDelugeService("", client)
+        val (client, converter) = mock(mockTorrents = true, connected = false)
+        val service = RealDelugeService("", client, converter)
 
         service.torrents()
 
         verify(exactly = 1) { client.connect(Data.sessionIdHttpCookie) }
         verify(exactly = 2) { client.login() }
         verify(exactly = 2) { client.torrents(DelugeParams.torrents(), Data.sessionIdHttpCookie) }
-
     }
 
-    private fun mock(mockTorrents: Boolean = true, connected: Boolean = true): DelugeClient {
+    @Test
+    fun `should collect stats`() {
+        val (client, converter) = mock(mockTorrents = true, connected = false, mockConverter = true)
+        val service = RealDelugeService("", client, converter)
+
+        every { converter.convert(any()) } returns Data.delugeTorrent
+
+        val torrents = (1..100).map { converter.convert(Data.delugeTorrentResponse.entries.first()) }
+
+        val stats = service.statsFrom(torrents, torrents)
+
+        assertThat(stats).isEqualTo(Data.stats)
+    }
+
+    private fun mock(mockTorrents: Boolean = true, connected: Boolean = true, mockConverter: Boolean = false)
+        : Pair<DelugeClient, DelugeTorrentConverter> {
         val delugeClient = mockk<DelugeClient>()
         val response = mockk<ResponseEntity<DelugeResponse>>()
+        val converter = if (mockConverter) mockk() else DelugeTorrentConverter()
 
         every { response.body } returns DelugeResponse(mapOf<String, Any>(), 123, mapOf())
         every { response.headers } returns httpHeaders()
-        every { response.body.isConnected() } returns connected
+        every { response.body.disconnected() } returns connected
         every { delugeClient.connect(Data.sessionIdHttpCookie) } just runs
 
         if (mockTorrents)
@@ -101,7 +117,7 @@ class RealDelugeServiceTest {
         every { delugeClient.login() } returns response
         every { delugeClient.torrents(DelugeParams.torrents(), Data.sessionIdHttpCookie) } returns response
 
-        return delugeClient
+        return delugeClient to converter
     }
 
 }
