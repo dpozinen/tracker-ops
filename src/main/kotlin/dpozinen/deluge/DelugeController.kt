@@ -46,7 +46,7 @@ class DelugeController(private val service: DelugeService,
     }
 
     @MessageMapping("/stream/mutate/search")
-    fun streamSearch(search: Search) = mutateAndSend(search)
+    fun streamSearch(search: Search) = if (search.name.isEmpty()) mutateAndSend(Clear.AllSearches()) else mutateAndSend(search)
 
     @MessageMapping("/stream/mutate/clear")
     fun streamClear() = mutateAndSend(Clear())
