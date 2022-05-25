@@ -3,7 +3,7 @@ package dpozinen.deluge.rest
 import dpozinen.deluge.DelugeService
 import dpozinen.deluge.DelugeTorrent
 import dpozinen.deluge.mutations.*
-import dpozinen.errors.defaultDummyData
+import dpozinen.errors.DelugeServerDownException
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.consumeEach
@@ -42,7 +42,7 @@ class DelugeController(private val service: DelugeService,
         stream = launch {
             log.info("Commencing torrent stream")
             val channel = produceTorrents()
-            channel.consumeEach { socketSend { it } }
+            channel.consumeEach { sendTorrents { it } }
         }
     }
 
@@ -68,33 +68,45 @@ class DelugeController(private val service: DelugeService,
     fun streamFilter(filter: Filter) = mutateAndSend(filter)
 
     @MessageMapping("/stream/mutate/filter/clear")
-    fun streamClearFilter(filter: Filter) {
-        mutateAndSend(Clear(filter))
-    }
+    fun streamClearFilter(filter: Filter) = mutateAndSend(Clear(filter))
 
     private fun mutateAndSend(mutation: Mutation) {
         service.mutate(mutation)
-        runCatching { socketSend() }
-            .onFailure {
-                log.error("${it.message}. Cause: {}", it.cause?.message ?: "No provided")
-                socketSend { defaultDummyData() }
-                streamStop()
-            }
+        sendTorrents()
     }
 
-    private fun socketSend(torrents: () -> Any = { service.torrents() }) {
-        template.convertAndSend("/topic/torrents", torrents.invoke())
+    private fun sendTorrents(torrents: () -> List<DelugeTorrent> = { service.torrents() }) {
+       runCatching { template.convertAndSend("/topic/torrents", torrents.invoke()) }
+           .onFailure {
+               handleException(it)
+           }
     }
 
     @Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
     @OptIn(ExperimentalCoroutinesApi::class)
     fun CoroutineScope.produceTorrents(): ReceiveChannel<List<DelugeTorrent>> = produce {
         repeat(900) {
-            val torrents = service.torrents()
-            send(torrents)
+            runCatching { service.torrents() }
+                .onFailure { handleException(it) }
+                .onSuccess { send(it) }
             delay(1000)
         }
-        template.convertAndSend("/topic/torrents/stop", "")
+        notifyAndStop(mapOf("msg" to "session timed out"))
+    }
+
+    private fun handleException(it: Throwable) {
+        log.error("${it.message}. Cause: {}", it.cause?.message ?: "Not provided")
+        val payload = when {
+            it is DelugeServerDownException -> mapOf("err" to "Deluge server is down")
+            it.message != null -> mapOf("err" to it.message!!)
+            else -> mapOf("err" to "${it::class} error with no message")
+        }
+        notifyAndStop(payload)
+    }
+
+    private fun notifyAndStop(payload: Map<String, Any>) {
+        template.convertAndSend("/topic/torrents/stop", payload)
+        streamStop()
     }
 
 }

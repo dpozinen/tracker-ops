@@ -5,7 +5,7 @@ let receiving = false
 let torrentsState = []
 let mutationRequested = false
 
-window.addEventListener('beforeunload', event => {
+window.addEventListener('beforeunload', () => {
     stomp.send("/stream/stop");
     sock._close()
 });
@@ -32,9 +32,9 @@ function delugeTorrents() {
 
                 renderTorrents(torrents)
             });
-            stomp.subscribe('/topic/torrents/stop', function() {
-                receiving = false
-                replaceChildrenOf("#play-pause", '<i class="fa-solid fa-play"></i>')
+
+            stomp.subscribe('/topic/torrents/stop', function(data) {
+                handleStreamStop(data)
             });
         })
 }
@@ -71,6 +71,20 @@ function playPause() {
         stomp.send("/stream/commence");
         receiving = true
         replaceChildrenOf("#play-pause", '<i class="fa-solid fa-pause"></i>')
+    }
+}
+
+function handleStreamStop(data) {
+    receiving = false
+    replaceChildrenOf("#play-pause", '<i class="fa-solid fa-play"></i>')
+    let close = JSON.parse(data.body)
+    console.log(close)
+    if (close.err) {
+        $("#search-divider-icon").attr('title', close.err).addClass("text-danger")
+        replaceChildrenOf("#search-divider-icon",
+            '<i class="fa-solid fa-circle-exclamation"></i>')
+
+        addErrCard(close.err)
     }
 }
 
