@@ -4,9 +4,7 @@ import Data
 import Data.Companion.httpHeaders
 import dpozinen.deluge.*
 import dpozinen.deluge.mutations.Search
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
+import io.mockk.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
@@ -28,7 +26,7 @@ class RealDelugeServiceTest {
 
     @Test
     fun `should throw if result has no torrents`() {
-        val delugeClient = mock(false)
+        val delugeClient = mock(mockTorrents = false)
 
         val service = RealDelugeService("", delugeClient)
 
@@ -70,12 +68,28 @@ class RealDelugeServiceTest {
         assertThat(service.reflectExtractState().mutations).hasSize(300)
     }
 
-    private fun mock(mockTorrents: Boolean = true): DelugeClient {
+    @Test
+    fun `should re connect to deluge`() {
+        val client = mock(mockTorrents = true, connected = false)
+        val service = RealDelugeService("", client)
+
+        service.torrents()
+
+        verify(exactly = 1) { client.connect(Data.sessionIdHttpCookie) }
+        verify(exactly = 2) { client.login() }
+        verify(exactly = 2) { client.torrents(DelugeParams.torrents(), Data.sessionIdHttpCookie) }
+
+    }
+
+    private fun mock(mockTorrents: Boolean = true, connected: Boolean = true): DelugeClient {
         val delugeClient = mockk<DelugeClient>()
         val response = mockk<ResponseEntity<DelugeResponse>>()
 
         every { response.body } returns DelugeResponse(mapOf<String, Any>(), 123, mapOf())
         every { response.headers } returns httpHeaders()
+        every { response.body.isConnected() } returns connected
+        every { delugeClient.connect(Data.sessionIdHttpCookie) } just runs
+
         if (mockTorrents)
             every { response.body.torrents() } returns Data.delugeTorrentResponse
 
