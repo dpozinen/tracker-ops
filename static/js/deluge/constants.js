@@ -153,3 +153,15 @@ function quickFilterPill(by, $selected) {
         </li>
         `;
 }
+
+function fullFilterPill(by, value, operators) {
+    return `
+        <li class="nav-item border border-light border-1 m-1" id="mu-pill-quick-filter-${by}">
+                <a class="text-light fw-lighter nav-link active">
+                        <i class="fa-solid fa-bars-staggered me-1"></i>
+                        ${by + " " + operators + " " + value}   
+                       <i onclick="clearFilterMutation('${by}')" class="fa-solid fa-circle-minus ms-1"></i>
+                </a>
+        </li>
+        `;
+}
