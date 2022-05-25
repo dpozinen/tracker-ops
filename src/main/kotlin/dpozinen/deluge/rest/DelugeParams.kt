@@ -31,7 +31,6 @@ class DelugeParams(params: Collection<Any>) : ArrayList<Any>(params) {
 
 }
 
-
 private val torrentFields: Collection<String> = listOf(
     "queue",
     "name",
