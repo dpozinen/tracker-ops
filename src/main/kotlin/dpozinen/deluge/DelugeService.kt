@@ -28,11 +28,11 @@ interface DelugeService {
 
         return DelugeTorrents.Stats(
             selected = mutated.size, total = total,
-            paused, seeding, downloading,
+            downloading, paused, seeding,
             activeDown, activeUp,
-            bytesToSize(totalUploaded.round(2)),
-            totalRatio,
             bytesToSize(totalDownloaded.round(2)),
+            totalRatio,
+            bytesToSize(totalUploaded.round(2)),
             bytesToSpeed(downSpeed),
             bytesToSpeed(upSpeed)
         )

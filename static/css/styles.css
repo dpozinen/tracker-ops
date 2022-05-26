@@ -11515,9 +11515,6 @@ html {
   color: #1abc9c !important;
 }
 
-#stats-pill-paused svg {
-  color: #DCD8A1 !important;
-}
 
 [id^="stats-pill-up"] svg, [id^="stats-pill-seeding"] svg, [id^="stats-pill-activeUp"] svg {
   color: #198754 !important;
