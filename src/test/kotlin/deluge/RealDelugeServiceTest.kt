@@ -74,7 +74,7 @@ class RealDelugeServiceTest {
 
     @Test
     fun `should re connect to deluge`() {
-        val (client, converter) = mock(mockTorrents = true, connected = false)
+        val (client, converter) = mock(mockTorrents = true, disconnected = true)
         val service = RealDelugeService("", client, converter)
 
         service.torrents()
@@ -86,7 +86,7 @@ class RealDelugeServiceTest {
 
     @Test
     fun `should collect stats`() {
-        val (client, converter) = mock(mockTorrents = true, connected = false, mockConverter = true)
+        val (client, converter) = mock(mockTorrents = true, disconnected = true, mockConverter = true)
         val service = RealDelugeService("", client, converter)
 
         every { converter.convert(any()) } returns Data.delugeTorrent
@@ -98,7 +98,7 @@ class RealDelugeServiceTest {
         assertThat(stats).isEqualTo(Data.stats)
     }
 
-    private fun mock(mockTorrents: Boolean = true, connected: Boolean = true, mockConverter: Boolean = false)
+    private fun mock(mockTorrents: Boolean = true, disconnected: Boolean = false, mockConverter: Boolean = false)
         : Pair<DelugeClient, DelugeTorrentConverter> {
         val delugeClient = mockk<DelugeClient>()
         val response = mockk<ResponseEntity<DelugeResponse>>()
@@ -106,7 +106,7 @@ class RealDelugeServiceTest {
 
         every { response.body } returns DelugeResponse(mapOf<String, Any>(), 123, mapOf())
         every { response.headers } returns httpHeaders()
-        every { response.body.disconnected() } returns connected
+        every { response.body.disconnected() } returns disconnected
         every { delugeClient.connect(Data.sessionIdHttpCookie) } just runs
 
         if (mockTorrents)
