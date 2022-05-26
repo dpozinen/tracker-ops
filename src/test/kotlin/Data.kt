@@ -41,7 +41,18 @@ class Data {
 
     companion object {
         val stats: DelugeTorrents.Stats = DelugeTorrents.Stats(
-            100, 100, 0, 0, 100, 0, 100, 67.94, "53.8 TiB", "811.0 GiB"
+            selected = 100,
+            total = 100,
+            downloading = 0,
+            paused = 0,
+            seeding = 100,
+            activeDown = 0,
+            activeUp = 100,
+            uploaded = "53.8 TiB",
+            ratio = 67.94,
+            downloaded = "811.0 GiB",
+            downSpeed = "",
+            upSpeed = "18.0 KiB/s"
         )
 
         val delugeTorrentResponse: Map<String, Map<String, Any>> =
