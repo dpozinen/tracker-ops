@@ -3,6 +3,7 @@ let stomp
 let receiving = false
 
 let torrentsState = []
+let torrentStats = []
 let mutationRequested = false
 
 window.addEventListener('beforeunload', () => {
@@ -12,9 +13,14 @@ window.addEventListener('beforeunload', () => {
 
 function openSocket() {
     sock = new WebSocket(`ws://${global.host}:8133/stream`);
+    sock.onclose = function () {
+        receiving = false
+        replaceChildrenOf("#play-pause", '<i class="fa-solid fa-play"></i>')
+    };
 }
 
 function delugeTorrents() {
+    $('[data-toggle="tooltip"]').tooltip()
     searchSpinner(true, false, $('#search-divider-icon'))
     openSocket();
     stomp = Stomp.over(sock);
@@ -28,9 +34,11 @@ function delugeTorrents() {
             receiving = true
 
             stomp.subscribe('/topic/torrents', function(data) {
-                let torrents = JSON.parse(data.body)
+                let msg = JSON.parse(data.body);
+                let torrents = msg.torrents
 
                 renderTorrents(torrents)
+                renderStats(msg.stats)
             });
 
             stomp.subscribe('/topic/torrents/stop', function(data) {

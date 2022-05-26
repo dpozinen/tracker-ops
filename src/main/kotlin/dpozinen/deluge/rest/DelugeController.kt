@@ -1,7 +1,7 @@
 package dpozinen.deluge.rest
 
 import dpozinen.deluge.DelugeService
-import dpozinen.deluge.DelugeTorrent
+import dpozinen.deluge.DelugeTorrents
 import dpozinen.deluge.mutations.*
 import dpozinen.errors.DelugeServerDownException
 import kotlinx.coroutines.*
@@ -75,7 +75,7 @@ class DelugeController(private val service: DelugeService,
         sendTorrents()
     }
 
-    private fun sendTorrents(torrents: () -> List<DelugeTorrent> = { service.torrents() }) {
+    private fun sendTorrents(torrents: () -> DelugeTorrents = { service.torrents() }) {
        runCatching { template.convertAndSend("/topic/torrents", torrents.invoke()) }
            .onFailure {
                handleException(it)
@@ -84,7 +84,7 @@ class DelugeController(private val service: DelugeService,
 
     @Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun CoroutineScope.produceTorrents(): ReceiveChannel<List<DelugeTorrent>> = produce {
+    fun CoroutineScope.produceTorrents(): ReceiveChannel<DelugeTorrents> = produce {
         repeat(900) {
             runCatching { service.torrents() }
                 .onFailure { handleException(it) }
