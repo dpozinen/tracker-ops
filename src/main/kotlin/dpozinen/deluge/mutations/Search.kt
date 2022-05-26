@@ -13,11 +13,10 @@ class Search(@JsonProperty("name") val name: String) : Mutation {
         return state.with(filteredTorrents, addSelf(state))
     }
 
-    private fun nameContains(it: DelugeTorrent): Boolean {
-        return it.name.contains(this.name)
-                || it.name.lowercase().contains(this.name.lowercase())
-                || it.name.replace(".", " ").lowercase().contains(this.name.lowercase())
-    }
+    private fun nameContains(it: DelugeTorrent) =
+               it.name.contains(this.name)
+            || it.name.lowercase().contains(this.name.lowercase())
+            || it.name.replace(".", " ").lowercase().contains(this.name.lowercase())
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
