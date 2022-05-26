@@ -85,7 +85,7 @@ function addQuickFilterMutation(selected) {
 }
 
 function clearFilterMutation(by) {
-    mutateWBody('filter/clear', {'by': by});
+     mutateWBody('filter/clear', {'by': by, 'value': 'dummy'});
 
     $(`#mu-pill-quick-filter-${by}`).remove()
 }
