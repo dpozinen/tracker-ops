@@ -44,9 +44,7 @@ class DelugeTorrentConverter {
 
     private fun roundDouble(it: Double) = if (it < 0) "-" else it.round(2).toString()
 
-    private fun date(timestamp: Long): String {
-        return dateTimeFormatter.format(Instant.ofEpochSecond(timestamp))
-    }
+    private fun date(timestamp: Long) = dateTimeFormatter.format(Instant.ofEpochSecond(timestamp))
 
     @Suppress("UNCHECKED_CAST")
     fun <T> field(map: Map<String, *>, key: String): T = map[key] as T
@@ -72,28 +70,25 @@ fun Double.round(decimals: Int): Double {
     return round(this * multiplier) / multiplier
 }
 
-fun sizeToBytes(size: String): Double {
-    return when {
+fun sizeToBytes(size: String) =
+    when {
         size.contains("KiB") -> 1024.0
         size.contains("MiB") -> 1024.0 * 1024.0
         size.contains("GiB") -> 1024.0 * 1024.0 * 1024.0
         else -> 1.0
     }
-}
 
-fun bytesToSize(bytes: Double): String {
-    return when {
+fun bytesToSize(bytes: Double) =
+    when {
         bytes <= 0 -> ""
         bytes / 1024 < 1024 -> "${(bytes / 1024).round(2)} KiB"
         bytes / 1024 / 1024 < 1024 -> "${(bytes / 1024 / 1024).round(2)} MiB"
         bytes / 1024 / 1024 / 1024 < 1024 -> "${(bytes / 1024 / 1024 / 1024).round(2)} GiB"
         else -> "${(bytes / 1024 / 1024 / 1024 / 1024).round(2)} TiB"
     }
-}
 
-fun bytesToSpeed(bytes: Double): String {
-    return when (val size = bytesToSize(bytes)) {
+fun bytesToSpeed(bytes: Double) =
+    when (val size = bytesToSize(bytes)) {
         "" -> size
         else -> "$size/s"
     }
-}

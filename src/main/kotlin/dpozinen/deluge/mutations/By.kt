@@ -1,9 +1,9 @@
 package dpozinen.deluge.mutations
 
 import dpozinen.deluge.DelugeTorrent
-import dpozinen.deluge.rest.DelugeTorrentConverter
 import dpozinen.deluge.mutations.By.ByComparable
 import dpozinen.deluge.mutations.By.ByPredicate
+import dpozinen.deluge.rest.DelugeTorrentConverter
 import dpozinen.deluge.rest.sizeToBytes
 import java.time.LocalDate
 import kotlin.time.DurationUnit.MINUTES
@@ -37,9 +37,7 @@ enum class By {
     fun interface ByPredicate {
         fun test(torrent: DelugeTorrent): Boolean
 
-        fun or(other: ByPredicate) : ByPredicate {
-            return ByPredicate { this.test(it) || other.test(it) }
-        }
+        fun or(other: ByPredicate) = ByPredicate { this.test(it) || other.test(it) }
     }
 
     companion object {
@@ -62,16 +60,15 @@ enum class By {
 
         private fun by() = ByComparable { it }
 
-        private fun bySize(): ByComparable<Double> {
-            return ByComparable {
+        private fun bySize() =
+            ByComparable {
                 if (it.isEmpty()) {
-                     0.0
+                    0.0
                 } else {
                     val size = it.substringBefore(" ").toDouble()
                     val multiplier = sizeToBytes(it.substringAfter(" "))
                     size * multiplier
                 }
             }
-        }
     }
 }

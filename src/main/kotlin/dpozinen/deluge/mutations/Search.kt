@@ -30,12 +30,8 @@ class Search(@JsonProperty("name") val name: String) : Mutation {
         return true
     }
 
-    override fun hashCode(): Int {
-        return name.hashCode()
-    }
+    override fun hashCode() = name.hashCode()
 
-    override fun toString(): String {
-        return "Search for $name"
-    }
+    override fun toString() = "Search for $name"
 
 }

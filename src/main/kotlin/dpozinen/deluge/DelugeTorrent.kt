@@ -23,12 +23,11 @@ data class DelugeTorrent(
      * @return getter for a field corresponding to the [By]
      * @param by getter field name
      */
-    fun getterBy(by: By): KProperty1.Getter<DelugeTorrent, String> {
-        return this::class.memberProperties
-            .filter { it.name == by.property() }
-            .map { it.getter }
-            .filterIsInstance<KProperty1.Getter<DelugeTorrent, String>>()
-            .first()
-    }
+    fun getterBy(by: By) =
+        this::class.memberProperties
+        .filter { it.name == by.property() }
+        .map { it.getter }
+        .filterIsInstance<KProperty1.Getter<DelugeTorrent, String>>()
+        .first()
 }
 

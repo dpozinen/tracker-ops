@@ -12,21 +12,13 @@ class DelugeState(
     val mutations: MutableSet<Mutation> = _mutations.toMutableSet()
         get() = field.toMutableSet()
 
-    fun mutate(mutation: Mutation): DelugeState {
-        return mutation.perform(this)
-    }
+    fun mutate(mutation: Mutation) = mutation.perform(this)
 
-    fun with(mutations: Set<Mutation>): DelugeState {
-        return DelugeState(torrents, mutations)
-    }
+    fun with(mutations: Set<Mutation>) = DelugeState(torrents, mutations)
 
-    fun with(torrents: List<DelugeTorrent>): DelugeState {
-        return DelugeState(torrents, mutations)
-    }
+    fun with(torrents: List<DelugeTorrent>) = DelugeState(torrents, mutations)
 
-    fun with(torrents: List<DelugeTorrent>, mutations: Set<Mutation>): DelugeState {
-        return DelugeState(torrents, mutations)
-    }
+    fun with(torrents: List<DelugeTorrent>, mutations: Set<Mutation>) = DelugeState(torrents, mutations)
 
     fun mutate(): DelugeState {
         var state = DelugeState(torrents, mutations)
@@ -48,11 +40,6 @@ class DelugeState(
         return true
     }
 
-    override fun hashCode(): Int {
-        var result = torrents.hashCode()
-        result = 31 * result + mutations.hashCode()
-        return result
-    }
-
+    override fun hashCode() = 31 * torrents.hashCode() + mutations.hashCode()
 
 }

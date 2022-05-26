@@ -15,14 +15,12 @@ class DelugeParams(params: Collection<Any>) : ArrayList<Any>(params) {
             else DelugeParams(listOf(torrentFields, mapOf("id" to ids)))
         }
 
-        fun addMagnet(magnet: String, downloadFolder: String): DelugeParams {
-            return DelugeParams(
-                listOf(
-                    magnet,
-                    mapOf("download_location" to downloadFolder)
-                )
+        fun addMagnet(magnet: String, downloadFolder: String) = DelugeParams(
+            listOf(
+                magnet,
+                mapOf("download_location" to downloadFolder)
             )
-        }
+        )
 
         fun empty() = DelugeParams(listOf())
 

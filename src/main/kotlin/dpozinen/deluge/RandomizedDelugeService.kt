@@ -19,34 +19,26 @@ class RandomizedDelugeService(private val converter: DelugeTorrentConverter) : D
         return DelugeTorrents(mutated, statsFrom(torrents, mutated))
     }
 
-    override fun mutate(mutation: Mutation) {
-        synchronized(this) {
-            state = state.mutate(mutation)
-        }
-    }
+    override fun mutate(mutation: Mutation) = synchronized(this) { state = state.mutate(mutation) }
 
-    private fun generateTorrents(): List<DelugeTorrent> {
-        return (0..100).map { converter.convert(randomize(it)) }
-    }
+    private fun generateTorrents() = (0..100).map { converter.convert(randomize(it)) }
 
-    private fun randomize(id: Int): Map.Entry<String, Map<String, Any>> {
-        return mapOf(
-            id.toString() to with(mutableListOf<Pair<String, Any>>()) {
-                add("eta" to Random.nextLong(0, 1000000))
-                add("name" to delugeTorrent.name.substring(0..Random.nextInt(5, 30)))
-                add("progress" to Random.nextInt(0, 100))
-                add("ratio" to Random.nextDouble(-50.0, 100.0))
-                add("state" to listOf("Seeding", "Paused", "Downloading", "Error")[Random.nextInt(0, 3)])
-                add("total_uploaded" to Random.nextLong(0, 5949401940790))
-                add("upload_payload_rate" to Random.nextLong(0, 54079000))
-                add("download_payload_rate" to Random.nextLong(0, 54079000))
-                add("time_added" to Random.nextLong(1624819185, 1624829185))
-                add("total_wanted" to Random.nextLong(819185, 1624829185))
-                add("total_done" to Random.nextLong(0, 8712212443))
-                this
-            }.toMap()
-        ).entries.first()
-    }
+    private fun randomize(id: Int) = mapOf(
+        id.toString() to with(mutableListOf<Pair<String, Any>>()) {
+            add("eta" to Random.nextLong(0, 1000000))
+            add("name" to delugeTorrent.name.substring(0..Random.nextInt(5, 30)))
+            add("progress" to Random.nextInt(0, 100))
+            add("ratio" to Random.nextDouble(-50.0, 100.0))
+            add("state" to listOf("Seeding", "Paused", "Downloading", "Error")[Random.nextInt(0, 3)])
+            add("total_uploaded" to Random.nextLong(0, 5949401940790))
+            add("upload_payload_rate" to Random.nextLong(0, 54079000))
+            add("download_payload_rate" to Random.nextLong(0, 54079000))
+            add("time_added" to Random.nextLong(1624819185, 1624829185))
+            add("total_wanted" to Random.nextLong(819185, 1624829185))
+            add("total_done" to Random.nextLong(0, 8712212443))
+            this
+        }.toMap()
+    ).entries.first()
 
 
     private val delugeTorrent = DelugeTorrent(

@@ -60,31 +60,32 @@ class Filter(
             Operator.LESS -> predicateBy(comparable) { less(it) }
         }
 
-    private fun <C : Comparable<C>> predicateBy(comparator: ByComparable<C>, predicate: (C) -> Boolean): ByPredicate  {
-        return ByPredicate { predicate.invoke(comparator.comparable(it.getterBy(by).call(it))) }
-    }
+    private fun <C : Comparable<C>> predicateBy(comparator: ByComparable<C>, predicate: (C) -> Boolean) =
+        ByPredicate { predicate.invoke(comparator.comparable(it.getterBy(by).call(it))) }
 
     private fun eq(any: Any?) = any == comparable
 
     private fun contains(string: Any) = (string as String).contains(comparable as String)
 
-    private fun greater(any: Any) = when (any) {
-        is Double -> any > (comparable as Double)
-        is Int -> any > (comparable as Int)
-        is Short -> any > (comparable as Short)
-        is Long -> any > (comparable as Long)
-        is LocalDate -> any.isAfter(comparable as LocalDate)
-        else -> (any as Number).toLong() > (comparable as Number).toLong()
-    }
+    private fun greater(any: Any) =
+        when (any) {
+            is Double -> any > (comparable as Double)
+            is Int -> any > (comparable as Int)
+            is Short -> any > (comparable as Short)
+            is Long -> any > (comparable as Long)
+            is LocalDate -> any.isAfter(comparable as LocalDate)
+            else -> (any as Number).toLong() > (comparable as Number).toLong()
+        }
 
-    private fun less(any: Any) = when (any) {
-        is Double -> any < (comparable as Double)
-        is Int -> any < (comparable as Int)
-        is Short -> any < (comparable as Short)
-        is Long -> any < (comparable as Long)
-        is LocalDate -> any.isBefore(comparable as LocalDate)
-        else -> (any as Number).toLong() < (comparable as Number).toLong()
-    }
+    private fun less(any: Any) =
+        when (any) {
+            is Double -> any < (comparable as Double)
+            is Int -> any < (comparable as Int)
+            is Short -> any < (comparable as Short)
+            is Long -> any < (comparable as Long)
+            is LocalDate -> any.isBefore(comparable as LocalDate)
+            else -> (any as Number).toLong() < (comparable as Number).toLong()
+        }
 
     enum class Operator {
         GREATER { override fun opposite() = LESS },
@@ -108,16 +109,12 @@ class Filter(
         return true
     }
 
-    override fun hashCode(): Int {
-        return by.hashCode()
-    }
+    override fun hashCode() = by.hashCode()
 
     override fun toString() =
         "Filter where $by ${operators.joinToString(separator = " or ") { it.name }} $value"
 
     data class Dto(val by: By, val value: String = "", val operators: List<Operator> = listOf(Operator.IS))
 
-    private fun invalid(): Boolean {
-        return operators.any { operators.contains(it.opposite()) }
-    }
+    private fun invalid() = operators.any { operators.contains(it.opposite()) }
 }

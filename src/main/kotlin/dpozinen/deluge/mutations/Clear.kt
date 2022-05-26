@@ -23,13 +23,9 @@ class Clear(private val mutation: Mutation? = null) : Mutation {
         return true
     }
 
-    override fun hashCode(): Int {
-        return mutation?.hashCode() ?: 0
-    }
+    override fun hashCode() = mutation?.hashCode() ?: 0
 
-    override fun toString(): String {
-        return "Clear: ${mutation ?: "all"}"
-    }
+    override fun toString() = "Clear: ${mutation ?: "all"}"
 
     class AllSearches: Mutation {
         override fun perform(state: DelugeState): DelugeState {
@@ -38,9 +34,7 @@ class Clear(private val mutation: Mutation? = null) : Mutation {
             return state.with(mutations)
         }
 
-        override fun toString(): String {
-            return "Clear all Search Mutations"
-        }
+        override fun toString() = "Clear all Search Mutations"
     }
 
 }
