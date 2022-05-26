@@ -9,7 +9,8 @@ function torrentCard(torrent) {
             <div class="card h-100">
                 <div class="card-body">
                     <div class="card-title">
-                        <div class="progress tor-progress" style="height:20px">
+                        <div class="progress tor-progress" style="height:20px"
+                        data-toggle="tooltip" data-placement="bottom" title="${torrent.state}">
                             ${progressStateField(torrent)}
                         </div>
                     </div>
