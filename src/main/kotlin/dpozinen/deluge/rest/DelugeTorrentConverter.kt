@@ -54,13 +54,6 @@ class DelugeTorrentConverter {
     @Suppress("UNCHECKED_CAST")
     fun <T, R> field(map: Map<String, *>, key: String, covert: (T) -> R): R = covert.invoke(map[key] as T)
 
-    private fun bytesToSpeed(bytes: Double): String {
-        return when (val size = bytesToSize(bytes)) {
-            "" -> size
-            else -> "$size/s"
-        }
-    }
-
     @Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
     @OptIn(ExperimentalTime::class)
     private fun eta(eta: Double): String {
@@ -87,16 +80,6 @@ fun sizeToBytes(size: String): Double {
         else -> 1.0
     }
 }
-//
-//fun bytesToSize(bytes: Double): String {
-//    return when {
-//        bytes <= 0 -> ""
-//        bytes / 1024 < 1024 -> "${(bytes / 1024).round(2)} KiB"
-//        bytes / 1024 / 1024 < 1024 -> "${(bytes / 1024 / 1024).round(2)} MiB"
-//        else -> "${(bytes / 1024 / 1024 / 1024).round(2)} GiB"
-//    }
-//}
-
 
 fun bytesToSize(bytes: Double): String {
     return when {
@@ -105,5 +88,12 @@ fun bytesToSize(bytes: Double): String {
         bytes / 1024 / 1024 < 1024 -> "${(bytes / 1024 / 1024).round(2)} MiB"
         bytes / 1024 / 1024 / 1024 < 1024 -> "${(bytes / 1024 / 1024 / 1024).round(2)} GiB"
         else -> "${(bytes / 1024 / 1024 / 1024 / 1024).round(2)} TiB"
+    }
+}
+
+fun bytesToSpeed(bytes: Double): String {
+    return when (val size = bytesToSize(bytes)) {
+        "" -> size
+        else -> "$size/s"
     }
 }

@@ -136,6 +136,80 @@
                         </ul>
                     </li>
                 </ul>
+                <ul class="nav nav-pills justify-content-center mt-5 text-muted text-secondary">
+                    <li class="nav-item border border-light border-1 m-1" id="toggle-stats-pill"
+                        data-toggle="tooltip" data-placement="bottom" title="Filtered Number Of Torrents">
+                        <a class="text-light fw-lighter nav-link active" onclick="showStats()">
+                            <i class="fa-solid fa-chart-simple"></i>
+                        </a>
+                    </li>
+                    <li hidden class="nav-item border border-light border-1 m-1" id="stats-pill-total"
+                        data-toggle="tooltip" data-placement="bottom" title="Total Number Of Torrents">
+                        <a class="text-light fw-lighter nav-link active" onclick="showStats()">
+                            <i class="me-1 fa-solid fa-chart-simple"></i>
+                        </a>
+                    </li>
+                    <li hidden class="nav-item border border-light text-warning border-1 m-1" id="stats-pill-paused"
+                        data-toggle="tooltip" data-placement="bottom" title="Paused">
+                        <a class="text-light fw-lighter nav-link active" onclick="showStats()">
+                            <i class="me-1 fa-solid fa-pause"></i>
+                        </a>
+                    </li>
+                    <li hidden class="nav-item border border-light border-1 m-1" id="stats-pill-downloading"
+                        data-toggle="tooltip" data-placement="bottom" title="Downloading">
+                        <a class="text-light fw-lighter nav-link active" onclick="showStats()">
+                            <i class="me-1 fa-solid fa-arrow-down"></i>
+                        </a>
+                    </li>
+                    <li hidden class="nav-item border border-light border-1 m-1" id="stats-pill-seeding"
+                        data-toggle="tooltip" data-placement="bottom" title="Seeding">
+                        <a class="text-light fw-lighter nav-link active" onclick="showStats()">
+                            <i class="me-1 fa-solid fa-arrow-up"></i>
+                        </a>
+                    </li>
+                    <li hidden class="nav-item border border-light border-1 m-1" id="stats-pill-activeDown"
+                        data-toggle="tooltip" data-placement="bottom" title="Actively Downloading">
+                        <a class="text-light fw-lighter nav-link active" onclick="showStats()">
+                            <i class="me-1 fa-solid fa-angles-down"></i>
+                        </a>
+                    </li>
+                    <li hidden class="nav-item border border-light border-1 m-1" id="stats-pill-activeUp"
+                        data-toggle="tooltip" data-placement="bottom" title="Actively Uploading">
+                        <a class="text-light fw-lighter nav-link active" onclick="showStats()">
+                            <i class="me-1 fa-solid fa-angles-up"></i>
+                        </a>
+                    </li>
+                    <li hidden class="nav-item border border-light border-1 m-1" id="stats-pill-ratio"
+                        data-toggle="tooltip" data-placement="bottom" title="Total Ratio">
+                        <a class="text-light fw-lighter nav-link active" onclick="showStats()">
+                            <i class="me-1 fa-solid fa-arrows-up-down"></i>
+                        </a>
+                    </li>
+                    <li hidden class="nav-item border border-light border-1 m-1" id="stats-pill-downloaded"
+                        data-toggle="tooltip" data-placement="bottom" title="Total Size Downloaded">
+                        <a class="text-light fw-lighter nav-link active" onclick="showStats()">
+                            <i class="me-1 fa-solid fa-download"></i>
+                        </a>
+                    </li>
+                    <li hidden class="nav-item border border-light border-1 m-1" id="stats-pill-uploaded"
+                        data-toggle="tooltip" data-placement="bottom" title="Total Size Uploaded">
+                        <a class="text-light fw-lighter nav-link active" onclick="showStats()">
+                            <i class="me-1 fa-solid fa-upload"></i>
+                        </a>
+                    </li>
+                    <li hidden class="nav-item border border-light border-1 m-1" id="stats-pill-upSpeed"
+                        data-toggle="tooltip" data-placement="bottom" title="Total Upload traffic">
+                        <a class="text-light fw-lighter nav-link active" onclick="showStats()">
+                            <i class="me-1 fa-solid fa-circle-arrow-up"></i>
+                        </a>
+                    </li>
+                    <li hidden class="nav-item border border-light border-1 m-1" id="stats-pill-downSpeed"
+                        data-toggle="tooltip" data-placement="bottom" title="Total Download traffic">
+                        <a class="text-light fw-lighter nav-link active" onclick="showStats()">
+                            <i class="me-1 fa-solid fa-circle-arrow-down"></i>
+                        </a>
+                    </li>
+                </ul>
             </div>
         </header>
         <section class="page-section results" id="results">

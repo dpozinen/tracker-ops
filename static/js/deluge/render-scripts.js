@@ -13,6 +13,7 @@ function renderTorrents(torrents) {
                 torrentCards.push(torrentCard(value));
             });
             $torrents.append(torrentCards.join(""));
+            $('[data-toggle="tooltip"]').tooltip()
         }
 
         handleScrollAndLoader(torrents);
@@ -89,4 +90,30 @@ function addErrCard(msg) {
     `
 
     $('#torrents').empty().append(card)
+}
+
+function renderStats(stats) {
+    torrentStats = stats
+    $('#toggle-stats-pill a')
+        .html(`<i class="me-2 fa-solid fa-chart-simple"></i> Torrents: ${stats.selected}`)
+
+    $.each(torrentStats, function (key, value) {
+        let $a = $(`#stats-pill-${key} a`);
+        if ($a.length !== 0) {
+            let html = $a.html();
+            let tmp = html.substring(0, html.lastIndexOf('-->')) + "-->"; // whatever, i hate js
+
+            let val = value === "" || value === "-" || value === "0s" ? ' - ' : value
+            $a.empty().append(`${tmp} ${val}`)
+        }
+    });
+}
+
+function showStats() {
+    let $selected = $('[id^="stats-pill"]');
+    if ($selected[0].hasAttribute('hidden')) {
+        $selected.removeAttr('hidden');
+    } else {
+        $selected.attr('hidden', true);
+    }
 }
