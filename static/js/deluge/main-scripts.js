@@ -51,7 +51,7 @@ function handleScrollAndLoader(torrents) { // todo improve
     if ($('#search-divider-icon .fa-circle-nodes').length === 0) {
         searchSpinner(false, false, $('#search-divider-icon'), '<i class="fa-solid fa-circle-nodes">');
         if (!$.isEmptyObject(torrents))
-            $("#results")[0].scrollIntoView()
+            $("#toggle-stats-pill")[0].scrollIntoView()
     }
 }
 
