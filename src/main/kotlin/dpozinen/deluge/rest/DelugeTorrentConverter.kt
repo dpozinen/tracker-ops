@@ -1,6 +1,8 @@
 package dpozinen.deluge.rest
 
 import dpozinen.deluge.DelugeTorrent
+import dpozinen.deluge.db.entities.DelugeTorrentEntity
+import dpozinen.deluge.mutations.By
 import org.springframework.stereotype.Component
 import java.time.Instant
 import java.time.ZoneId
@@ -11,6 +13,15 @@ import kotlin.time.ExperimentalTime
 
 @Component
 class DelugeTorrentConverter {
+
+    fun convert(torrents: List<DelugeTorrent>) = torrents.map { convert(it) }
+
+    fun convert(torrent: DelugeTorrent) = DelugeTorrentEntity(
+        id = torrent.id,
+        name = torrent.name,
+        size = sizeToBytes(torrent.size).toLong(),
+        dateAdded = By.date.comparable(torrent.date)
+    )
 
     fun convert(torrent: Map.Entry<String, Map<String, *>>): DelugeTorrent {
         val id = torrent.key

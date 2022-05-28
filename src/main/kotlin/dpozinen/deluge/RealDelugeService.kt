@@ -40,7 +40,14 @@ class RealDelugeService(
         delugeClient.addMagnet(DelugeParams.addMagnet(magnet, downloadFolder), session)
     }
 
-    override fun torrents(): DelugeTorrents {
+    override fun statefulTorrents(): DelugeTorrents {
+        val torrents = allTorrents()
+        val mutated = state.with(torrents).mutate().torrents
+
+        return DelugeTorrents(mutated, statsFrom(torrents, mutated))
+    }
+
+    override fun allTorrents(): List<DelugeTorrent> {
         login()
         val params = DelugeParams.torrents()
         var response = delugeClient.torrents(params, session).body
@@ -51,10 +58,7 @@ class RealDelugeService(
             response = delugeClient.torrents(params, session).body
         }
 
-        val torrents = response.torrents().map { converter.convert(it) }
-        val mutated = state.with(torrents).mutate().torrents
-
-        return DelugeTorrents(mutated, statsFrom(torrents, mutated))
+        return response.torrents().map { converter.convert(it) }
     }
 
     override fun mutate(mutation: Mutation) {

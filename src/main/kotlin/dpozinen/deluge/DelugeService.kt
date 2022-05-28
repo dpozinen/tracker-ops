@@ -8,7 +8,8 @@ import dpozinen.deluge.rest.round
 
 interface DelugeService {
     fun addMagnet(magnet: String)
-    fun torrents(): DelugeTorrents
+    fun statefulTorrents(): DelugeTorrents
+    fun allTorrents(): List<DelugeTorrent>
     fun mutate(mutation: Mutation)
 
     fun statsFrom(all: List<DelugeTorrent>, mutated: List<DelugeTorrent>): DelugeTorrents.Stats {

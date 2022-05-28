@@ -13,11 +13,13 @@ class RandomizedDelugeService(private val converter: DelugeTorrentConverter) : D
 
     override fun addMagnet(magnet: String) {}
 
-    override fun torrents(): DelugeTorrents {
+    override fun statefulTorrents(): DelugeTorrents {
         val torrents = generateTorrents()
         val mutated = state.with(torrents).mutate().torrents
         return DelugeTorrents(mutated, statsFrom(torrents, mutated))
     }
+
+    override fun allTorrents() = statefulTorrents().torrents
 
     override fun mutate(mutation: Mutation) = synchronized(this) { state = state.mutate(mutation) }
 
