@@ -26,7 +26,7 @@ class DelugeController(private val service: DelugeService,
     fun addMagnet(@RequestBody magnet: String) = service.addMagnet(magnet)
 
     @GetMapping("/deluge/torrents")
-    fun delugeTorrents() = service.torrents()
+    fun delugeTorrents() = service.statefulTorrents()
 
     @MessageMapping("/stream/stop")
     fun streamStop() = runBlocking {
@@ -75,7 +75,7 @@ class DelugeController(private val service: DelugeService,
         sendTorrents()
     }
 
-    private fun sendTorrents(torrents: () -> DelugeTorrents = { service.torrents() }) {
+    private fun sendTorrents(torrents: () -> DelugeTorrents = { service.statefulTorrents() }) {
        runCatching { template.convertAndSend("/topic/torrents", torrents.invoke()) }
            .onFailure {
                handleException(it)
@@ -86,7 +86,7 @@ class DelugeController(private val service: DelugeService,
     @OptIn(ExperimentalCoroutinesApi::class)
     fun CoroutineScope.produceTorrents(): ReceiveChannel<DelugeTorrents> = produce {
         repeat(900) {
-            runCatching { service.torrents() }
+            runCatching { service.statefulTorrents() }
                 .onFailure { handleException(it) }
                 .onSuccess { send(it) }
             delay(1000)

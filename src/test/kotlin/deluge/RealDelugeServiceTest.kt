@@ -23,7 +23,7 @@ class RealDelugeServiceTest {
         val (client, converter) = mock()
         val service = RealDelugeService("", client, converter)
 
-        assertThat(service.torrents())
+        assertThat(service.statefulTorrents())
             .hasSize(1)
             .first()
             .isEqualTo(Data.delugeTorrent)
@@ -35,7 +35,7 @@ class RealDelugeServiceTest {
         val service = RealDelugeService("", client, converter)
 
         try {
-            service.torrents()
+            service.statefulTorrents()
         } catch (e: Exception) {
             assertThat(e)
                 .hasMessage("no torrents")
@@ -48,9 +48,9 @@ class RealDelugeServiceTest {
         val (client, converter) = mock()
         val service = RealDelugeService("", client, converter)
 
-        service.torrents()
-        service.torrents()
-        service.torrents()
+        service.statefulTorrents()
+        service.statefulTorrents()
+        service.statefulTorrents()
 
         verify(exactly = 1) { client.login() }
     }
@@ -77,7 +77,7 @@ class RealDelugeServiceTest {
         val (client, converter) = mock(mockTorrents = true, disconnected = true)
         val service = RealDelugeService("", client, converter)
 
-        service.torrents()
+        service.statefulTorrents()
 
         verify(exactly = 1) { client.connect(Data.sessionIdHttpCookie) }
         verify(exactly = 2) { client.login() }

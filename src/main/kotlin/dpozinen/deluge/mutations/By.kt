@@ -60,7 +60,7 @@ enum class By {
 
         private fun by() = ByComparable { it }
 
-        private fun bySize() =
+        fun bySize() =
             ByComparable {
                 if (it.isEmpty()) {
                     0.0
