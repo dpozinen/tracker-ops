@@ -3,6 +3,7 @@ package dpozinen.deluge.rest
 import dpozinen.deluge.DelugeTorrent
 import dpozinen.deluge.db.entities.DelugeTorrentEntity
 import dpozinen.deluge.mutations.By
+import dpozinen.deluge.mutations.By.Companion.bySize
 import org.springframework.stereotype.Component
 import java.time.Instant
 import java.time.ZoneId
@@ -19,7 +20,7 @@ class DelugeTorrentConverter {
     fun convert(torrent: DelugeTorrent) = DelugeTorrentEntity(
         id = torrent.id,
         name = torrent.name,
-        size = sizeToBytes(torrent.size).toLong(),
+        size = bySize().comparable(torrent.size).toLong(),
         dateAdded = By.date.comparable(torrent.date)
     )
 
