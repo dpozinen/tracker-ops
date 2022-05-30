@@ -89,7 +89,7 @@ class RealDelugeServiceTest {
         val (client, converter) = mock(mockTorrents = true, disconnected = true, mockConverter = true)
         val service = RealDelugeService("", client, converter)
 
-        every { converter.convert(any()) } returns Data.delugeTorrent
+        every { converter.convert((any() as Map.Entry<String, Map<String, *>>)) } returns Data.delugeTorrent
 
         val torrents = (1..100).map { converter.convert(Data.delugeTorrentResponse.entries.first()) }
 
