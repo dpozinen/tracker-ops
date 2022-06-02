@@ -61,7 +61,7 @@ class Filter(
         }
 
     private fun <C : Comparable<C>> predicateBy(comparator: ByComparable<C>, predicate: (C) -> Boolean) =
-        ByPredicate { predicate.invoke(comparator.comparable(it.getterBy(by).call(it))) }
+        ByPredicate { predicate(comparator.comparable(it.getterBy(by).call(it))) }
 
     private fun eq(any: Any?) = any == comparable
 

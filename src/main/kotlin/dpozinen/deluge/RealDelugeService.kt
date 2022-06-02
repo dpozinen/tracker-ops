@@ -10,8 +10,8 @@ import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 import java.net.HttpCookie
 
-@Profile("!dev")
-@Service // todo 'web.connect'
+@Profile("!test")
+@Service
 class RealDelugeService(
     @Value("\${tracker-ops.deluge.download-folder}") private val downloadFolder: String,
     private val delugeClient: DelugeClient,
@@ -65,7 +65,7 @@ class RealDelugeService(
         synchronized(this) {
             state = state.mutate(mutation)
         }
-        log.info("Mutated {}", mutation)
+        log.info("Mutated $mutation")
     }
 
 }

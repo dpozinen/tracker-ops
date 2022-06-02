@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 import kotlin.random.Random
 
-@Profile("dev")
+@Profile("dev", "test")
 @Service
 class RandomizedDelugeService(private val converter: DelugeTorrentConverter) : DelugeService {
     private var state: DelugeState = DelugeState()

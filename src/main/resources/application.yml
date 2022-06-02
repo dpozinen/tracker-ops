@@ -8,6 +8,8 @@ tracker-ops:
 server:
   port: 8133
 
+---
+
 spring:
   datasource:
     url: jdbc:h2:split:./db/deluge.db
@@ -15,3 +17,6 @@ spring:
     password: deluge
   jpa:
     hibernate.ddl-auto: update
+  config:
+    activate:
+      on-profile: stats
