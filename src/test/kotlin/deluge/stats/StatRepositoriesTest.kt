@@ -8,7 +8,7 @@ import dpozinen.deluge.db.entities.DataPointEntity
 import dpozinen.deluge.rest.DelugeTorrentConverter
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.iterable.ThrowingExtractor
-import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -16,7 +16,7 @@ import org.springframework.test.context.ActiveProfiles
 import java.util.concurrent.TimeUnit
 
 @SpringBootTest(classes = [App::class])
-@ActiveProfiles("test")
+@ActiveProfiles("test", "stats")
 class StatRepositoriesTest {
     @Autowired
     lateinit var dataPointRepo: DataPointRepo
@@ -69,7 +69,7 @@ class StatRepositoriesTest {
         )
     }
 
-    @AfterEach
+    @BeforeEach
     private fun clear() {
         dataPointRepo.deleteAll()
         delugeTorrentRepo.deleteAll()

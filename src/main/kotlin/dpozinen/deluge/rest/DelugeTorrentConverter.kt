@@ -62,7 +62,7 @@ class DelugeTorrentConverter {
     fun <T> field(map: Map<String, *>, key: String): T = map[key] as T
 
     @Suppress("UNCHECKED_CAST")
-    fun <T, R> field(map: Map<String, *>, key: String, covert: (T) -> R): R = covert.invoke(map[key] as T)
+    fun <T, R> field(map: Map<String, *>, key: String, covert: (T) -> R): R = covert(map[key] as T)
 
     @Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
     @OptIn(ExperimentalTime::class)

@@ -1,29 +1,31 @@
 package tracker
 
-import Data
 import Data.OneThreeThree.Companion.PAGE_EXPECTED_TORRENT
 import Data.OneThreeThree.Companion.SEARCH_EXPECTED_TORRENT
 import com.ninjasquad.springmockk.MockkBean
 import dpozinen.App
+import dpozinen.tracker.Torrents
 import dpozinen.tracker.TrackerController
 import dpozinen.tracker.TrackerService
 import dpozinen.tracker.Trackers
-import dpozinen.tracker.Torrents
 import io.mockk.every
 import org.hamcrest.Matchers.`is`
-import org.junit.jupiter.api.Disabled
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import kotlin.test.Test
 
 
 @WebMvcTest(TrackerController::class)
 @ContextConfiguration(classes = [App::class])
-class ControllerTest(@Autowired val mockMvc: MockMvc) {
+@ActiveProfiles("test")
+class ControllerTest(@Autowired val mockMvc: MockMvc,
+                     @Value("\${tracker-ops.host:localhost}") private val host: String,
+                     @Value("\${server.port:8133}") private val port: String,) {
 
     @MockkBean
     private lateinit var service: TrackerService
@@ -36,14 +38,13 @@ class ControllerTest(@Autowired val mockMvc: MockMvc) {
         mockMvc.get("/search/133/abc abc")
             .andExpect {
                 jsonPath<String>("[0].name", `is`(SEARCH_EXPECTED_TORRENT.name))
-                jsonPath<String>("[0].name", `is`(SEARCH_EXPECTED_TORRENT.name))
                 jsonPath<String>("[0].size", `is`(SEARCH_EXPECTED_TORRENT.size))
                 jsonPath<Int>("[0].seeds", `is`(SEARCH_EXPECTED_TORRENT.seeds))
                 jsonPath<Int>("[0].leeches", `is`(SEARCH_EXPECTED_TORRENT.leeches))
                 jsonPath<String>("[0].date", `is`(SEARCH_EXPECTED_TORRENT.date))
                 jsonPath<String>("[0].contributor", `is`(SEARCH_EXPECTED_TORRENT.contributor))
                 jsonPath<Int>("[0].index", `is`(0))
-                jsonPath<String>("[0].link", `is`("http://192.168.0.130:8133/search/133/abc%20abc/select/0"))
+                jsonPath<String>("[0].link", `is`("http://$host:$port/search/133/abc%20abc/select/0"))
             }
     }
 

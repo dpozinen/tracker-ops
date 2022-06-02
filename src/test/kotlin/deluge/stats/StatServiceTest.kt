@@ -9,6 +9,7 @@ import dpozinen.deluge.db.entities.DataPointEntity
 import dpozinen.deluge.rest.DelugeTorrentConverter
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import kotlin.test.Test
 
 class StatServiceTest {
@@ -42,6 +43,8 @@ class StatServiceTest {
         every { dataPointRepo.saveAll(listOf(dataPointB)) } returns listOf()
 
         statsService.updateStats()
+
+        verify(exactly = 0) { dataPointRepo.saveAll(listOf(dataPointA, dataPointB)) }
     }
 
     private fun allTorrents() = listOf(

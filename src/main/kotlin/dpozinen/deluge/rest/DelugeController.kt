@@ -76,7 +76,7 @@ class DelugeController(private val service: DelugeService,
     }
 
     private fun sendTorrents(torrents: () -> DelugeTorrents = { service.statefulTorrents() }) {
-       runCatching { template.convertAndSend("/topic/torrents", torrents.invoke()) }
+       runCatching { template.convertAndSend("/topic/torrents", torrents()) }
            .onFailure {
                handleException(it)
            }

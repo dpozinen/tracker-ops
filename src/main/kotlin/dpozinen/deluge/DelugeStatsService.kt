@@ -5,9 +5,11 @@ import dpozinen.deluge.db.DelugeTorrentRepo
 import dpozinen.deluge.db.entities.DataPointEntity
 import dpozinen.deluge.mutations.By.Companion.bySize
 import dpozinen.deluge.rest.DelugeTorrentConverter
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 
 @Service
+@Profile("stats")
 class DelugeStatsService(
     private val dataPointRepo: DataPointRepo,
     private val delugeTorrentRepo: DelugeTorrentRepo,

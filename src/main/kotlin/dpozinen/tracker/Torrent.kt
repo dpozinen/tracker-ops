@@ -24,8 +24,8 @@ data class Torrent(
                             getter: (Torrent) -> F,
                             predicate: (F) -> Boolean,
     ) : F {
-        val current = getter.invoke(this)
-        return if (predicate.invoke(current)) getter.invoke(other) else current
+        val current = getter(this)
+        return if (predicate(current)) getter(other) else current
     }
 
 }
