@@ -40,7 +40,7 @@ class Data {
 
 
     companion object {
-        val stats: DelugeTorrents.Stats = DelugeTorrents.Stats(
+        val info: DelugeTorrents.Info = DelugeTorrents.Info(
             selected = 100,
             total = 100,
             downloading = 0,

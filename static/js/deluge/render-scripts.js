@@ -92,10 +92,10 @@ function addErrCard(msg) {
     $('#torrents').empty().append(card)
 }
 
-function renderStats(stats) {
-    torrentStats = stats
+function renderInfo(info) {
+    torrentStats = info
     $('#toggle-stats-pill a')
-        .html(`<i class="me-2 fa-solid fa-chart-simple"></i> Torrents: ${stats.selected}`)
+        .html(`<i class="me-2 fa-solid fa-chart-simple"></i> Torrents: ${info.selected}`)
 
     $.each(torrentStats, function (key, value) {
         let $a = $(`#stats-pill-${key} a`);

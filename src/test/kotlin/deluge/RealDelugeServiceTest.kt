@@ -94,9 +94,9 @@ class RealDelugeServiceTest {
 
         val torrents = (1..100).map { converter.convert(Data.delugeTorrentResponse.entries.first()) }
 
-        val stats = service.statsFrom(torrents, torrents)
+        val stats = service.info(torrents, torrents)
 
-        assertThat(stats).isEqualTo(Data.stats)
+        assertThat(stats).isEqualTo(Data.info)
     }
 
     private fun mock(mockTorrents: Boolean = true, disconnected: Boolean = false, mockConverter: Boolean = false)

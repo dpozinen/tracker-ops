@@ -18,7 +18,7 @@ class RandomizedDelugeService(private val converter: DelugeConverter) : DelugeSe
     override fun statefulTorrents(): DelugeTorrents {
         val torrents = generateTorrents()
         val mutated = state.with(torrents).mutate().torrents
-        return DelugeTorrents(mutated, statsFrom(torrents, mutated))
+        return DelugeTorrents(mutated, info(torrents, mutated))
     }
 
     override fun allTorrents() = statefulTorrents().torrents
