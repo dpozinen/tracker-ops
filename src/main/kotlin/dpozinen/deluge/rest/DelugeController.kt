@@ -1,7 +1,7 @@
 package dpozinen.deluge.rest
 
-import dpozinen.deluge.DelugeService
-import dpozinen.deluge.DelugeTorrents
+import dpozinen.deluge.core.DelugeService
+import dpozinen.deluge.domain.DelugeTorrents
 import dpozinen.deluge.mutations.*
 import dpozinen.errors.DelugeServerDownException
 import kotlinx.coroutines.*

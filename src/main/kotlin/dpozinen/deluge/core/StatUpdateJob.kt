@@ -1,4 +1,4 @@
-package dpozinen.deluge
+package dpozinen.deluge.core
 
 import kotlinx.coroutines.*
 import org.springframework.boot.context.event.ApplicationReadyEvent

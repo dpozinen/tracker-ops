@@ -1,6 +1,6 @@
 package dpozinen.deluge.rest
 
-import dpozinen.deluge.DelugeTorrent
+import dpozinen.deluge.domain.DelugeTorrent
 import dpozinen.deluge.db.entities.DelugeTorrentEntity
 import dpozinen.deluge.mutations.By
 import dpozinen.deluge.mutations.By.Companion.bySize
@@ -13,7 +13,7 @@ import kotlin.math.round
 import kotlin.time.ExperimentalTime
 
 @Component
-class DelugeTorrentConverter {
+class DelugeConverter {
 
     fun convert(torrents: List<DelugeTorrent>) = torrents.map { convert(it) }
 

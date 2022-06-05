@@ -1,4 +1,4 @@
-package dpozinen.deluge
+package dpozinen.deluge.domain
 
 data class DelugeTorrents(val torrents: List<DelugeTorrent>, val stats: Stats) : Iterable<DelugeTorrent> {
 

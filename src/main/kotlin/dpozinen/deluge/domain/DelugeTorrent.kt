@@ -1,4 +1,4 @@
-package dpozinen.deluge
+package dpozinen.deluge.domain
 
 import dpozinen.deluge.mutations.By
 import kotlin.reflect.KProperty1

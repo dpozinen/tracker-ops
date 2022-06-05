@@ -1,5 +1,5 @@
-import dpozinen.deluge.DelugeTorrent
-import dpozinen.deluge.DelugeTorrents
+import dpozinen.deluge.domain.DelugeTorrent
+import dpozinen.deluge.domain.DelugeTorrents
 import dpozinen.tracker.Torrent
 import org.springframework.http.HttpHeaders
 import java.net.HttpCookie

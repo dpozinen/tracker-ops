@@ -1,6 +1,6 @@
 package dpozinen.deluge.mutations
 
-import dpozinen.deluge.DelugeState
+import dpozinen.deluge.core.DelugeState
 import dpozinen.deluge.mutations.By.*
 import mu.KotlinLogging
 import java.time.LocalDate

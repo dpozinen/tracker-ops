@@ -1,5 +1,6 @@
-package dpozinen.deluge
+package dpozinen.deluge.core
 
+import dpozinen.deluge.domain.DelugeTorrent
 import dpozinen.deluge.mutations.Mutation
 
 class DelugeState(
