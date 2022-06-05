@@ -38,7 +38,7 @@ function delugeTorrents() {
                 let torrents = msg.torrents
 
                 renderTorrents(torrents)
-                renderStats(msg.stats)
+                renderInfo(msg.info)
             });
 
             stomp.subscribe('/topic/torrents/stop', function(data) {

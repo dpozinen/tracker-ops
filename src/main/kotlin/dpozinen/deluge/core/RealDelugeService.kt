@@ -46,7 +46,7 @@ class RealDelugeService(
         val torrents = allTorrents()
         val mutated = state.with(torrents).mutate().torrents
 
-        return DelugeTorrents(mutated, statsFrom(torrents, mutated))
+        return DelugeTorrents(mutated, info(torrents, mutated))
     }
 
     override fun allTorrents(): List<DelugeTorrent> {

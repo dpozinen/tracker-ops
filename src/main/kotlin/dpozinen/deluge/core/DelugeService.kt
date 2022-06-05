@@ -14,7 +14,7 @@ interface DelugeService {
     fun allTorrents(): List<DelugeTorrent>
     fun mutate(mutation: Mutation)
 
-    fun statsFrom(all: List<DelugeTorrent>, mutated: List<DelugeTorrent>): DelugeTorrents.Stats {
+    fun info(all: List<DelugeTorrent>, mutated: List<DelugeTorrent>): DelugeTorrents.Info {
         val total = all.size
         val paused = all.count { it.state == "Paused" }
         val downloading = all.count { it.state == "Downloading" }
@@ -29,7 +29,7 @@ interface DelugeService {
         val downSpeed = all.sumOf { By.downloadSpeed.comparable(it.downloadSpeed) }
         val upSpeed = all.sumOf { By.uploadSpeed.comparable(it.uploadSpeed) }
 
-        return DelugeTorrents.Stats(
+        return DelugeTorrents.Info(
             selected = mutated.size, total = total,
             downloading, paused, seeding,
             activeDown, activeUp,
