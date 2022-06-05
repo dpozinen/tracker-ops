@@ -1,7 +1,7 @@
 package deluge
 
 import Data.Companion.delugeTorrent
-import dpozinen.deluge.DelugeState
+import dpozinen.deluge.core.DelugeState
 import dpozinen.deluge.mutations.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

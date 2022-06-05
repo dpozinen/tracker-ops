@@ -1,9 +1,9 @@
 package dpozinen.deluge.mutations
 
-import dpozinen.deluge.DelugeTorrent
+import dpozinen.deluge.domain.DelugeTorrent
 import dpozinen.deluge.mutations.By.ByComparable
 import dpozinen.deluge.mutations.By.ByPredicate
-import dpozinen.deluge.rest.DelugeTorrentConverter
+import dpozinen.deluge.rest.DelugeConverter
 import dpozinen.deluge.rest.sizeToBytes
 import java.time.LocalDate
 import kotlin.time.DurationUnit.MINUTES
@@ -56,7 +56,7 @@ enum class By {
         @OptIn(ExperimentalTime::class)
         val eta = ByComparable { if (it.isEmpty()) 0 else kotlin.time.Duration.parse(it).toLong(MINUTES) }
 
-        val date = ByComparable { LocalDate.parse(it, DelugeTorrentConverter.dateTimeFormatter) }
+        val date = ByComparable { LocalDate.parse(it, DelugeConverter.dateTimeFormatter) }
 
         private fun by() = ByComparable { it }
 

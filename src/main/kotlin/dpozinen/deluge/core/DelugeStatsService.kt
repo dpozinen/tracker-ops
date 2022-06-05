@@ -1,12 +1,14 @@
-package dpozinen.deluge
+package dpozinen.deluge.core
 
 import dpozinen.deluge.db.DataPointRepo
 import dpozinen.deluge.db.DelugeTorrentRepo
 import dpozinen.deluge.db.entities.DataPointEntity
+import dpozinen.deluge.domain.DelugeTorrent
 import dpozinen.deluge.mutations.By.Companion.bySize
-import dpozinen.deluge.rest.DelugeTorrentConverter
+import dpozinen.deluge.rest.DelugeConverter
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 
 @Service
 @Profile("stats")
@@ -14,8 +16,13 @@ class DelugeStatsService(
     private val dataPointRepo: DataPointRepo,
     private val delugeTorrentRepo: DelugeTorrentRepo,
     private val delugeService: DelugeService,
-    private val converter: DelugeTorrentConverter
+    private val converter: DelugeConverter
 ) {
+
+    fun stats(torrentIds: Collection<String>, from: LocalDateTime, to: LocalDateTime): Map<String, List<DataPointEntity>> {
+        return dataPointRepo.findByTorrentsInTimeFrame(torrentIds, from, to)
+                            .groupBy { it.torrentId }
+    }
 
     fun updateStats() {
         val torrents = delugeService.allTorrents()

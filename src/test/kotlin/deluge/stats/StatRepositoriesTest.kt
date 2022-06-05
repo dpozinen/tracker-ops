@@ -5,7 +5,7 @@ import dpozinen.App
 import dpozinen.deluge.db.DataPointRepo
 import dpozinen.deluge.db.DelugeTorrentRepo
 import dpozinen.deluge.db.entities.DataPointEntity
-import dpozinen.deluge.rest.DelugeTorrentConverter
+import dpozinen.deluge.rest.DelugeConverter
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.iterable.ThrowingExtractor
 import org.junit.jupiter.api.BeforeEach
@@ -25,7 +25,7 @@ class StatRepositoriesTest {
     lateinit var delugeTorrentRepo: DelugeTorrentRepo
 
     @Autowired
-    lateinit var converter: DelugeTorrentConverter
+    lateinit var converter: DelugeConverter
 
     @Test
     fun `should save data points`() {

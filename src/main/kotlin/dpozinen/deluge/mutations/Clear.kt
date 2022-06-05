@@ -1,6 +1,6 @@
 package dpozinen.deluge.mutations
 
-import dpozinen.deluge.DelugeState
+import dpozinen.deluge.core.DelugeState
 
 class Clear(private val mutation: Mutation? = null) : Mutation {
     override fun perform(state: DelugeState): DelugeState {

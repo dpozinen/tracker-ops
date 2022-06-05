@@ -2,12 +2,13 @@ package deluge
 
 import Data
 import Data.Companion.httpHeaders
-import dpozinen.deluge.*
+import dpozinen.deluge.core.DelugeState
+import dpozinen.deluge.core.RealDelugeService
 import dpozinen.deluge.mutations.Search
 import dpozinen.deluge.rest.DelugeClient
 import dpozinen.deluge.rest.DelugeParams
 import dpozinen.deluge.rest.DelugeResponse
-import dpozinen.deluge.rest.DelugeTorrentConverter
+import dpozinen.deluge.rest.DelugeConverter
 import io.mockk.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -99,10 +100,10 @@ class RealDelugeServiceTest {
     }
 
     private fun mock(mockTorrents: Boolean = true, disconnected: Boolean = false, mockConverter: Boolean = false)
-        : Pair<DelugeClient, DelugeTorrentConverter> {
+        : Pair<DelugeClient, DelugeConverter> {
         val delugeClient = mockk<DelugeClient>()
         val response = mockk<ResponseEntity<DelugeResponse>>()
-        val converter = if (mockConverter) mockk() else DelugeTorrentConverter()
+        val converter = if (mockConverter) mockk() else DelugeConverter()
 
         every { response.body } returns DelugeResponse(mapOf<String, Any>(), 123, mapOf())
         every { response.headers } returns httpHeaders()

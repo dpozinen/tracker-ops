@@ -1,8 +1,8 @@
 package dpozinen.deluge.mutations
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dpozinen.deluge.DelugeState
-import dpozinen.deluge.DelugeTorrent
+import dpozinen.deluge.core.DelugeState
+import dpozinen.deluge.domain.DelugeTorrent
 
 class Search(@JsonProperty("name") val name: String) : Mutation {
     override fun perform(state: DelugeState): DelugeState {

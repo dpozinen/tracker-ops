@@ -1,7 +1,7 @@
 package deluge
 
 import Data.Companion.delugeTorrent
-import dpozinen.deluge.DelugeState
+import dpozinen.deluge.core.DelugeState
 import dpozinen.deluge.mutations.By
 import dpozinen.deluge.mutations.Filter
 import dpozinen.deluge.mutations.Filter.Operator.*

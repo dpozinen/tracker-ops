@@ -1,6 +1,6 @@
 package dpozinen.deluge.mutations
 
-import dpozinen.deluge.DelugeState
+import dpozinen.deluge.core.DelugeState
 
 fun interface Mutation {
 

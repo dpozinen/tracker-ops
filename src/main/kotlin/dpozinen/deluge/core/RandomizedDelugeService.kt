@@ -1,14 +1,16 @@
-package dpozinen.deluge
+package dpozinen.deluge.core
 
+import dpozinen.deluge.domain.DelugeTorrent
+import dpozinen.deluge.domain.DelugeTorrents
 import dpozinen.deluge.mutations.Mutation
-import dpozinen.deluge.rest.DelugeTorrentConverter
+import dpozinen.deluge.rest.DelugeConverter
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 import kotlin.random.Random
 
 @Profile("dev", "test")
 @Service
-class RandomizedDelugeService(private val converter: DelugeTorrentConverter) : DelugeService {
+class RandomizedDelugeService(private val converter: DelugeConverter) : DelugeService {
     private var state: DelugeState = DelugeState()
 
     override fun addMagnet(magnet: String) {}

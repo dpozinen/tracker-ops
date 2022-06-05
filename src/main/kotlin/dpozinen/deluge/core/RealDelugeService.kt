@@ -1,9 +1,11 @@
-package dpozinen.deluge
+package dpozinen.deluge.core
 
+import dpozinen.deluge.domain.DelugeTorrent
+import dpozinen.deluge.domain.DelugeTorrents
 import dpozinen.deluge.mutations.Mutation
 import dpozinen.deluge.rest.DelugeClient
 import dpozinen.deluge.rest.DelugeParams
-import dpozinen.deluge.rest.DelugeTorrentConverter
+import dpozinen.deluge.rest.DelugeConverter
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Profile
@@ -15,7 +17,7 @@ import java.net.HttpCookie
 class RealDelugeService(
     @Value("\${tracker-ops.deluge.download-folder}") private val downloadFolder: String,
     private val delugeClient: DelugeClient,
-    private val converter: DelugeTorrentConverter
+    private val converter: DelugeConverter
 ) : DelugeService {
     private val log = KotlinLogging.logger {}
     private var session: HttpCookie = HttpCookie.parse("dummy=dummy; max-age=0")[0]

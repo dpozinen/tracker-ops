@@ -1,7 +1,7 @@
 package dpozinen.deluge.mutations
 
-import dpozinen.deluge.DelugeState
-import dpozinen.deluge.DelugeTorrent
+import dpozinen.deluge.core.DelugeState
+import dpozinen.deluge.domain.DelugeTorrent
 import dpozinen.deluge.mutations.By.*
 import dpozinen.deluge.mutations.Sort.Order.ASC
 import dpozinen.deluge.mutations.Sort.Order.DESC
