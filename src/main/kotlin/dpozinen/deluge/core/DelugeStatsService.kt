@@ -21,10 +21,12 @@ class DelugeStatsService(
     private val converter: DelugeConverter
 ) {
 
-    fun stats(torrentIds: Collection<String>, from: LocalDateTime, to: LocalDateTime) =
-        dataPointRepo.findByTorrentsInTimeFrame(torrentIds, from, to)
-                            .map { converter.toDataPoint(it) }
-                            .groupBy { it.torrentId }
+    fun stats(torrentIds: Collection<String>, from: LocalDateTime, to: LocalDateTime): Map<String, List<DataPoint>> {
+        val ids = torrentIds.ifEmpty { delugeTorrentRepo.findAllIds() }
+        return dataPointRepo.findByTorrentsInTimeFrame(ids, from, to)
+            .map { converter.toDataPoint(it) }
+            .groupBy { it.torrentId }
+    }
 
     fun updateStats() {
         val torrents = delugeService.allTorrents()

@@ -1,6 +1,12 @@
 package deluge.stats
 
 import Data
+import Data.Companion.dataPointA
+import Data.Companion.dataPointA1
+import Data.Companion.dataPointB
+import Data.Companion.dataPointEntityA
+import Data.Companion.dataPointEntityA1
+import Data.Companion.dataPointEntityB
 import dpozinen.deluge.core.DelugeService
 import dpozinen.deluge.core.DelugeStatsService
 import dpozinen.deluge.db.DataPointRepo
@@ -30,7 +36,7 @@ class StatServiceTest {
         every { delugeService.allTorrents() } returns torrents
         every { delugeTorrentRepo.saveAll(converter.convert(torrents)) } returns listOf()
         every { dataPointRepo.findTopOrderByTimeDescPerTorrent() } returns listOf()
-        every { dataPointRepo.saveAll(listOf(dataPointA, dataPointB)) } returns listOf()
+        every { dataPointRepo.saveAll(listOf(empty(dataPointEntityA), empty(dataPointEntityB))) } returns listOf()
 
         statsService.updateStats()
     }
@@ -42,12 +48,12 @@ class StatServiceTest {
 
         every { delugeService.allTorrents() } returns torrents
         every { delugeTorrentRepo.saveAll(converter.convert(torrents)) } returns listOf()
-        every { dataPointRepo.findTopOrderByTimeDescPerTorrent() } returns listOf(dataPointA)
-        every { dataPointRepo.saveAll(listOf(dataPointB)) } returns listOf()
+        every { dataPointRepo.findTopOrderByTimeDescPerTorrent() } returns listOf(dataPointEntityA)
+        every { dataPointRepo.saveAll(listOf(empty(dataPointEntityB))) } returns listOf()
 
         statsService.updateStats()
 
-        verify(exactly = 0) { dataPointRepo.saveAll(listOf(dataPointA, dataPointB)) }
+        verify(exactly = 0) { dataPointRepo.saveAll(listOf(empty(dataPointEntityA), empty(dataPointEntityB))) }
     }
 
     @Test
@@ -59,7 +65,7 @@ class StatServiceTest {
 
         every {
             dataPointRepo.findByTorrentsInTimeFrame(torrents, from, to)
-        } returns listOf(dataPointA, dataPointA1, dataPointB)
+        } returns listOf(dataPointEntityA, dataPointEntityA1, dataPointEntityB)
 
         val stats = statsService.stats(torrents, from, to)
 
@@ -69,6 +75,16 @@ class StatServiceTest {
         assertThat(stats)
             .extractingByKey("456").isEqualTo(listOf(dataPointB))
     }
+
+    private fun empty(entity: DataPointEntity) = DataPointEntity(
+        id = null,
+        torrentId = entity.torrentId,
+        downloaded = entity.downloaded,
+        uploaded = entity.uploaded,
+        upSpeed = entity.upSpeed,
+        downSpeed = entity.downSpeed,
+        time = null,
+    )
 
     private fun allTorrents() = listOf(
         Data.delugeTorrent.copy(
@@ -88,27 +104,3 @@ class StatServiceTest {
     )
 
 }
-private val dataPointA = DataPointEntity(
-    id = 1,
-    torrentId = "123",
-    downloaded = 1024 * 1024 * 1024,
-    uploaded = 1024 * 1024 * 1024,
-    upSpeed = 1024 * 1024 * 100,
-    downSpeed = 1024 * 1024 * 10,
-)
-private val dataPointA1 = DataPointEntity(
-    id = 2,
-    torrentId = "123",
-    downloaded = 1024 * 1024 * 1024,
-    uploaded = 1024 * 1024 * 1024,
-    upSpeed = 1024 * 1024 * 100,
-    downSpeed = 1024 * 1024 * 10,
-)
-
-private val dataPointB = DataPointEntity(
-    torrentId = "456",
-    downloaded = 1024 * 1024 * 1024L * 2L,
-    uploaded = 1024 * 1024 * 1024 * 2L,
-    upSpeed = 1024 * 1024,
-    downSpeed = 1024 * 1024 * 2,
-)

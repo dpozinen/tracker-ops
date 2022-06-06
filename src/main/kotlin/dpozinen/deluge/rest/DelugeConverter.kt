@@ -12,6 +12,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatter.ofPattern
+import java.time.temporal.ChronoUnit
 import kotlin.math.round
 import kotlin.time.DurationUnit
 import kotlin.time.ExperimentalTime
@@ -24,8 +25,7 @@ class DelugeConverter {
     fun toLocalDateTime(timeAgo: String): LocalDateTime {
         val duration = kotlin.time.Duration.parse(timeAgo)
         val millis = duration.toLong(DurationUnit.MILLISECONDS)
-        val instant = Instant.ofEpochMilli(millis)
-        return LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
+        return LocalDateTime.now().minus(millis, ChronoUnit.MILLIS)
     }
 
     fun toDataPoint(entity: DataPointEntity): DataPoint {
