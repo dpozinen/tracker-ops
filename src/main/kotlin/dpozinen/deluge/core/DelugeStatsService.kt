@@ -1,8 +1,10 @@
 package dpozinen.deluge.core
 
 import dpozinen.deluge.db.DataPointRepo
+import dpozinen.deluge.db.DataPointRepo.Extensions.findByTorrentsInTimeFrame
 import dpozinen.deluge.db.DelugeTorrentRepo
 import dpozinen.deluge.db.entities.DataPointEntity
+import dpozinen.deluge.domain.DataPoint
 import dpozinen.deluge.domain.DelugeTorrent
 import dpozinen.deluge.mutations.By.Companion.bySize
 import dpozinen.deluge.rest.DelugeConverter
@@ -19,10 +21,10 @@ class DelugeStatsService(
     private val converter: DelugeConverter
 ) {
 
-    fun stats(torrentIds: Collection<String>, from: LocalDateTime, to: LocalDateTime): Map<String, List<DataPointEntity>> {
-        return dataPointRepo.findByTorrentsInTimeFrame(torrentIds, from, to)
+    fun stats(torrentIds: Collection<String>, from: LocalDateTime, to: LocalDateTime) =
+        dataPointRepo.findByTorrentsInTimeFrame(torrentIds, from, to)
+                            .map { converter.toDataPoint(it) }
                             .groupBy { it.torrentId }
-    }
 
     fun updateStats() {
         val torrents = delugeService.allTorrents()

@@ -4,6 +4,7 @@ import Data
 import dpozinen.deluge.core.DelugeService
 import dpozinen.deluge.core.DelugeStatsService
 import dpozinen.deluge.db.DataPointRepo
+import dpozinen.deluge.db.DataPointRepo.Extensions.findByTorrentsInTimeFrame
 import dpozinen.deluge.db.DelugeTorrentRepo
 import dpozinen.deluge.db.entities.DataPointEntity
 import dpozinen.deluge.rest.DelugeConverter

@@ -1,19 +1,48 @@
 package dpozinen.deluge.rest
 
+import dpozinen.deluge.db.entities.DataPointEntity
 import dpozinen.deluge.domain.DelugeTorrent
 import dpozinen.deluge.db.entities.DelugeTorrentEntity
+import dpozinen.deluge.domain.DataPoint
 import dpozinen.deluge.mutations.By
 import dpozinen.deluge.mutations.By.Companion.bySize
 import org.springframework.stereotype.Component
 import java.time.Instant
+import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatter.ofPattern
 import kotlin.math.round
+import kotlin.time.DurationUnit
 import kotlin.time.ExperimentalTime
 
 @Component
+@Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
+@OptIn(ExperimentalTime::class)
 class DelugeConverter {
+
+    fun toLocalDateTime(timeAgo: String): LocalDateTime {
+        val duration = kotlin.time.Duration.parse(timeAgo)
+        val millis = duration.toLong(DurationUnit.MILLISECONDS)
+        val instant = Instant.ofEpochMilli(millis)
+        return LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
+    }
+
+    fun toDataPoint(entity: DataPointEntity): DataPoint {
+        return DataPoint(
+            id = entity.id!!,
+            torrentId = entity.torrentId,
+            time = entity.time!!,
+            upSpeed = entity.upSpeed,
+            upSpeedBytes = bytesToSpeed(entity.upSpeed.toDouble()),
+            downSpeed = entity.downSpeed,
+            downSpeedBytes = bytesToSpeed(entity.downSpeed.toDouble()),
+            uploaded = entity.uploaded,
+            uploadedBytes = bytesToSize(entity.uploaded.toDouble()),
+            downloaded = entity.downloaded,
+            downloadedBytes = bytesToSize(entity.downloaded.toDouble())
+        )
+    }
 
     fun convert(torrents: List<DelugeTorrent>) = torrents.map { convert(it) }
 
@@ -64,8 +93,6 @@ class DelugeConverter {
     @Suppress("UNCHECKED_CAST")
     fun <T, R> field(map: Map<String, *>, key: String, covert: (T) -> R): R = covert(map[key] as T)
 
-    @Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
-    @OptIn(ExperimentalTime::class)
     private fun eta(eta: Double): String {
         return kotlin.time.Duration.seconds(eta).toString()
     }
