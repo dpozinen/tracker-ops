@@ -4,6 +4,8 @@ tracker-ops:
     host: 192.168.0.180
     port: 8112
     download-folder: /Downloads/running
+    stats:
+      poll-interval: 5m
 
 server:
   port: 8133
