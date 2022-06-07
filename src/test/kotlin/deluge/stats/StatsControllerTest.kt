@@ -20,8 +20,6 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.MockMvcResultMatchersDsl
 import org.springframework.test.web.servlet.get
 import kotlin.test.Test
-import kotlin.time.DurationUnit
-import kotlin.time.ExperimentalTime
 
 @WebMvcTest(DelugeStatsController::class)
 @ContextConfiguration(classes = [App::class, StatsControllerTest.Config::class])
@@ -49,6 +47,25 @@ class StatsControllerTest(@Autowired val mockMvc: MockMvc) {
             param("to", Data.now.toString())
             param("torrentIds", "123")
         }.andExpect {
+                eq("stats['123'][0].id" to `is`(2))
+                eq("stats['123'][1].id" to `is`(1))
+                eq("torrents[0].id" to `is`("123"))
+            }
+    }
+
+
+    @Test
+    fun `should get stats default time`() {
+        every {
+            statsService.stats(any(), any(), any())
+        } returns mapOf("123" to listOf(Data.dataPointA1, Data.dataPointA))
+
+        every {
+            torrentService.allTorrents()
+        } returns listOf(Data.delugeTorrent.copy(id = "123"))
+
+        mockMvc.get("/deluge/stats")
+            .andExpect {
                 eq("stats['123'][0].id" to `is`(2))
                 eq("stats['123'][1].id" to `is`(1))
                 eq("torrents[0].id" to `is`("123"))

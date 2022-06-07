@@ -35,8 +35,8 @@ class DelugeStatsController(
             .orElseGet {
                 statsService.stats(
                     torrentIds,
-                    LocalDateTime.parse(timeFrom) ?: now().minusHours(6),
-                    LocalDateTime.parse(timeTo) ?: now())
+                    timeFrom?.let { LocalDateTime.parse(it) } ?: now().minusHours(6),
+                    timeTo?.let { LocalDateTime.parse(it) } ?: now())
             }
 
         val torrents = torrentService.allTorrents()
