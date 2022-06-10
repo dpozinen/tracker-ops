@@ -26,11 +26,17 @@ class Tracker(
         fun from(tracker: Trackers) =
             when (tracker) {
                 Trackers.OneThreeThree -> oneThreeThreeSevenXTo()
+                Trackers.Rarbg -> rarbg()
             }
 
         private fun oneThreeThreeSevenXTo() = Tracker(
             TrackerParser.OneThreeThree(),
-            TrackerOps.OneThreeThree("https://1337x.to")
+            TrackerOps.OneThreeThree()
+        )
+
+        private fun rarbg() = Tracker(
+            TrackerParser.Rarbg(),
+            TrackerOps.Rarbg()
         )
 
     }

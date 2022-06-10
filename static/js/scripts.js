@@ -62,7 +62,7 @@ function searchSpinner(enable, border, elem, disabledIcon) {
 function search(event) {
     event.preventDefault()
     searchSpinner(true, false, $('#search-divider-icon'))
-    let tracker = $('#search-form input[checked]').val();
+    let tracker = $('#search-form .form-check-input:checked').val();
     let keywords = $('#keywords').val();
 
     let url = `http://${global.host}:8133/search/${tracker}/${keywords}`;
