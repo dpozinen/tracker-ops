@@ -1,11 +1,15 @@
+const mutated = new Event('mutated');
+
 function mutate(mutation) {
     mutationRequested = true
     stomp.send(`/stream/mutate/${mutation}`);
+    window.dispatchEvent(mutated)
 }
 
 function mutateWBody(mutation, body) {
     mutationRequested = true
     stomp.send(`/stream/mutate/${mutation}`, {}, JSON.stringify(body));
+    window.dispatchEvent(mutated)
 }
 
 function clearMutations() {

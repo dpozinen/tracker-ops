@@ -14,4 +14,8 @@ data class DataPoint(
     val uploadedBytes: String,
     val downloaded: Long,
     val downloadedBytes: String,
-)
+) {
+    fun emptyCopy(time: LocalDateTime) = this.copy(id = -1, time = time, downSpeed = 0, downSpeedBytes = "", upSpeed = 0, upSpeedBytes = "")
+
+    fun isEmptyCopy() = this.id == -1L
+}

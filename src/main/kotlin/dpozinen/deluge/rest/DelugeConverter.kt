@@ -32,7 +32,7 @@ class DelugeConverter {
         return DataPoint(
             id = entity.id!!,
             torrentId = entity.torrentId,
-            time = entity.time!!,
+            time = entity.time!!.truncatedTo(ChronoUnit.MINUTES),
             upSpeed = entity.upSpeed,
             upSpeedBytes = bytesToSpeed(entity.upSpeed.toDouble()),
             downSpeed = entity.downSpeed,
@@ -114,6 +114,7 @@ fun sizeToBytes(size: String) =
         size.contains("KiB") -> 1024.0
         size.contains("MiB") -> 1024.0 * 1024.0
         size.contains("GiB") -> 1024.0 * 1024.0 * 1024.0
+        size.contains("TiB") -> 1024.0 * 1024.0 * 1024.0 * 1024
         else -> 1.0
     }
 
