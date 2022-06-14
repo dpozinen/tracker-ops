@@ -55,7 +55,7 @@ class DelugeStatsService(
         points: List<DataPoint>,
         from: LocalDateTime,
         to: LocalDateTime,
-        interval: Duration,
+        interval: Duration, // dptodo when interval is big there are issues with not finding closest value
         fillEnd: Boolean
     ): List<DataPoint> {
         val timeToPoint = points.associateBy { it.time }
@@ -100,9 +100,9 @@ class DelugeStatsService(
 
 }
 
-private fun <E> List<E>.removeEndWhile(predicate: (E) -> Boolean): MutableList<E> {
-    val list = this.reversed().toMutableList()
-    val iterator = list.iterator()
+private fun <E> List<E>.removeEndWhile(predicate: (E) -> Boolean): List<E> {
+    val list = this.toMutableList()
+    val iterator = list.asReversed().iterator()
 
     for (e in iterator) if (predicate(e)) iterator.remove() else break
 

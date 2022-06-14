@@ -36,9 +36,9 @@ class DelugeStatsController(
     ): Stats {
         val timeFrom = timeAgo
             ?.let { converter.toLocalDateTime(it) }
-            ?: from?.let { parse(it) }
+            ?: from?.takeUnless { it.isBlank() }?.let { parse(it) }
             ?: now().minusHours(6)
-        val timeTo = to?.let { parse(it) } ?: now()
+        val timeTo = to?.takeUnless { it.isBlank() }?.let { parse(it) } ?: now()
         val stats = statsService.stats(torrentIds, timeFrom, timeTo, Duration.parse(interval), minPoints, fillEnd)
             .filterNot { it.value.isEmpty() }
 

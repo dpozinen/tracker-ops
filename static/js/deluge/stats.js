@@ -1,4 +1,4 @@
-let statsMode = 'UPLOADED'
+let statsMode = "UP_SPEED"
 let axisTicks = {
     UP_SPEED: {
         tickvals: [0, 50_000, 100_000, 200_000, 500_000, 1_000_000, 2_000_000],
@@ -38,7 +38,25 @@ function initStats() {
 }
 
 function requestStats() {
-    let url = `http://${global.host}:8133/deluge/stats?ago=3d&interval=5h&minPoints=10&fillEnd=true`;
+    let from = $('#fromDate').val()
+    let to = $('#toDate').val()
+    let agoN = $('#ago-n').val();
+    let ago = agoN + $('#ago-d').val()
+    let intervalN = $('#interval-n').val();
+    let interval = intervalN + $('#interval-d').val()
+    let minPoints = $('#mindPoints').val()
+    statsMode = $('#data-mode').val()
+
+    let base = `http://${global.host}:8133/deluge/stats`;
+    let params = ""
+    if (minPoints) params += `&minPoints=${minPoints}`
+    if (intervalN) params += `&interval=${interval}`
+
+    let url
+
+    if (agoN) url = base + `?ago=${ago}&${params}`;
+    else url = base + `?from=${from}&to=${to}&${params}`;
+
     $.ajax({
         type: "GET",
         dataType: "json",
