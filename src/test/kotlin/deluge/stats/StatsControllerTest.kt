@@ -20,6 +20,8 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.MockMvcResultMatchersDsl
 import org.springframework.test.web.servlet.get
 import kotlin.test.Test
+import kotlin.time.Duration
+import kotlin.time.ExperimentalTime
 
 @WebMvcTest(DelugeStatsController::class)
 @ContextConfiguration(classes = [App::class, StatsControllerTest.Config::class])
@@ -32,10 +34,11 @@ class StatsControllerTest(@Autowired val mockMvc: MockMvc) {
     @MockkBean
     lateinit var torrentService: DelugeService
 
+    @OptIn(ExperimentalTime::class)
     @Test
     fun `should get stats`() {
         every {
-            statsService.stats(setOf("123"), Data.now.minusHours(5), Data.now)
+            statsService.stats(setOf("123"), Data.now.minusHours(5), Data.now, Duration.parse("5m"), 3, false)
         } returns mapOf("123" to listOf(Data.dataPointA1, Data.dataPointA))
 
         every {
@@ -57,7 +60,7 @@ class StatsControllerTest(@Autowired val mockMvc: MockMvc) {
     @Test
     fun `should get stats default time`() {
         every {
-            statsService.stats(any(), any(), any())
+            statsService.stats(any(), any(), any(),any(), any(), any())
         } returns mapOf("123" to listOf(Data.dataPointA1, Data.dataPointA))
 
         every {
@@ -75,7 +78,7 @@ class StatsControllerTest(@Autowired val mockMvc: MockMvc) {
     @Test
     fun `should get stats relative`() {
         every {
-            statsService.stats(eq(setOf("123")), any(), any())
+            statsService.stats(eq(setOf("123")), any(), any(), any(), any(), any())
         } returns mapOf("123" to listOf(Data.dataPointA1, Data.dataPointA))
 
         every {

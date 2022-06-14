@@ -6,6 +6,7 @@ import dpozinen.tracker.Torrent
 import org.springframework.http.HttpHeaders
 import java.net.HttpCookie
 import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 
 class Data {
 
@@ -121,7 +122,7 @@ class Data {
             return httpHeaders
         }
 
-        val now: LocalDateTime = LocalDateTime.now()
+        val now: LocalDateTime = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES)
         val dataPointEntityA = DataPointEntity(
             id = 1,
             torrentId = "123",
@@ -138,7 +139,7 @@ class Data {
             uploaded = 1024 * 1024 * 1024,
             upSpeed = 1024 * 1024 * 100,
             downSpeed = 1024 * 1024 * 10,
-            time = now
+            time = now.plusMinutes(5).truncatedTo(ChronoUnit.MINUTES)
         )
 
         val dataPointEntityB = DataPointEntity(
@@ -170,7 +171,7 @@ class Data {
             uploaded = 1024 * 1024 * 1024,
             upSpeed = 1024 * 1024 * 100,
             downSpeed = 1024 * 1024 * 10,
-            time = now,
+            time = now.plusMinutes(5).truncatedTo(ChronoUnit.MINUTES),
             upSpeedBytes = "100.0 MiB/s",
             downSpeedBytes = "10.0 MiB/s",
             uploadedBytes = "1.0 GiB",

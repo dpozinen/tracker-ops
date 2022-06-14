@@ -20,6 +20,8 @@ import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import java.time.LocalDateTime
 import kotlin.test.Test
+import kotlin.time.Duration
+import kotlin.time.ExperimentalTime
 
 class StatServiceTest {
 
@@ -56,24 +58,25 @@ class StatServiceTest {
         verify(exactly = 0) { dataPointRepo.saveAll(listOf(empty(dataPointEntityA), empty(dataPointEntityB))) }
     }
 
+    @OptIn(ExperimentalTime::class)
     @Test
     fun `should get stats`() {
         val statsService = DelugeStatsService(dataPointRepo, delugeTorrentRepo, delugeService, converter)
         val torrents = allTorrents().map { it.id }
-        val from = LocalDateTime.now().minusHours(6)
-        val to = LocalDateTime.now()
+        val from = Data.now.minusHours(6)
+        val to = Data.now.plusHours(5)
 
         every {
             dataPointRepo.findByTorrentsInTimeFrame(torrents, from, to)
         } returns listOf(dataPointEntityA, dataPointEntityA1, dataPointEntityB)
 
-        val stats = statsService.stats(torrents, from, to)
+        val stats = statsService.stats(torrents, from, to, Duration.parse("5m"), 0, false)
 
         assertThat(stats)
-            .extractingByKey("123").isEqualTo(listOf(dataPointA, dataPointA1))
+            .extractingByKey("123").asList().contains(dataPointA, dataPointA1)
 
         assertThat(stats)
-            .extractingByKey("456").isEqualTo(listOf(dataPointB))
+            .extractingByKey("456").asList().contains(dataPointB)
     }
 
     private fun empty(entity: DataPointEntity) = DataPointEntity(
