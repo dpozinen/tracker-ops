@@ -26,7 +26,7 @@ class StatJobTest {
         every { delugeStatsService.updateStats() } answers { counter++ }
 
         TimeUnit.SECONDS.sleep(10)
-        Assertions.assertThat(counter).isEqualTo(3)
+        Assertions.assertThat(counter).isGreaterThan(2)
     }
 
 }
