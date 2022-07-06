@@ -6,6 +6,8 @@ import dpozinen.deluge.mutations.Mutation
 import dpozinen.deluge.rest.DelugeClient
 import dpozinen.deluge.rest.DelugeParams
 import dpozinen.deluge.rest.DelugeConverter
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Profile
@@ -17,7 +19,8 @@ import java.net.HttpCookie
 class RealDelugeService(
     @Value("\${tracker-ops.deluge.download-folder}") private val downloadFolder: String,
     private val delugeClient: DelugeClient,
-    private val converter: DelugeConverter
+    private val converter: DelugeConverter,
+    private val callbacks: DownloadedCallbacks
 ) : DelugeService {
     private val log = KotlinLogging.logger {}
     private var session: HttpCookie = HttpCookie.parse("dummy=dummy; max-age=0")[0]
@@ -39,7 +42,17 @@ class RealDelugeService(
 
     override fun addMagnet(magnet: String) {
         login()
+        val oldTorrents = allTorrents().toMutableList()
         delugeClient.addMagnet(DelugeParams.addMagnet(magnet, downloadFolder), session)
+        runBlocking { delay(500) }
+        val newTorrent = allTorrents().toMutableList().let { it.removeAll(oldTorrents); it }
+        if (newTorrent.isNotEmpty()) {
+            runBlocking {
+                callbacks.follow(newTorrent[0]) { allTorrents() }
+            }
+        } else {
+            log.warn { "could not launch torrent download tracking job" }
+        }
     }
 
     override fun statefulTorrents(): DelugeTorrents {
