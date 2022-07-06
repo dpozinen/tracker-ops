@@ -39,7 +39,7 @@ class DelugeController(private val service: DelugeService,
     @MessageMapping("/stream/commence")
     fun streamCommence() = runBlocking {
         streamStop()
-        stream = launch {
+        stream = CoroutineScope(Dispatchers.IO).launch {
             log.info("Commencing torrent stream")
             val channel = produceTorrents()
             channel.consumeEach { sendTorrents { it } }

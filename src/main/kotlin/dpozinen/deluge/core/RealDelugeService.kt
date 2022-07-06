@@ -6,8 +6,11 @@ import dpozinen.deluge.mutations.Mutation
 import dpozinen.deluge.rest.DelugeClient
 import dpozinen.deluge.rest.DelugeParams
 import dpozinen.deluge.rest.DelugeConverter
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.CoroutineScope
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Profile
@@ -48,7 +51,9 @@ class RealDelugeService(
         val newTorrent = allTorrents().toMutableList().let { it.removeAll(oldTorrents); it }
         if (newTorrent.isNotEmpty()) {
             runBlocking {
-                callbacks.follow(newTorrent[0]) { allTorrents() }
+                CoroutineScope(Dispatchers.IO).launch {
+                    callbacks.follow(newTorrent[0]) { allTorrents() }
+                }
             }
         } else {
             log.warn { "could not launch torrent download tracking job" }
