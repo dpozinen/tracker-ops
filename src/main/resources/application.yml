@@ -1,5 +1,12 @@
 tracker-ops:
   host: 192.168.0.130
+  truenas:
+    host: 192.168.0.184
+    api-key: /sensitive/trueNas
+  plex:
+    host: 192.168.0.114
+    port: 32400
+    api-key: /sensitive/plex
   deluge:
     host: 192.168.0.180
     port: 8112

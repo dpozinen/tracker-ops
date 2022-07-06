@@ -1,0 +1,48 @@
+package deluge
+
+import dpozinen.App
+import dpozinen.deluge.core.DownloadedCallbacks
+import kotlinx.coroutines.runBlocking
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatNoException
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
+import java.util.concurrent.atomic.AtomicInteger
+
+@SpringBootTest(
+    classes = [App::class],
+    webEnvironment = SpringBootTest.WebEnvironment.NONE
+)
+@ActiveProfiles("test")
+class DownloadedCallbacksTest {
+
+    @Autowired
+    lateinit var downloadedCallbacks: DownloadedCallbacks
+
+    @Test @DisabledIfEnvironmentVariable(named = "CI", matches = "true", disabledReason = "Only local")
+    fun `trigger completed move`() {
+        assertThatNoException().isThrownBy {
+            downloadedCallbacks.trueNasMove()
+            downloadedCallbacks.plexScanLib()
+        }
+    }
+
+    @Test @DisabledIfEnvironmentVariable(named = "CI", matches = "true", disabledReason = "Only local")
+    fun `follow torrent download`() {
+        val ok = AtomicInteger(0)
+        runBlocking {
+            downloadedCallbacks.follow(Data.delugeTorrent) {
+                if (ok.get() >= 1)
+                    listOf(Data.delugeTorrent.copy(state = "Downloaded"))
+                else {
+                    ok.incrementAndGet()
+                    listOf()
+                }
+            }
+            assertThat(ok).hasValue(1)
+        }
+    }
+}

@@ -15,6 +15,8 @@
         <encoder><pattern>%d{MM.dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern></encoder>
     </appender>
 
+    <logger name="org.apache.http.client.protocol.ResponseProcessCookies" level="ERROR" />
+
     <root level="info">
         <appender-ref ref="FILE" />
         <appender-ref ref="CONSOLE" />
