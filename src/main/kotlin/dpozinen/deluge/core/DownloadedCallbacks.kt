@@ -99,7 +99,7 @@ class DownloadedCallbacks(
 
         repeat(followFor.toLong(DurationUnit.MINUTES).toInt()) {
             delay(Dur.minutes(1))
-            if (update().any { it.id == torrent.id && it.state == "Downloaded" }) {
+            if (update().any { it.id == torrent.id && it.state == "Seeding" }) {
                 val delay = calcDelayBetweenTriggers(torrent)
 
                 trigger(delay)

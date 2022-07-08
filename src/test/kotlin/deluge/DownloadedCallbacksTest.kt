@@ -37,13 +37,25 @@ class DownloadedCallbacksTest {
         runBlocking {
             downloadedCallbacks.follow(Data.delugeTorrent) {
                 if (ok.get() == 2)
-                    listOf(Data.delugeTorrent.copy(state = "Downloaded"))
+                    listOf(Data.delugeTorrent.copy(state = "Seeding"))
                 else {
                     ok.incrementAndGet()
                     listOf()
                 }
             }
             assertThat(ok).hasValue(2)
+        }
+    }
+
+    @Test @DisabledIfEnvironmentVariable(named = "CI", matches = "true", disabledReason = "Only local")
+    fun `follow torrent download for too long`() {
+        val ok = AtomicInteger(0)
+        runBlocking {
+            downloadedCallbacks.follow(Data.delugeTorrent) {
+                ok.incrementAndGet()
+                listOf()
+            }
+            assertThat(ok).hasValue(3)
         }
     }
 }
