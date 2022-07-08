@@ -1,6 +1,7 @@
 package dpozinen.deluge.rest
 
 import dpozinen.deluge.core.DelugeService
+import dpozinen.deluge.core.DownloadedCallbacks
 import dpozinen.deluge.domain.DelugeTorrents
 import dpozinen.deluge.mutations.*
 import dpozinen.errors.DelugeServerDownException
@@ -18,9 +19,15 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class DelugeController(private val service: DelugeService,
+                       private val callbacks: DownloadedCallbacks,
                        private val template: SimpMessagingTemplate) {
     private val log = KotlinLogging.logger {}
     private var stream: Job? = null
+
+    @PostMapping("/on-downloaded")
+    fun onDownloaded(@RequestBody magnet: String) = runBlocking {
+        CoroutineScope(Dispatchers.IO).launch { callbacks.trigger() }
+    }
 
     @PostMapping("/deluge")
     fun addMagnet(@RequestBody magnet: String) = service.addMagnet(magnet)

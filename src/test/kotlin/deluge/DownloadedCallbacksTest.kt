@@ -13,6 +13,7 @@ import org.springframework.test.context.ActiveProfiles
 import java.util.concurrent.atomic.AtomicInteger
 
 @SpringBootTest(
+    properties = ["tracker-ops.follow-duration=3m"],
     classes = [App::class],
     webEnvironment = SpringBootTest.WebEnvironment.NONE
 )
@@ -35,14 +36,14 @@ class DownloadedCallbacksTest {
         val ok = AtomicInteger(0)
         runBlocking {
             downloadedCallbacks.follow(Data.delugeTorrent) {
-                if (ok.get() >= 1)
+                if (ok.get() == 2)
                     listOf(Data.delugeTorrent.copy(state = "Downloaded"))
                 else {
                     ok.incrementAndGet()
                     listOf()
                 }
             }
-            assertThat(ok).hasValue(1)
+            assertThat(ok).hasValue(2)
         }
     }
 }

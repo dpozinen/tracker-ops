@@ -114,6 +114,7 @@ fun sizeToBytes(size: String) =
         size.contains("KiB") -> 1024.0
         size.contains("MiB") -> 1024.0 * 1024.0
         size.contains("GiB") -> 1024.0 * 1024.0 * 1024.0
+        size.contains("TiB") -> 1024.0 * 1024.0 * 1024.0 * 1024.0
         else -> 1.0
     }
 
