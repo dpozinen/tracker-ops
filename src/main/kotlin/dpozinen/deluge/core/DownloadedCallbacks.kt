@@ -46,15 +46,6 @@ class DownloadedCallbacks(
     fun init() {
         this.plexApiKey = this::class.java.getResource(plexApiKeyPath)?.readText() ?: ""
         this.trueNasApiKey = this::class.java.getResource(trueNasApiKeyPath)?.readText() ?: ""
-        rest.exchange<String>(
-            method(HttpMethod.POST, URI("https://$trueNasHost/api/v2.0/cronjob/run"))
-                .headers {
-                    it["Content-Type"] = "application/json"
-                    it["Accept"] = "*/*"
-                    it["Authorization"] = "Bearer $trueNasApiKey"
-                }
-                .body("""{ "id": 1,  "skip_disabled": false }""")
-        )
     }
 
     fun trueNasMove() {
@@ -64,7 +55,7 @@ class DownloadedCallbacks(
                     .headers {
                         it["Content-Type"] = "application/json"
                         it["Accept"] = "*/*"
-                        it["Authorization"] = "Bearer $trueNasApiKey"
+                        it["Authorization"] = "Bearer $trueNasApiKey".trim()
                     }
                     .body("""{ "id": 1,  "skip_disabled": false }""")
             )
@@ -85,12 +76,14 @@ class DownloadedCallbacks(
     }
 
     suspend fun trigger(delay: Dur = Dur.minutes(2)) {
+        log.info("Triggering true nas move job")
         trueNasMove()
-        log.info("Triggered true nas move job")
+
+        log.info { "Waiting for $delay before triggering plex scan" }
 
         delay(delay)
 
-        log.info("Triggered plex scan lib")
+        log.info("Triggering plex scan lib")
         plexScanLib()
     }
 
