@@ -52,7 +52,11 @@ class DownloadedCallbacks(
         runCatching {
             rest.exchange<String>(
                 method(HttpMethod.POST, URI("https://$trueNasHost/api/v2.0/cronjob/run"))
-                    .header("Authorization", "Bearer $trueNasApiKey")
+                    .headers {
+                        it["Content-Type"] = "application/json"
+                        it["Accept"] = "*/*"
+                        it["Authorization"] = "Bearer $trueNasApiKey"
+                    }
                     .body("""{ "id": 1,  "skip_disabled": false }""")
             )
         }.onFailure { log.error { it } }
@@ -61,7 +65,7 @@ class DownloadedCallbacks(
     fun plexScanLib() {
         fun scan(id: Int) = runCatching {
             rest.exchange<Any>(
-                get(URI("https://$plexHost:$plexPort/library/sections/$id/refresh?X-Plex-Token=$plexApiKey")).build()
+                get(URI("https://$plexHost:$plexPort/library/sections/$id/refresh?X-Plex-Token=$plexApiKey".trim())).build()
             )
         }.onFailure { log.error { it } }
 
