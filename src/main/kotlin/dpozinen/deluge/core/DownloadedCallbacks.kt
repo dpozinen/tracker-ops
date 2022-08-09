@@ -46,6 +46,15 @@ class DownloadedCallbacks(
     fun init() {
         this.plexApiKey = this::class.java.getResource(plexApiKeyPath)?.readText() ?: ""
         this.trueNasApiKey = this::class.java.getResource(trueNasApiKeyPath)?.readText() ?: ""
+        rest.exchange<String>(
+            method(HttpMethod.POST, URI("https://$trueNasHost/api/v2.0/cronjob/run"))
+                .headers {
+                    it["Content-Type"] = "application/json"
+                    it["Accept"] = "*/*"
+                    it["Authorization"] = "Bearer $trueNasApiKey"
+                }
+                .body("""{ "id": 1,  "skip_disabled": false }""")
+        )
     }
 
     fun trueNasMove() {
@@ -60,6 +69,7 @@ class DownloadedCallbacks(
                     .body("""{ "id": 1,  "skip_disabled": false }""")
             )
         }.onFailure { log.error { it } }
+            .onSuccess { log.info { "True nas move job succeeded" } }
     }
 
     fun plexScanLib() {
@@ -68,6 +78,7 @@ class DownloadedCallbacks(
                 get(URI("https://$plexHost:$plexPort/library/sections/$id/refresh?X-Plex-Token=$plexApiKey".trim())).build()
             )
         }.onFailure { log.error { it } }
+            .onSuccess { log.info { "Plex scan lib $id job succeeded" } }
 
         scan(1)
         scan(2)
