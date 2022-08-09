@@ -16,6 +16,7 @@
     </appender>
 
     <logger name="org.apache.http.client.protocol.ResponseProcessCookies" level="ERROR" />
+    <logger name="org.springframework.web.socket.config.WebSocketMessageBrokerStats" level="WARN" />
 
     <root level="info">
         <appender-ref ref="FILE" />
