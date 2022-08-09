@@ -49,19 +49,22 @@ class DownloadedCallbacks(
     }
 
     fun trueNasMove() {
-        rest.exchange<String>(
-            method(HttpMethod.POST, URI("https://$trueNasHost/api/v2.0/cronjob/run"))
-                .header("Authorization", "Bearer $trueNasApiKey")
-                .body("""{ "id": 1,  "skip_disabled": false }""")
-        )
+        runCatching {
+            rest.exchange<String>(
+                method(HttpMethod.POST, URI("https://$trueNasHost/api/v2.0/cronjob/run"))
+                    .header("Authorization", "Bearer $trueNasApiKey")
+                    .body("""{ "id": 1,  "skip_disabled": false }""")
+            )
+        }.onFailure { log.error { it } }
     }
 
     fun plexScanLib() {
-        fun scan(id: Int) {
+        fun scan(id: Int) = runCatching {
             rest.exchange<Any>(
                 get(URI("https://$plexHost:$plexPort/library/sections/$id/refresh?X-Plex-Token=$plexApiKey")).build()
             )
-        }
+        }.onFailure { log.error { it } }
+
         scan(1)
         scan(2)
     }
