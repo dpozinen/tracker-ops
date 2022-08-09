@@ -99,9 +99,7 @@ class DownloadedCallbacks(
 
         repeat(followFor.toLong(DurationUnit.MINUTES).toInt()) {
             delay(Dur.minutes(1))
-            val updated = update()
-            log.info { updated }
-            if (updated.any { it.id == torrent.id && it.state != "Downloading" }) {
+            if (update().any { it.id == torrent.id && it.state != "Downloading" }) {
                 val delay = calcDelayBetweenTriggers(torrent)
                 log.info { "Torrent ${torrent.name} is done downloading, triggering scan jobs with $delay delay" }
 
