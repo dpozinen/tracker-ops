@@ -34,8 +34,9 @@ open class Deserializers(@Value("\${tracker-ops.host:localhost}") private val ad
             val request = (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes).request
 
             json.writeStartArray()
-            for (i in torrents.torrents.indices) {
-                val torrent = torrents.torrents[i]
+            val sortedTorrents = torrents.torrents.sortedWith(qxrFirstComparator)
+            for (i in sortedTorrents.indices) {
+                val torrent = sortedTorrents[i]
                 with(json) {
                     writeStartObject()
 
@@ -60,5 +61,13 @@ open class Deserializers(@Value("\${tracker-ops.host:localhost}") private val ad
     companion object {
         lateinit var address: String
         lateinit var port: String
+        val qxrFirstComparator = Comparator<Torrent> {
+            a, _ ->
+            if (a.contributor.lowercase().trim().contains("qxr")) {
+                -1
+            } else {
+                1
+            }
+        }
     }
 }

@@ -31,6 +31,25 @@ class ControllerTest(@Autowired val mockMvc: MockMvc,
     private lateinit var service: TrackerService
 
     @Test
+    fun `should sort results qxr first`() {
+        every { service.search(Trackers.OneThreeThree, "abc abc") }
+            .returns(Torrents(listOf(
+                SEARCH_EXPECTED_TORRENT.copy(contributor = "abc"),
+                SEARCH_EXPECTED_TORRENT,
+                SEARCH_EXPECTED_TORRENT.copy(contributor = "abc"),
+                SEARCH_EXPECTED_TORRENT.copy(contributor = "qxr"),
+            )))
+
+        mockMvc.get("/search/133/abc abc")
+            .andExpect {
+                jsonPath<String>("[0].contributor", `is`("qxr"))
+                jsonPath<String>("[1].contributor", `is`("QxR"))
+                jsonPath<String>("[2].contributor", `is`("abc"))
+                jsonPath<String>("[3].contributor", `is`("abc"))
+            }
+    }
+
+    @Test
     fun `should search`() {
         every { service.search(Trackers.OneThreeThree, "abc abc") }
             .returns(Torrents(listOf(SEARCH_EXPECTED_TORRENT)))
