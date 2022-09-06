@@ -62,8 +62,10 @@ open class Deserializers(@Value("\${tracker-ops.host:localhost}") private val ad
         lateinit var address: String
         lateinit var port: String
         val qxrFirstComparator = Comparator<Torrent> {
-            a, _ ->
+            a, b ->
             if (a.contributor.lowercase().trim().contains("qxr")) {
+                -1
+            } else if (a.contributor.isNotEmpty() && b.contributor.isEmpty()) {
                 -1
             } else {
                 1

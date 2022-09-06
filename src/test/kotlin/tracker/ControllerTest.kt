@@ -36,7 +36,7 @@ class ControllerTest(@Autowired val mockMvc: MockMvc,
             .returns(Torrents(listOf(
                 SEARCH_EXPECTED_TORRENT.copy(contributor = "abc"),
                 SEARCH_EXPECTED_TORRENT,
-                SEARCH_EXPECTED_TORRENT.copy(contributor = "abc"),
+                SEARCH_EXPECTED_TORRENT.copy(contributor = ""),
                 SEARCH_EXPECTED_TORRENT.copy(contributor = "qxr"),
             )))
 
@@ -45,7 +45,7 @@ class ControllerTest(@Autowired val mockMvc: MockMvc,
                 jsonPath<String>("[0].contributor", `is`("qxr"))
                 jsonPath<String>("[1].contributor", `is`("QxR"))
                 jsonPath<String>("[2].contributor", `is`("abc"))
-                jsonPath<String>("[3].contributor", `is`("abc"))
+                jsonPath<String>("[3].contributor", `is`(""))
             }
     }
 
