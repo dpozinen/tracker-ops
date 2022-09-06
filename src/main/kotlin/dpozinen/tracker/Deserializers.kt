@@ -47,7 +47,7 @@ open class Deserializers(@Value("\${tracker-ops.host:localhost}") private val ad
                     writeNumberField("leeches", torrent.leeches)
                     writeStringField("date", torrent.date)
                     writeStringField("contributor", torrent.contributor)
-                    writeStringField("link", searchResultLink(request, i))
+                    writeStringField("link", searchResultLink(request, torrents.torrents.indexOf(torrent)))
                     writeEndObject()
                 }
             }
