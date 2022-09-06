@@ -110,13 +110,20 @@ class DownloadedCallbacks(
 
         repeat(followFor.toLong(DurationUnit.MINUTES).toInt()) {
             delay(Dur.minutes(1))
-            if (update().any { it.id == torrent.id && it.state != "Downloading" }) {
+            val torrents = update()
+            val victim = torrents.firstOrNull { it.id == torrent.id }
+
+            if (victim == null) {
+                log.debug { "${torrent.name} is not found. What the fuck. Here's what was found" }
+            } else if (victim.state != "Downloading") {
                 val delay = calcDelayBetweenTriggers(torrent)
                 log.info { "Torrent ${torrent.name} is done downloading, triggering scan jobs with $delay delay" }
 
                 trigger(delay)
 
                 return@follow
+            } else {
+                log.debug { "${torrent.name} is still downloading.\n $victim" }
             }
         }
         log.info("It took over $followFor for ${torrent.name} to complete, stopped following")

@@ -13,7 +13,9 @@ import org.springframework.test.context.ActiveProfiles
 import java.util.concurrent.atomic.AtomicInteger
 
 @SpringBootTest(
-    properties = ["tracker-ops.follow-duration=3m"],
+    properties = [
+        "tracker-ops.follow-duration=3m",
+        "logging.level.dpozinen.deluge.core.DownloadedCallbacks=debug"],
     classes = [App::class],
     webEnvironment = SpringBootTest.WebEnvironment.NONE
 )
