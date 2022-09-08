@@ -4,13 +4,9 @@ import dpozinen.deluge.domain.DelugeTorrent
 import dpozinen.deluge.domain.DelugeTorrents
 import dpozinen.deluge.mutations.Mutation
 import dpozinen.deluge.rest.DelugeClient
-import dpozinen.deluge.rest.DelugeParams
 import dpozinen.deluge.rest.DelugeConverter
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.CoroutineScope
+import dpozinen.deluge.rest.DelugeParams
+import kotlinx.coroutines.*
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Profile
@@ -45,17 +41,21 @@ class RealDelugeService(
 
     override fun addMagnet(magnet: String) {
         login()
-        val oldTorrents = allTorrents().toMutableList()
+        val oldTorrents = allTorrents().toMutableList().map { it.id }
         delugeClient.addMagnet(DelugeParams.addMagnet(magnet, downloadFolder), session)
         runBlocking { delay(500) }
-        val newTorrent = allTorrents().toMutableList().let { it.removeAll(oldTorrents); it }
-        if (newTorrent.isNotEmpty()) {
+        val newTorrent = allTorrents().toMutableList()
+            .let { newTorrents ->
+                newTorrents.removeIf { oldTorrents.contains(it.id) }
+                newTorrents.firstOrNull()
+            }
+        if (newTorrent != null) {
             runBlocking {
                 CoroutineScope(Dispatchers.IO).launch {
-                    callbacks.follow(newTorrent[0]) { allTorrents() }
+                    callbacks.follow(newTorrent) { allTorrents() }
                 }
             }
-            log.debug { "Follow for ${newTorrent[0].name} triggered" }
+            log.debug { "Follow for ${newTorrent.name} triggered" }
         } else {
             log.warn { "could not launch torrent download tracking job" }
         }

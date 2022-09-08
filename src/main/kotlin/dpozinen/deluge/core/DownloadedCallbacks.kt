@@ -87,29 +87,13 @@ class DownloadedCallbacks(
         plexScanLib()
     }
 
-    private fun restTemplate() =
-        SSLContexts.custom()
-            .loadTrustMaterial(null) { _, _ -> true }
-            .build()
-            .let { SSLConnectionSocketFactory(it) { _, _ -> true } }
-            .let { HttpClients.custom().setSSLSocketFactory(it).build() }
-            .let { HttpComponentsClientHttpRequestFactory(it) }
-            .let {
-                RestTemplateBuilder()
-                    .setConnectTimeout(Duration.ofSeconds(5))
-                    .setReadTimeout(Duration.ofSeconds(5))
-                    .defaultHeader("Content-Type", "application/json")
-                    .defaultHeader("Accept", "*/*")
-                    .requestFactory { it }
-                    .build()
-            }
-
     suspend fun follow(torrent: DelugeTorrent, update: () -> List<DelugeTorrent>) {
         val followFor = Dur.parse(followDuration)
         log.info("Will follow download of torrent ${torrent.name} with id ${torrent.id} for $followFor")
 
         repeat(followFor.toLong(DurationUnit.MINUTES).toInt()) {
             delay(Dur.minutes(1))
+
             runCatching {
                 val torrents = update()
                 val victim = torrents.firstOrNull { it.id == torrent.id }
@@ -143,5 +127,22 @@ class DownloadedCallbacks(
             else -> Dur.seconds(30)
         }
     }
+
+    private fun restTemplate() =
+        SSLContexts.custom()
+            .loadTrustMaterial(null) { _, _ -> true }
+            .build()
+            .let { SSLConnectionSocketFactory(it) { _, _ -> true } }
+            .let { HttpClients.custom().setSSLSocketFactory(it).build() }
+            .let { HttpComponentsClientHttpRequestFactory(it) }
+            .let {
+                RestTemplateBuilder()
+                    .setConnectTimeout(Duration.ofSeconds(5))
+                    .setReadTimeout(Duration.ofSeconds(5))
+                    .defaultHeader("Content-Type", "application/json")
+                    .defaultHeader("Accept", "*/*")
+                    .requestFactory { it }
+                    .build()
+            }
 
 }
