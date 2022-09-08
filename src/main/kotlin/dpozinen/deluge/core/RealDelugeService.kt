@@ -55,6 +55,7 @@ class RealDelugeService(
                     callbacks.follow(newTorrent[0]) { allTorrents() }
                 }
             }
+            log.debug { "Follow for ${newTorrent[0].name} triggered" }
         } else {
             log.warn { "could not launch torrent download tracking job" }
         }
