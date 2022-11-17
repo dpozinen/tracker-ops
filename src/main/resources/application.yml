@@ -18,6 +18,10 @@ tracker-ops:
 server:
   port: 8133
 
+kafka:
+  address: localhost:29092
+  topic: stats
+
 ---
 
 spring:

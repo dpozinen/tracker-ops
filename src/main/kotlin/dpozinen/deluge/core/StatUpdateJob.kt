@@ -24,7 +24,7 @@ open class StatUpdateJob(
     fun startJob() {
         GlobalScope.launch(Dispatchers.IO) {
             repeat(Int.MAX_VALUE) {
-                runCatching { delugeStatsService.updateStats() }
+                runCatching { delugeStatsService.collectStats() }
                     .onFailure {
                         log.error { it }
                     }
