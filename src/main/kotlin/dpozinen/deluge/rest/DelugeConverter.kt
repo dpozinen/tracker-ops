@@ -1,20 +1,17 @@
 package dpozinen.deluge.rest
 
-import dpozinen.deluge.db.entities.DataPointEntity
 import dpozinen.deluge.domain.DelugeTorrent
-import dpozinen.deluge.db.entities.DelugeTorrentEntity
 import dpozinen.deluge.domain.DataPoint
 import dpozinen.deluge.mutations.By
 import dpozinen.deluge.mutations.By.Companion.bySize
 import org.springframework.stereotype.Component
 import java.time.Instant
-import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatter.ofPattern
-import java.time.temporal.ChronoUnit
 import kotlin.math.round
-import kotlin.time.DurationUnit
 import kotlin.time.ExperimentalTime
 
 @Component
@@ -22,36 +19,21 @@ import kotlin.time.ExperimentalTime
 @OptIn(ExperimentalTime::class)
 class DelugeConverter {
 
-    fun toLocalDateTime(timeAgo: String): LocalDateTime {
-        val duration = kotlin.time.Duration.parse(timeAgo)
-        val millis = duration.toLong(DurationUnit.MILLISECONDS)
-        return LocalDateTime.now().minus(millis, ChronoUnit.MILLIS)
-    }
-
-    fun toDataPoint(entity: DataPointEntity): DataPoint {
-        return DataPoint(
-            id = entity.id!!,
-            torrentId = entity.torrentId,
-            time = entity.time!!,
-            upSpeed = entity.upSpeed,
-            upSpeedBytes = bytesToSpeed(entity.upSpeed.toDouble()),
-            downSpeed = entity.downSpeed,
-            downSpeedBytes = bytesToSpeed(entity.downSpeed.toDouble()),
-            uploaded = entity.uploaded,
-            uploadedBytes = bytesToSize(entity.uploaded.toDouble()),
-            downloaded = entity.downloaded,
-            downloadedBytes = bytesToSize(entity.downloaded.toDouble())
-        )
-    }
-
     fun convert(torrents: List<DelugeTorrent>) = torrents.map { convert(it) }
 
-    fun convert(torrent: DelugeTorrent) = DelugeTorrentEntity(
-        id = torrent.id,
+    private fun convert(torrent: DelugeTorrent) = DataPoint(
+        torrentId = torrent.id,
         name = torrent.name,
         size = bySize().comparable(torrent.size).toLong(),
-        dateAdded = By.date.comparable(torrent.date)
+        dateAdded = Instant.ofEpochSecond(By.date.comparable(torrent.date).toEpochSecond(LocalTime.NOON, ZoneOffset.UTC)),
+        upSpeed = toBytes(torrent.uploadSpeed),
+        downSpeed = toBytes(torrent.downloadSpeed),
+        uploaded = toBytes(torrent.uploaded),
+        downloaded = toBytes(torrent.downloaded),
+        timestamp = Instant.now()
     )
+
+    private fun toBytes(humanReadableForm: String) = bySize().comparable(humanReadableForm).toLong()
 
     fun convert(torrent: Map.Entry<String, Map<String, *>>): DelugeTorrent {
         val id = torrent.key

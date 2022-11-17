@@ -1,17 +1,16 @@
 package dpozinen.deluge.domain
 
-import java.time.LocalDateTime
+import java.time.Instant
 
 data class DataPoint(
-    val id: Long,
     val torrentId: String,
-    var time: LocalDateTime,
+    val name: String,
+    val size: Long,
+    val dateAdded: Instant,
+
     val upSpeed: Long,
-    val upSpeedBytes: String,
     val downSpeed: Long,
-    val downSpeedBytes: String,
     val uploaded: Long,
-    val uploadedBytes: String,
     val downloaded: Long,
-    val downloadedBytes: String,
+    val timestamp: Instant
 )
