@@ -19,7 +19,7 @@ server:
   port: 8133
 
 kafka:
-  address: 192.168.0.155:29092
+  address: 192.168.0.155:29093
   topic: stats
 
 ---
