@@ -4,6 +4,7 @@ import dpozinen.deluge.db.MigrationRepository
 import dpozinen.deluge.kafka.StatsKafkaProducer
 import dpozinen.deluge.rest.DelugeConverter
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.annotation.Profile
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Service
@@ -25,7 +26,7 @@ class DelugeStatsService(
         producer.send(stats)
     }
 
-    @EventListener
+    @EventListener(value = [ApplicationReadyEvent::class])
     fun migrateStatsToInflux() {
         if (performMigration) {
             for (i in 0..50_000) {

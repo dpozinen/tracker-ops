@@ -5,10 +5,7 @@ import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Component
 import java.sql.ResultSet
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.ZoneId
+import java.time.*
 import java.time.format.DateTimeFormatter
 
 @Component
@@ -36,17 +33,16 @@ class MigrationRepository(private val jdbcTemplate: NamedParameterJdbcTemplate) 
                 downSpeed = it.getLong("down_speed"),
                 uploaded = it.getLong("uploaded"),
                 downloaded = it.getLong("downloaded"),
-                timestamp = Instant.from(it.getTimestamp("time").toLocalDateTime())
+                timestamp = it.getTimestamp("time").toInstant()
             )
         }
     }
 
-    private fun parseDate(it: ResultSet) = Instant.from(
-        LocalDateTime.parse(
-            it.getString("date_added"),
-            DateTimeFormatter.ofPattern("yyyy-MM-dd")
-                            .withZone(ZoneId.of("Europe/Kiev"))
+    private fun parseDate(it: ResultSet) = Instant.ofEpochSecond(
+        LocalDate.parse(it.getString("date_added"),
+            DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                             .toEpochSecond(LocalTime.NOON, ZoneOffset.UTC)
         )
-    )
+
 
 }
