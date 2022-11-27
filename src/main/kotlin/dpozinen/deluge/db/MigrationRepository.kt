@@ -15,7 +15,7 @@ class MigrationRepository(private val jdbcTemplate: NamedParameterJdbcTemplate) 
         select * from deluge_torrent_entity as torrent
         inner join data_point_entity as dp on dp.torrent_id = torrent.id
         order by torrent.name
-        limit 5000
+        limit 2000
         offset :offset
     """.trimIndent()
 

@@ -37,7 +37,7 @@ class DelugeStatsService(
     fun migrateStatsToInflux() {
         if (performMigration) {
             for (i in 0..50_000) {
-                val stats = migrationRepository.findAll(i * 5000)
+                val stats = migrationRepository.findAll(i * 2000)
                 if (stats.isEmpty()) {
                     break
                 } else {
