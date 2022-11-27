@@ -26,7 +26,11 @@ class DelugeStatsService(
     fun collectStats() {
         val stats = converter.convert(delugeService.allTorrents())
 
-        producer.send(stats)
+        try {
+            producer.send(stats)
+        } catch (e: Exception) {
+            log.error(e) { "Could not send stats" }
+        }
     }
 
     @EventListener(value = [ApplicationReadyEvent::class])

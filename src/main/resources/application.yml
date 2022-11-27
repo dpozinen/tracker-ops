@@ -21,6 +21,7 @@ server:
 kafka:
   address: 192.168.0.155:29093
   topic: stats
+  blocked-timeout: 100000
 
 ---
 
