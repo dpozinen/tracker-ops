@@ -19,7 +19,7 @@ class RealDelugeService(
     @Value("\${tracker-ops.deluge.download-folder}") private val downloadFolder: String,
     private val delugeClient: DelugeClient,
     private val converter: DelugeConverter,
-    private val callbacks: DownloadedCallbacks
+    private val follower: DelugeDownloadFollower
 ) : DelugeService {
     private val log = KotlinLogging.logger {}
     private var session: HttpCookie = HttpCookie.parse("dummy=dummy; max-age=0")[0]
@@ -52,7 +52,7 @@ class RealDelugeService(
         if (newTorrent != null) {
             runBlocking {
                 CoroutineScope(Dispatchers.IO).launch {
-                    callbacks.follow(newTorrent) { allTorrents() }
+                    follower.follow(newTorrent) { allTorrents() }
                 }
             }
             log.debug { "Follow for ${newTorrent.name} triggered" }

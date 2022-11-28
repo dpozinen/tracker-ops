@@ -2,8 +2,6 @@
 
 package dpozinen.deluge.core
 
-import dpozinen.deluge.domain.DelugeTorrent
-import dpozinen.deluge.rest.round
 import kotlinx.coroutines.delay
 import mu.KotlinLogging
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory
@@ -21,7 +19,6 @@ import org.springframework.web.client.exchange
 import java.net.URI
 import java.time.Duration
 import javax.annotation.PostConstruct
-import kotlin.time.DurationUnit
 import kotlin.time.ExperimentalTime
 import kotlin.time.Duration as Dur
 
@@ -33,7 +30,6 @@ class DownloadedCallbacks(
     @Value("\${tracker-ops.plex.host}") private val plexHost: String,
     @Value("\${tracker-ops.plex.port}") private val plexPort: String,
     @Value("\${tracker-ops.plex.api-key}") private val plexApiKeyPath: String,
-    @Value("\${tracker-ops.follow-duration}") private val followDuration: String,
 ) {
     private val log = KotlinLogging.logger {}
 
@@ -85,47 +81,6 @@ class DownloadedCallbacks(
 
         log.info("Triggering plex scan lib")
         plexScanLib()
-    }
-
-    suspend fun follow(torrent: DelugeTorrent, update: () -> List<DelugeTorrent>) {
-        val followFor = Dur.parse(followDuration)
-        log.info("Will follow download of torrent ${torrent.name} with id ${torrent.id} for $followFor")
-
-        repeat(followFor.toLong(DurationUnit.MINUTES).toInt()) {
-            delay(Dur.minutes(1))
-
-            runCatching {
-                val torrents = update()
-                val victim = torrents.firstOrNull { it.id == torrent.id }
-
-                if (victim == null) {
-                    log.debug { "${torrent.name} is not found. What the fuck. Here's what was found" }
-                } else if (victim.state != "Downloading") {
-                    val delay = calcDelayBetweenTriggers(torrent)
-                    log.info { "Torrent ${torrent.name} is done downloading, triggering scan jobs with $delay delay" }
-
-                    trigger(delay)
-
-                    return@follow
-                } else {
-                    log.debug { "${torrent.name} is still downloading.\n $victim" }
-                }
-            }.onFailure { log.info { "Failed to follow ${torrent.name}" } }
-        }
-        log.info("It took over $followFor for ${torrent.name} to complete, stopped following")
-    }
-
-    private fun calcDelayBetweenTriggers(torrent: DelugeTorrent): Dur {
-        return when {
-            torrent.size.contains("GiB") -> {
-                val exactDelay = torrent.size.substringBefore(" ")
-                    .toDouble()
-                    .round(1)
-                    .times(10) // it takes about 10 seconds per Gb
-                Dur.seconds(exactDelay + (exactDelay / 2)) // + 50% overhead just in case
-            }
-            else -> Dur.seconds(30)
-        }
     }
 
     private fun restTemplate() =

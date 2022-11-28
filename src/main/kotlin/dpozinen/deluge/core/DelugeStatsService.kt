@@ -1,6 +1,8 @@
 package dpozinen.deluge.core
 
 import dpozinen.deluge.db.MigrationRepository
+import dpozinen.deluge.domain.DataPoint
+import dpozinen.deluge.domain.DelugeTorrent
 import dpozinen.deluge.kafka.StatsKafkaProducer
 import dpozinen.deluge.rest.DelugeConverter
 import mu.KotlinLogging
@@ -23,9 +25,19 @@ class DelugeStatsService(
 
     private val log = KotlinLogging.logger {}
 
+    fun sendAsStats(torrent: DelugeTorrent) {
+        val stats = listOf(converter.convert(torrent))
+
+        send(stats)
+    }
+
     fun collectStats() {
         val stats = converter.convert(delugeService.allTorrents())
 
+        send(stats)
+    }
+
+    private fun send(stats: List<DataPoint>) {
         try {
             producer.send(stats)
         } catch (e: Exception) {

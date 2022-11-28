@@ -1,6 +1,8 @@
 package deluge
 
+import Data
 import dpozinen.App
+import dpozinen.deluge.core.DelugeDownloadFollower
 import dpozinen.deluge.core.DownloadedCallbacks
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
@@ -15,15 +17,19 @@ import java.util.concurrent.atomic.AtomicInteger
 @SpringBootTest(
     properties = [
         "tracker-ops.follow-duration=3m",
+        "tracker-ops.follow-interval=1m",
         "logging.level.dpozinen.deluge.core.DownloadedCallbacks=debug"],
     classes = [App::class],
     webEnvironment = SpringBootTest.WebEnvironment.NONE
 )
 @ActiveProfiles("test")
-class DownloadedCallbacksTest {
+class DownloadedFollowTest {
 
     @Autowired
     lateinit var downloadedCallbacks: DownloadedCallbacks
+
+    @Autowired
+    lateinit var follower: DelugeDownloadFollower
 
     @Test @DisabledIfEnvironmentVariable(named = "CI", matches = "true", disabledReason = "Only local")
     fun `trigger completed move`() {
@@ -37,7 +43,7 @@ class DownloadedCallbacksTest {
     fun `follow torrent download`() {
         val ok = AtomicInteger(0)
         runBlocking {
-            downloadedCallbacks.follow(Data.delugeTorrent) {
+            follower.follow(Data.delugeTorrent) {
                 if (ok.get() == 2)
                     listOf(Data.delugeTorrent.copy(state = "Seeding"))
                 else {
@@ -45,15 +51,15 @@ class DownloadedCallbacksTest {
                     listOf()
                 }
             }
-            assertThat(ok).hasValue(2)
         }
+        assertThat(ok).hasValue(2)
     }
 
     @Test @DisabledIfEnvironmentVariable(named = "CI", matches = "true", disabledReason = "Only local")
     fun `follow torrent download for too long`() {
         val ok = AtomicInteger(0)
         runBlocking {
-            downloadedCallbacks.follow(Data.delugeTorrent) {
+            follower.follow(Data.delugeTorrent) {
                 ok.incrementAndGet()
                 listOf()
             }

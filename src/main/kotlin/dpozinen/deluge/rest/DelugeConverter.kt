@@ -1,7 +1,7 @@
 package dpozinen.deluge.rest
 
-import dpozinen.deluge.domain.DelugeTorrent
 import dpozinen.deluge.domain.DataPoint
+import dpozinen.deluge.domain.DelugeTorrent
 import dpozinen.deluge.mutations.By
 import dpozinen.deluge.mutations.By.Companion.bySize
 import org.springframework.stereotype.Component
@@ -21,7 +21,7 @@ class DelugeConverter {
 
     fun convert(torrents: List<DelugeTorrent>) = torrents.map { convert(it) }
 
-    private fun convert(torrent: DelugeTorrent) = DataPoint(
+    fun convert(torrent: DelugeTorrent) = DataPoint(
         torrentId = torrent.id,
         name = torrent.name,
         size = bySize().comparable(torrent.size).toLong(),
