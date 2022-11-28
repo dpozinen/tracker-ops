@@ -3,6 +3,8 @@
 package dpozinen.deluge.core
 
 import dpozinen.deluge.domain.DelugeTorrent
+import dpozinen.deluge.kafka.StatsKafkaProducer
+import dpozinen.deluge.rest.DelugeConverter
 import dpozinen.deluge.rest.round
 import kotlinx.coroutines.delay
 import mu.KotlinLogging
@@ -14,7 +16,8 @@ import kotlin.time.ExperimentalTime
 
 @Service
 class DelugeDownloadFollower(
-    private val statsService: DelugeStatsService,
+    private val converter: DelugeConverter,
+    private val producer: StatsKafkaProducer,
     private val callbacks: DownloadedCallbacks,
     @Value("\${tracker-ops.follow-duration:4h}") private val followDuration: String,
     @Value("\${tracker-ops.follow-interval:1m}") private val followInterval: String,
@@ -42,8 +45,10 @@ class DelugeDownloadFollower(
 
                     return@follow
                 } else {
-                    statsService.sendAsStats(victim)
                     log.debug { "${torrent.name} is still downloading.\n $victim" }
+
+                    val stats = converter.convert(listOf(victim))
+                    producer.send(stats)
                 }
             }.onFailure { log.info { "Failed to follow ${torrent.name}" } }
         }
