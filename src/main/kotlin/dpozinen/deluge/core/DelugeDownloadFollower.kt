@@ -10,8 +10,9 @@ import kotlinx.coroutines.delay
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import java.time.Instant
+import java.time.Instant.now
 import kotlin.time.Duration
-import kotlin.time.DurationUnit
 import kotlin.time.ExperimentalTime
 
 @Service
@@ -26,10 +27,15 @@ class DelugeDownloadFollower(
 
     suspend fun follow(torrent: DelugeTorrent, update: () -> List<DelugeTorrent>) {
         val followFor = Duration.parse(followDuration)
-        log.info("Will follow download of torrent ${torrent.name} with id ${torrent.id} for $followFor")
+        val followDelay = Duration.parse(followInterval)
 
-        repeat(followFor.toLong(DurationUnit.MINUTES).toInt()) {
-            delay(Duration.parse(followInterval))
+        val end = Instant.ofEpochMilli(now().toEpochMilli() + followFor.inWholeMilliseconds)
+
+        log.info("Will follow download of torrent ${torrent.name} with id ${torrent.id} for $followFor until $end")
+        repeat(Int.MAX_VALUE) {
+            if (now().isAfter(end)) return@repeat
+
+            delay(followDelay)
 
             runCatching {
                 val torrents = update()
