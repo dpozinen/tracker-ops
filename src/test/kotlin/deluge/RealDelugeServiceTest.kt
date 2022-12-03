@@ -2,14 +2,14 @@ package deluge
 
 import Data
 import Data.Companion.httpHeaders
+import dpozinen.deluge.core.DelugeDownloadFollower
 import dpozinen.deluge.core.DelugeState
-import dpozinen.deluge.core.DownloadedCallbacks
 import dpozinen.deluge.core.RealDelugeService
 import dpozinen.deluge.mutations.Search
 import dpozinen.deluge.rest.DelugeClient
+import dpozinen.deluge.rest.DelugeConverter
 import dpozinen.deluge.rest.DelugeParams
 import dpozinen.deluge.rest.DelugeResponse
-import dpozinen.deluge.rest.DelugeConverter
 import io.mockk.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -20,12 +20,12 @@ import kotlin.test.Test
 
 class RealDelugeServiceTest {
 
-    private val callbacks: DownloadedCallbacks = mockk()
+    private val follower: DelugeDownloadFollower = mockk()
 
     @Test
     fun `should parse response to torrents`() {
         val (client, converter) = mock()
-        val service = RealDelugeService("", client, converter, callbacks)
+        val service = RealDelugeService("", client, converter, follower)
 
         assertThat(service.statefulTorrents())
             .hasSize(1)
@@ -36,7 +36,7 @@ class RealDelugeServiceTest {
     @Test
     fun `should throw if result has no torrents`() {
         val (client, converter) = mock(mockTorrents = false)
-        val service = RealDelugeService("", client, converter, callbacks)
+        val service = RealDelugeService("", client, converter, follower)
 
         try {
             service.statefulTorrents()
@@ -50,7 +50,7 @@ class RealDelugeServiceTest {
     @Test
     fun `should login once per active session`() {
         val (client, converter) = mock()
-        val service = RealDelugeService("", client, converter, callbacks)
+        val service = RealDelugeService("", client, converter, follower)
 
         service.statefulTorrents()
         service.statefulTorrents()
@@ -62,7 +62,7 @@ class RealDelugeServiceTest {
     @Test
     fun `should perform mutations concurrently`() {
         val (client, converter) = mock()
-        val service = RealDelugeService("", client, converter, callbacks)
+        val service = RealDelugeService("", client, converter, follower)
 
         fun search(range: IntRange) =
             range.map { Search(it.toString()) }.forEach { service.mutate(it) }
@@ -79,7 +79,7 @@ class RealDelugeServiceTest {
     @Test
     fun `should re connect to deluge`() {
         val (client, converter) = mock(mockTorrents = true, disconnected = true)
-        val service = RealDelugeService("", client, converter, callbacks)
+        val service = RealDelugeService("", client, converter, follower)
 
         service.statefulTorrents()
 
@@ -91,7 +91,7 @@ class RealDelugeServiceTest {
     @Test
     fun `should collect stats`() {
         val (client, converter) = mock(mockTorrents = true, disconnected = true, mockConverter = true)
-        val service = RealDelugeService("", client, converter, callbacks)
+        val service = RealDelugeService("", client, converter, follower)
 
         every { converter.convert((any() as Map.Entry<String, Map<String, *>>)) } returns Data.delugeTorrent
 

@@ -1,11 +1,8 @@
-import dpozinen.deluge.db.entities.DataPointEntity
-import dpozinen.deluge.domain.DataPoint
 import dpozinen.deluge.domain.DelugeTorrent
 import dpozinen.deluge.domain.DelugeTorrents
 import dpozinen.tracker.Torrent
 import org.springframework.http.HttpHeaders
 import java.net.HttpCookie
-import java.time.LocalDateTime
 
 class Data {
 
@@ -128,7 +125,8 @@ class Data {
             date = "28.06.2021"
         )
 
-        const val sessionIdCookie = "_session_id=ff9533d4210cb1ebb0062b193f02234a1a7da716b2f7ce7fbea417cd3b35eb954594; Expires=Thu, 12 May 2022 16:11:28 GMT"
+        const val sessionIdCookie =
+            "_session_id=ff9533d4210cb1ebb0062b193f02234a1a7da716b2f7ce7fbea417cd3b35eb954594; Expires=Thu, 12 May 2022 16:11:28 GMT"
 
         val sessionIdHttpCookie: HttpCookie = HttpCookie.parse(
             sessionIdCookie
@@ -142,77 +140,7 @@ class Data {
             return httpHeaders
         }
 
-        val now: LocalDateTime = LocalDateTime.now()
-        val dataPointEntityA = DataPointEntity(
-            id = 1,
-            torrentId = "123",
-            downloaded = 1024 * 1024 * 1024,
-            uploaded = 1024 * 1024 * 1024,
-            upSpeed = 1024 * 1024 * 100,
-            downSpeed = 1024 * 1024 * 10,
-            time = now
-        )
-        val dataPointEntityA1 = DataPointEntity(
-            id = 2,
-            torrentId = "123",
-            downloaded = 1024 * 1024 * 1024,
-            uploaded = 1024 * 1024 * 1024,
-            upSpeed = 1024 * 1024 * 100,
-            downSpeed = 1024 * 1024 * 10,
-            time = now
-        )
-
-        val dataPointEntityB = DataPointEntity(
-            id = 3,
-            torrentId = "456",
-            downloaded = 1024 * 1024 * 1024L * 2L,
-            uploaded = 1024 * 1024 * 1024 * 2L,
-            upSpeed = 1024 * 1024,
-            downSpeed = 1024 * 1024 * 2,
-            time = now
-        )
-        val dataPointA = DataPoint(
-            id = 1,
-            torrentId = "123",
-            downloaded = 1024 * 1024 * 1024,
-            uploaded = 1024 * 1024 * 1024,
-            upSpeed = 1024 * 1024 * 100,
-            downSpeed = 1024 * 1024 * 10,
-            upSpeedBytes = "100.0 MiB/s",
-            downSpeedBytes = "10.0 MiB/s",
-            uploadedBytes = "1.0 GiB",
-            downloadedBytes="1.0 GiB",
-            time = now
-        )
-        val dataPointA1 = DataPoint(
-            id = 2,
-            torrentId = "123",
-            downloaded = 1024 * 1024 * 1024,
-            uploaded = 1024 * 1024 * 1024,
-            upSpeed = 1024 * 1024 * 100,
-            downSpeed = 1024 * 1024 * 10,
-            time = now,
-            upSpeedBytes = "100.0 MiB/s",
-            downSpeedBytes = "10.0 MiB/s",
-            uploadedBytes = "1.0 GiB",
-            downloadedBytes = "1.0 GiB"
-        )
-
-        val dataPointB = DataPoint(
-            id = 3,
-            torrentId = "456",
-            downloaded = 1024 * 1024 * 1024L * 2L,
-            uploaded = 1024 * 1024 * 1024 * 2L,
-            upSpeed = 1024 * 1024,
-            downSpeed = 1024 * 1024 * 2,
-            time = now,
-            upSpeedBytes = "1.0 MiB/s",
-            downSpeedBytes = "2.0 MiB/s",
-            uploadedBytes = "2.0 GiB",
-            downloadedBytes = "2.0 GiB"
-        )
     }
-
 
 }
 

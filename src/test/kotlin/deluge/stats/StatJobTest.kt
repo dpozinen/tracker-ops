@@ -23,7 +23,7 @@ class StatJobTest {
     @Test
     fun `should run job`() {
         var counter = 0
-        every { delugeStatsService.updateStats() } answers { counter++ }
+        every { delugeStatsService.collectStats() } answers { counter++ }
 
         TimeUnit.SECONDS.sleep(10)
         Assertions.assertThat(counter).isEqualTo(3)
