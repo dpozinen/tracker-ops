@@ -1,7 +1,7 @@
 tracker-ops:
   host: 192.168.0.130
   follow-duration: 4h
-  follow-interval: 10s
+  follow-interval: 5s
   truenas:
     host: 192.168.0.184
     api-key: /sensitive/trueNas
