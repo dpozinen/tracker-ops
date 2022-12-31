@@ -47,6 +47,7 @@ class DelugeDownloadFollower(
                     val delay = calcDelayBetweenTriggers(torrent)
                     log.info { "Torrent ${torrent.name} is done downloading, triggering scan jobs with $delay delay" }
 
+                    delay(delay) // wait for deluge to move the torrent to 'done' folder
                     callbacks.trigger(delay)
 
                     return@follow
