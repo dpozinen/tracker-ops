@@ -47,7 +47,7 @@ class DelugeDownloadFollower(
                     val delay = calcDelayBetweenTriggers(torrent)
                     log.info { "Torrent ${torrent.name} is done downloading, triggering scan jobs with $delay delay" }
 
-                    delay(delay*2) // wait for deluge to move the torrent to 'done' folder
+                    delay(delay) // wait for deluge to move the torrent to 'done' folder
                     callbacks.trigger(delay)
 
                     return@follow
@@ -63,9 +63,10 @@ class DelugeDownloadFollower(
     }
 
     private fun calcDelayBetweenTriggers(torrent: DelugeTorrent): Duration {
+        log.info { "Torrent ${torrent.name} is sized at ${torrent.size} downloaded is ${torrent.downloaded}" }
         return when {
-            torrent.size.contains("GiB") -> {
-                val exactDelay = torrent.size.substringBefore(" ")
+            torrent.downloaded.contains("GiB") -> {
+                val exactDelay = torrent.downloaded.substringBefore(" ")
                     .toDouble()
                     .round(1)
                     .times(10) // it takes about 10 seconds per Gb
