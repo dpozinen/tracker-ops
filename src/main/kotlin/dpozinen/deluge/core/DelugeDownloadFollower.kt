@@ -44,15 +44,15 @@ class DelugeDownloadFollower(
                 if (victim == null) {
                     log.debug { "${torrent.name} is not found. What the fuck. Here's what was found: $torrents" }
                 } else if (victim.state != "Downloading") {
-                    val delay = calcDelayBetweenTriggers(torrent)
-                    log.info { "Torrent ${torrent.name} is done downloading, triggering scan jobs with $delay delay" }
+                    val delay = calcDelayBetweenTriggers(victim)
+                    log.info { "Torrent ${victim.name} is done downloading, triggering scan jobs with $delay delay" }
 
                     delay(delay) // wait for deluge to move the torrent to 'done' folder
                     callbacks.trigger(delay)
 
                     return@follow
                 } else {
-                    log.debug { "${torrent.name} is still downloading.\n $victim" }
+                    log.debug { "${victim.name} is still downloading.\n $victim" }
 
                     val stats = converter.convert(listOf(victim))
                     producer.send(stats)

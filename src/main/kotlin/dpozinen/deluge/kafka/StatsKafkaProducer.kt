@@ -23,7 +23,7 @@ class StatsKafkaProducer(
         )
     )
     fun send(stats: List<DataPoint>) {
-        log.info { "Sending stats about ${stats.map { it.name }.toSet()}" }
+        log.trace { "Sending stats about ${stats.map { it.name }.toSet()}" }
         val future = kafkaTemplate.send(topic, stats)
         future.addCallback(
             { },
