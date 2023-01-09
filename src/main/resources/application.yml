@@ -27,12 +27,6 @@ kafka:
 ---
 
 spring:
-  datasource:
-    url: jdbc:h2:split:./db/deluge.db
-    username: deluge
-    password: deluge
-  jpa:
-    hibernate.ddl-auto: update
   config:
     activate:
       on-profile: stats
