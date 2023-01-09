@@ -11,12 +11,24 @@
         <encoder><pattern>%d{MM.dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern></encoder>
     </appender>
 
+    <appender name="KAFKA_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_FILE}.kafka.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_FILE}.kafka.%d{yyyy-MM}.%i.gz</fileNamePattern>
+
+            <maxHistory>2</maxHistory>
+            <maxFileSize>30MB</maxFileSize>
+        </rollingPolicy>
+        <encoder><pattern>%d{MM.dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern></encoder>
+    </appender>
+
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder><pattern>%d{MM.dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern></encoder>
     </appender>
 
     <logger name="org.apache.http.client.protocol.ResponseProcessCookies" level="ERROR" />
     <logger name="org.springframework.web.socket.config.WebSocketMessageBrokerStats" level="WARN" />
+    <logger name="org.apache.kafka" additivity="false"><appender-ref ref="KAFKA_FILE"/></logger>
 
     <root level="info">
         <appender-ref ref="FILE" />
