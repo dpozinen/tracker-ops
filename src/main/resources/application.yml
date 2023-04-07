@@ -18,18 +18,18 @@ tracker-ops:
 
 server:
   port: 8133
-
-kafka:
-  address: 192.168.0.155:29093
-  topic: stats
-  blocked-timeout: 100000
-
 ---
 
 spring:
   config:
     activate:
       on-profile: stats
+  kafka:
+    bootstrap-servers: 192.168.0.155:29093
+    template:
+      default-topic: stats
+    producer:
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
 logging:
   level:

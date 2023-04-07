@@ -11,8 +11,7 @@ fun interface StatsKafkaProducer {
     fun send(stats: List<DataPoint>)
 
     class DefaultStatsKafkaProducer(
-        private val kafkaTemplate: KafkaTemplate<String, List<DataPoint>>,
-        private val topic: String
+        private val kafkaTemplate: KafkaTemplate<String, List<DataPoint>>
     ) : StatsKafkaProducer {
 
         private val log = KotlinLogging.logger {}
@@ -27,7 +26,7 @@ fun interface StatsKafkaProducer {
         )
         override fun send(stats: List<DataPoint>) {
             log.trace { "Sending stats about ${stats.map { it.name }.toSet()}" }
-            val future = kafkaTemplate.send(topic, stats)
+            val future = kafkaTemplate.send(kafkaTemplate.defaultTopic, stats)
             future.addCallback(
                 { },
                 { ex -> log.error(ex) { "Could not send stats" } }
