@@ -2,7 +2,10 @@ package dpozinen.deluge.core
 
 import dpozinen.deluge.domain.DelugeTorrent
 import dpozinen.deluge.domain.DelugeTorrents
+import dpozinen.deluge.mutations.By
+import dpozinen.deluge.mutations.Filter
 import dpozinen.deluge.mutations.Mutation
+import dpozinen.deluge.mutations.Sort
 import dpozinen.deluge.rest.DelugeClient
 import dpozinen.deluge.rest.DelugeConverter
 import dpozinen.deluge.rest.DelugeParams
@@ -24,7 +27,7 @@ class RealDelugeService(
     private val log = KotlinLogging.logger {}
     private var session: HttpCookie = HttpCookie.parse("dummy=dummy; max-age=0")[0]
 
-    private var state: DelugeState = DelugeState()
+    private var state: DelugeState = DelugeState().with(Sort(By.NAME), Filter(By.STATE, "Downloading"))
 
     private fun login(force: Boolean = false) {
         if (session.hasExpired() || force) {
