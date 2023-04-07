@@ -17,6 +17,8 @@ class DelugeState(
 
     fun with(mutations: Set<Mutation>) = DelugeState(torrents, mutations)
 
+    fun with(vararg mutations: Mutation) = DelugeState(torrents, setOf(*mutations))
+
     fun with(torrents: List<DelugeTorrent>) = DelugeState(torrents, mutations)
 
     fun with(torrents: List<DelugeTorrent>, mutations: Set<Mutation>) = DelugeState(torrents, mutations)
