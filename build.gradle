@@ -54,6 +54,6 @@ application {
 }
 
 run {
-    args = ["--spring.profiles.active=stats"]
+//    args = ["--spring.profiles.active=stats"]
     standardInput = System.in
 }

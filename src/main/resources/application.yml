@@ -1,5 +1,5 @@
 tracker-ops:
-  host: 192.168.0.130
+  host: 192.168.0.132
   follow-duration: 4h
   follow-interval: 5s
   truenas:
