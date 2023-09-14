@@ -74,12 +74,12 @@ class RealDelugeService(
     override fun allTorrents(): List<DelugeTorrent> {
         login()
         val params = DelugeParams.torrents()
-        var response = delugeClient.torrents(params, session).body
+        var response = delugeClient.torrents(params, session).body!!
 
         if (response.disconnected()) {
             delugeClient.connect(session)
             login(true)
-            response = delugeClient.torrents(params, session).body
+            response = delugeClient.torrents(params, session).body!!
         }
 
         return response.torrents().map { converter.convert(it) }

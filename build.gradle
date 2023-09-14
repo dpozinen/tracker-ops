@@ -1,5 +1,5 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.5.10'
+    id 'org.jetbrains.kotlin.jvm' version '1.9.20-Beta'
     id 'application'
     id "org.jetbrains.kotlin.plugin.jpa" version "1.6.21"
 }
@@ -22,6 +22,7 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5'
     implementation 'org.apache.httpcomponents:httpclient:4.5.1'
     implementation 'org.springframework.kafka:spring-kafka:2.8.10'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator:2.6.7'
 
     implementation 'javax.xml.bind:jaxb-api:2.3.0'
 

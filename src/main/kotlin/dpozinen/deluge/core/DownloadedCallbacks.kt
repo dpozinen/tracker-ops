@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalTime::class)
-
 package dpozinen.deluge.core
 
 import kotlinx.coroutines.delay
@@ -17,10 +15,11 @@ import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.exchange
 import java.net.URI
-import java.time.Duration
 import javax.annotation.PostConstruct
-import kotlin.time.ExperimentalTime
-import kotlin.time.Duration as Dur
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.toJavaDuration
 
 
 @Service
@@ -71,7 +70,7 @@ class DownloadedCallbacks(
         scan(2)
     }
 
-    suspend fun trigger(delay: Dur = Dur.minutes(2)) {
+    suspend fun trigger(delay: Duration = 2.minutes) {
         log.info("Triggering true nas move job")
         trueNasMove()
 
@@ -92,8 +91,8 @@ class DownloadedCallbacks(
             .let { HttpComponentsClientHttpRequestFactory(it) }
             .let {
                 RestTemplateBuilder()
-                    .setConnectTimeout(Duration.ofSeconds(5))
-                    .setReadTimeout(Duration.ofSeconds(5))
+                    .setConnectTimeout(5.seconds.toJavaDuration())
+                    .setReadTimeout(5.seconds.toJavaDuration())
                     .defaultHeader("Content-Type", "application/json")
                     .defaultHeader("Accept", "*/*")
                     .requestFactory { it }

@@ -6,8 +6,8 @@ import dpozinen.deluge.mutations.By.ByPredicate
 import dpozinen.deluge.rest.DelugeConverter
 import dpozinen.deluge.rest.sizeToBytes
 import java.time.LocalDate
+import kotlin.time.Duration
 import kotlin.time.DurationUnit.MINUTES
-import kotlin.time.ExperimentalTime
 
 enum class By {
     NAME,
@@ -52,9 +52,7 @@ enum class By {
         val downloadSpeed = bySize()
         val uploadSpeed = bySize()
 
-        @Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
-        @OptIn(ExperimentalTime::class)
-        val eta = ByComparable { if (it.isEmpty()) 0 else kotlin.time.Duration.parse(it).toLong(MINUTES) }
+        val eta = ByComparable { if (it.isEmpty()) 0 else Duration.parse(it).toLong(MINUTES) }
 
         val date = ByComparable { LocalDate.parse(it, DelugeConverter.dateTimeFormatter) }
 

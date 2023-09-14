@@ -38,7 +38,7 @@ class DelugeClient(
     fun connect(session: HttpCookie) {
         val response = send("web.get_hosts", DelugeParams.empty(), session)
 
-        val hosts = response.body.hosts()
+        val hosts = response.body?.hosts() ?: listOf()
         if (hosts.isEmpty()) throw IllegalStateException("no hosts")
 
         send("web.connect", DelugeParams.connect(hosts[0].id), session)
@@ -60,7 +60,7 @@ class DelugeClient(
 
         if ("web.update_ui" != method) log.info("Received from deluge {}", response.body)
 
-        response.body.result ?: throw DelugeClientException(response.body)
+        response.body?.result ?: throw DelugeClientException(response.body)
 
         return response
     }

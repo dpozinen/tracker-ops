@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalTime::class)
-
 package dpozinen.deluge.core
 
 import dpozinen.deluge.domain.DelugeTorrent
@@ -13,7 +11,7 @@ import org.springframework.stereotype.Service
 import java.time.Instant
 import java.time.Instant.now
 import kotlin.time.Duration
-import kotlin.time.ExperimentalTime
+import kotlin.time.Duration.Companion.seconds
 
 @Service
 class DelugeDownloadFollower(
@@ -70,9 +68,9 @@ class DelugeDownloadFollower(
                     .toDouble()
                     .round(1)
                     .times(10) // it takes about 10 seconds per Gb
-                Duration.seconds(exactDelay + (exactDelay / 2)) // + 50% overhead just in case
+                (exactDelay + (exactDelay / 2)).seconds // + 50% overhead just in case
             }
-            else -> Duration.seconds(30)
+            else -> 30.seconds
         }
     }
 }

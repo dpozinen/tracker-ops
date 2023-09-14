@@ -12,11 +12,9 @@ import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatter.ofPattern
 import kotlin.math.round
-import kotlin.time.ExperimentalTime
+import kotlin.time.Duration.Companion.seconds
 
 @Component
-@Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
-@OptIn(ExperimentalTime::class)
 class DelugeConverter {
 
     fun convert(torrents: List<DelugeTorrent>) = torrents.map { convert(it) }
@@ -76,7 +74,7 @@ class DelugeConverter {
     fun <T, R> field(map: Map<String, *>, key: String, covert: (T) -> R): R = covert(map[key] as T)
 
     private fun eta(eta: Double): String {
-        return kotlin.time.Duration.seconds(eta).toString()
+        return eta.seconds.toString()
     }
 
     companion object {

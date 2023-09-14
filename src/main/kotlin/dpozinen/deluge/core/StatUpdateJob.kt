@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Profile
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
 import kotlin.time.Duration
-import kotlin.time.ExperimentalTime
 
 @Component
 @Profile("(stats & !test) | job-test")
@@ -16,10 +15,10 @@ open class StatUpdateJob(
     private val delugeStatsService: DelugeStatsService,
     @Value("\${tracker-ops.deluge.stats.poll-interval}") private val interval: String
 ) {
-    private val log = KotlinLogging.logger {  }
+    private val log = KotlinLogging.logger { }
 
     @Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
-    @OptIn(ExperimentalTime::class, DelicateCoroutinesApi::class)
+    @OptIn(DelicateCoroutinesApi::class)
     @EventListener(value = [ApplicationReadyEvent::class])
     fun startJob() {
         GlobalScope.launch(Dispatchers.IO) {
