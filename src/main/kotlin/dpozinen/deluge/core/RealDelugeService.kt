@@ -42,7 +42,7 @@ class RealDelugeService(
         }
     }
 
-    override fun addMagnet(magnet: String) {
+    override suspend fun addMagnet(magnet: String) {
         login()
         val oldTorrents = allTorrents().toMutableList().map { it.id }
         delugeClient.addMagnet(DelugeParams.addMagnet(magnet, downloadFolder), session)

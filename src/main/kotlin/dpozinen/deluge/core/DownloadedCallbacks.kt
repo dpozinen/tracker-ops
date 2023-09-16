@@ -1,5 +1,6 @@
 package dpozinen.deluge.core
 
+import dpozinen.deluge.domain.DelugeTorrent
 import kotlinx.coroutines.delay
 import mu.KotlinLogging
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory
@@ -70,7 +71,7 @@ class DownloadedCallbacks(
         scan(2)
     }
 
-    suspend fun trigger(delay: Duration = 2.minutes) {
+    suspend fun trigger(torrent: DelugeTorrent, delay: Duration = 2.minutes) {
         log.info("Triggering true nas move job")
         trueNasMove()
 
@@ -80,6 +81,8 @@ class DownloadedCallbacks(
 
         log.info("Triggering plex scan lib")
         plexScanLib()
+
+        moveDownloadFolder(torrent)
     }
 
     private fun restTemplate() =
@@ -99,4 +102,13 @@ class DownloadedCallbacks(
                     .build()
             }
 
+    private fun moveDownloadFolder(torrent: DelugeTorrent) {
+        val regexS=".*S[0-9][0-9]?.*"
+        val regexSeason=".*Season ?[0-9][0-9]?.*"
+
+        val name = torrent.name.replace("FS88", "")
+        if (name.matches(Regex(regexS)) || name.matches(Regex(regexSeason))) {
+
+        }
+    }
 }

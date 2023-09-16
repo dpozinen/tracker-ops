@@ -9,7 +9,7 @@ import dpozinen.deluge.rest.bytesToSpeed
 import dpozinen.deluge.rest.round
 
 interface DelugeService {
-    fun addMagnet(magnet: String)
+    suspend fun addMagnet(magnet: String)
     fun statefulTorrents(): DelugeTorrents
     fun allTorrents(): List<DelugeTorrent>
     fun mutate(mutation: Mutation)

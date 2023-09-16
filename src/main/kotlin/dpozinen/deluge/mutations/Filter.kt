@@ -104,9 +104,7 @@ class Filter(
 
         other as Filter
 
-        if (by != other.by) return false
-
-        return true
+        return by == other.by
     }
 
     override fun hashCode() = by.hashCode()

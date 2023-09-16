@@ -38,9 +38,7 @@ class DelugeState(
         other as DelugeState
 
         if (torrents != other.torrents) return false
-        if (mutations != other.mutations) return false
-
-        return true
+        return mutations == other.mutations
     }
 
     override fun hashCode() = 31 * torrents.hashCode() + mutations.hashCode()

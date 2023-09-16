@@ -1,7 +1,7 @@
 tracker-ops:
   host: localhost
   deluge:
-    host: localhost
+    host: 192.168.0.182
     port: 8112
     download-folder: /Downloads/running
 

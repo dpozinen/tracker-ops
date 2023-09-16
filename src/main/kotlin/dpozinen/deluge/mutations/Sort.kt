@@ -55,9 +55,7 @@ class Sort(private val by: By, private var order: Order = ASC) : Mutation {
 
         other as Sort
 
-        if (by != other.by) return false
-
-        return true
+        return by == other.by
     }
 
     override fun hashCode() = by.hashCode()

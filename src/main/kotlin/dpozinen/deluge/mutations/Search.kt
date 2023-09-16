@@ -24,9 +24,7 @@ class Search(@JsonProperty("name") val name: String) : Mutation {
 
         other as Search
 
-        if (name != other.name) return false
-
-        return true
+        return name == other.name
     }
 
     override fun hashCode() = name.hashCode()

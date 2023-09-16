@@ -1,3 +1,6 @@
 package dpozinen.errors
 
-class DelugeServerDownException(cause: Throwable) : Throwable("check if deluge server is up", cause)
+class DelugeServerDownException : Throwable {
+    constructor(cause: Throwable) : super("check if deluge server is up", cause)
+    constructor() : super()
+}

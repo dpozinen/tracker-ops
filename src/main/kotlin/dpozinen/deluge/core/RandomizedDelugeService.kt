@@ -13,7 +13,7 @@ import kotlin.random.Random
 class RandomizedDelugeService(private val converter: DelugeConverter) : DelugeService {
     private var state: DelugeState = DelugeState()
 
-    override fun addMagnet(magnet: String) {}
+    override suspend fun addMagnet(magnet: String) {}
 
     override fun statefulTorrents(): DelugeTorrents {
         val torrents = generateTorrents()

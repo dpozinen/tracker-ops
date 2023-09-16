@@ -46,7 +46,7 @@ class DelugeDownloadFollower(
                     log.info { "Torrent ${victim.name} is done downloading, triggering scan jobs with $delay delay" }
 
                     delay(delay) // wait for deluge to move the torrent to 'done' folder
-                    callbacks.trigger(delay)
+                    callbacks.trigger(victim, delay)
 
                     return@follow
                 } else {

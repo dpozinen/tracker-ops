@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
-import java.io.File
 import javax.net.ssl.SSLHandshakeException
 
 @ControllerAdvice
@@ -17,7 +16,7 @@ class ErrorHandler {
 
     @ExceptionHandler(DelugeClientException::class)
     fun deluge(ex: DelugeClientException) : ResponseEntity<DelugeResponse> {
-        log.error(ex.response.errMsg())
+        log.error(ex.response?.errMsg())
         return ResponseEntity.internalServerError()
             .body(ex.response)
     }
