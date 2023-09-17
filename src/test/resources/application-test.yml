@@ -1,9 +1,14 @@
 tracker-ops:
   host: localhost
   deluge:
-    host: 192.168.0.182
-    port: 8112
+    url: localhost:8112
     download-folder: /Downloads/running
+  plex:
+    url: localhost:8112
+    api-key: /sensitive/plex
+  truenas:
+    url: localhost:8112
+    api-key: /sensitive/plex
 
 server:
   port: 8133

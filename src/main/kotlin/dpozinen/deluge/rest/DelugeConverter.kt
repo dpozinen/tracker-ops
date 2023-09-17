@@ -4,6 +4,7 @@ import dpozinen.deluge.domain.DataPoint
 import dpozinen.deluge.domain.DelugeTorrent
 import dpozinen.deluge.mutations.By
 import dpozinen.deluge.mutations.By.Companion.bySize
+import dpozinen.deluge.rest.clients.TorrentsResult.TorrentResult
 import org.springframework.stereotype.Component
 import java.time.Instant
 import java.time.LocalTime
@@ -53,6 +54,32 @@ class DelugeConverter {
         return DelugeTorrent(
             id, name, state, progress, size, downloaded, ratio, uploaded, downSpeed, eta, upSpeed, date
         )
+    }
+
+    fun convert(torrent: TorrentResult): DelugeTorrent {
+        val id = torrent.id!!
+
+        val name = torrent.name
+        val state = torrent.state
+        val progress = roundDouble(torrent.progress)
+        val uploaded = bytesToSize(torrent.uploaded)
+        val downloaded = bytesToSize(torrent.downloaded)
+        val size = bytesToSize(torrent.size)
+        val ratio = ratio(torrent.ratio, torrent.size, torrent.uploaded)
+
+        val eta = eta(torrent.eta)
+        val date = date(torrent.date)
+        val downSpeed = bytesToSpeed(torrent.downloadSpeed)
+        val upSpeed = bytesToSpeed(torrent.uploadSpeed)
+
+        return DelugeTorrent(
+            id, name, state, progress, size, downloaded, ratio, uploaded, downSpeed, eta, upSpeed, date
+        )
+    }
+
+    private fun ratio(ratio: Double, size: Double, uploaded: Double): String {
+        return if (ratio == -1.0) roundDouble(uploaded / size)
+        else roundDouble(ratio)
     }
 
     private fun ratio(it: Double, fields: Map<String, *>) =

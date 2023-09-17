@@ -7,8 +7,9 @@ import dpozinen.deluge.mutations.Filter
 import dpozinen.deluge.mutations.Mutation
 import dpozinen.deluge.mutations.Sort
 import dpozinen.deluge.rest.*
+import dpozinen.deluge.rest.clients.DelugeActionsClient
 import kotlinx.coroutines.*
-import mu.KotlinLogging
+import mu.KotlinLogging.logger
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
@@ -17,30 +18,30 @@ import org.springframework.stereotype.Service
 @Service
 class NewDelugeService(
     @Value("\${tracker-ops.deluge.download-folder}") private val downloadFolder: String,
-    private val delugeClient: DelugeFeignClient,
+    private val delugeClient: DelugeActionsClient,
     private val converter: DelugeConverter,
     private val follower: DelugeDownloadFollower
 ) : DelugeService {
-    private val log = KotlinLogging.logger {}
+    private val log = logger {}
 
     private var state: DelugeState = DelugeState().with(Sort(By.NAME), Filter(By.STATE, "Downloading"))
 
     override suspend fun addMagnet(magnet: String) {
-        val oldTorrents = allTorrents()
+        val oldTorrents = rawTorrents()
         runBlocking {
-            delugeClient.send(DelugeRequest.addMagnet(magnet, downloadFolder))
+            delugeClient.torrents(DelugeRequest.addMagnet(magnet, downloadFolder))
         }
 
         coroutineScope {
             delay(1000)
-            allTorrents().toMutableList()
+            rawTorrents().toMutableList()
                 .let { newTorrents ->
                     newTorrents.removeAll(oldTorrents)
                     newTorrents.firstOrNull()
                 }
                 ?.also {
                     CoroutineScope(Dispatchers.IO).launch {
-                        follower.follow(it) { allTorrents() }
+                        follower.follow(converter.convert(it)) { allTorrents() }
                     }
                     log.info { "Follow for ${it.name} triggered" }
                 }
@@ -56,10 +57,12 @@ class NewDelugeService(
     }
 
     override fun allTorrents(): List<DelugeTorrent> {
-        val response = delugeClient.send(DelugeRequest.torrents()).body!!
+        val response = delugeClient.torrents()
 
-        return response.torrents().map { converter.convert(it) }
+        return response.result.torrents().map { converter.convert(it) }
     }
+
+    fun rawTorrents() = delugeClient.torrents().result.torrents()
 
     override fun mutate(mutation: Mutation) {
         synchronized(this) {

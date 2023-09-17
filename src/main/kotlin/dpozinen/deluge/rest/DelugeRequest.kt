@@ -2,9 +2,11 @@ package dpozinen.deluge.rest
 
 import com.fasterxml.jackson.annotation.JsonValue
 import dpozinen.deluge.rest.DelugeParams.Companion.empty
-import dpozinen.deluge.rest.DelugeRequest.Method.add_torrent
+import dpozinen.deluge.rest.DelugeRequest.Method.add_magnet
 import dpozinen.deluge.rest.DelugeRequest.Method.connect
 import dpozinen.deluge.rest.DelugeRequest.Method.get_hosts
+import dpozinen.deluge.rest.DelugeRequest.Method.login
+import dpozinen.deluge.rest.DelugeRequest.Method.move_storage
 import dpozinen.deluge.rest.DelugeRequest.Method.update_ui
 
 data class DelugeRequest(
@@ -14,15 +16,16 @@ data class DelugeRequest(
 ) {
     enum class Method(@JsonValue val method: String) {
         login("auth.login"),
-        add_torrent("core.add_torrent_magnet"),
+        add_magnet("core.add_torrent_magnet"),
         update_ui("web.update_ui"),
         get_hosts("web.get_hosts"),
-        connect("web.connect")
+        connect("web.connect"),
+        move_storage("core.move_storage")
     }
 
     companion object {
         fun addMagnet(magnet: String, downloadFolder: String) = DelugeRequest(
-            add_torrent,
+            add_magnet,
             DelugeParams(listOf(magnet, mapOf("download_location" to downloadFolder)))
         )
 
@@ -32,11 +35,15 @@ data class DelugeRequest(
 
         fun hosts() = DelugeRequest(get_hosts, empty())
 
+        fun login() = DelugeRequest(login, DelugeParams(listOf("deluge")))
+
+        fun move(ids: List<String>, to: String) = DelugeRequest(
+            move_storage,
+            DelugeParams(listOf(ids, to))
+        )
+
     }
 }
-
-
-
 
 private val torrentFields: Collection<String> = listOf(
     "queue",

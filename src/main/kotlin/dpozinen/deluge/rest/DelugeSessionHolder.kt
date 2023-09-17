@@ -1,6 +1,6 @@
 package dpozinen.deluge.rest
 
-import dpozinen.deluge.rest.DelugeRequest.Method.login
+import dpozinen.deluge.rest.clients.DelugeAuthClient
 import dpozinen.errors.DelugeServerDownException
 import org.springframework.stereotype.Component
 import org.springframework.web.client.ResourceAccessException
@@ -8,9 +8,7 @@ import java.net.HttpCookie
 
 
 @Component
-open class DelugeSessionHolder(
-    private val client: DelugeAuthClient
-) {
+open class DelugeSessionHolder(private val client: DelugeAuthClient) {
 
     private val session: DelugeSession = DelugeSession()
 
@@ -19,7 +17,7 @@ open class DelugeSessionHolder(
     fun get(force: Boolean = false): String {
         if (session.hasExpired() || force) {
             try {
-                val response = client.login(DelugeRequest(login, DelugeParams(listOf("deluge"))))
+                val response = client.login(DelugeRequest.login())
                 val cookie = response.headers()["Set-Cookie"]?.first() ?: throw DelugeServerDownException()
 
                 cookie.substringBefore("Expires")
