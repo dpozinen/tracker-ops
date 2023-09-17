@@ -1,6 +1,5 @@
 package dpozinen.errors
 
-import dpozinen.deluge.rest.DelugeResponse
 import mu.KotlinLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE
@@ -14,12 +13,12 @@ class ErrorHandler {
 
     private val log = KotlinLogging.logger {}
 
-    @ExceptionHandler(DelugeClientException::class)
-    fun deluge(ex: DelugeClientException) : ResponseEntity<DelugeResponse> {
-        log.error(ex.response?.errMsg())
-        return ResponseEntity.internalServerError()
-            .body(ex.response)
-    }
+//    @ExceptionHandler(DelugeClientException::class)
+//    fun deluge(ex: DelugeClientException) : ResponseEntity<*> {
+//        log.error(ex.response?.errMsg())
+//        return ResponseEntity.internalServerError()
+//            .body(ex.response)
+//    }
 
     @ExceptionHandler(SSLHandshakeException::class)
     fun deluge(ex: SSLHandshakeException): ResponseEntity<Map<String, String>> {

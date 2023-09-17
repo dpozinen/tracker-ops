@@ -1,7 +1,6 @@
 package dpozinen.deluge.rest.clients
 
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import dpozinen.deluge.rest.DelugeParams
 import dpozinen.deluge.rest.DelugeRequest
 import dpozinen.deluge.rest.DelugeSessionHolder
 import dpozinen.errors.DelugeDisconnectedException
@@ -63,7 +62,7 @@ class AuthConnectRetryer(
         if (e is DelugeDisconnectedException) {
             val hostId = connectionClient.hosts().result.id()
 
-            connectionClient.connect(DelugeRequest(DelugeRequest.Method.connect, DelugeParams.connect(hostId)))
+            connectionClient.connect(DelugeRequest.connect(hostId))
         }
         authRetryer.continueOrPropagate(e)
     }

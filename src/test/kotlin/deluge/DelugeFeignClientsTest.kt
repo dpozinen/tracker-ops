@@ -82,8 +82,16 @@ class DelugeFeignClientsTest {
             stringResource("/deluge-torrents-response.json")
         )
 
-        val torrents = client.torrents(DelugeRequest.torrents()).result.torrents()
+        val torrents = client.torrents().result.torrents()
         assertTorrents(torrents)
+    }
+
+    @Test
+    fun `should add magnet`() {
+        mockDeluge(Bodies.addMagnetRequest, Bodies.addMagnetResponse)
+
+        val result = client.addMagnet(DelugeRequest.addMagnet("magnet", "folder")).result
+        assertThat(result).isTrue()
     }
 
     @Test

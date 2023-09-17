@@ -11,12 +11,10 @@ import dpozinen.deluge.rest.clients.DelugeActionsClient
 import kotlinx.coroutines.*
 import mu.KotlinLogging.logger
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 
-@Profile("!test")
 @Service
-class NewDelugeService(
+class DefaultDelugeService(
     @Value("\${tracker-ops.deluge.download-folder}") private val downloadFolder: String,
     private val delugeClient: DelugeActionsClient,
     private val converter: DelugeConverter,
@@ -29,7 +27,7 @@ class NewDelugeService(
     override suspend fun addMagnet(magnet: String) {
         val oldTorrents = rawTorrents()
         runBlocking {
-            delugeClient.torrents(DelugeRequest.addMagnet(magnet, downloadFolder))
+            delugeClient.addMagnet(DelugeRequest.addMagnet(magnet, downloadFolder))
         }
 
         coroutineScope {
@@ -62,7 +60,7 @@ class NewDelugeService(
         return response.result.torrents().map { converter.convert(it) }
     }
 
-    fun rawTorrents() = delugeClient.torrents().result.torrents()
+    private fun rawTorrents() = delugeClient.torrents().result.torrents()
 
     override fun mutate(mutation: Mutation) {
         synchronized(this) {

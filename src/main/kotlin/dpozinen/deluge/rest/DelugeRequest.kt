@@ -1,7 +1,6 @@
 package dpozinen.deluge.rest
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dpozinen.deluge.rest.DelugeParams.Companion.empty
 import dpozinen.deluge.rest.DelugeRequest.Method.add_magnet
 import dpozinen.deluge.rest.DelugeRequest.Method.connect
 import dpozinen.deluge.rest.DelugeRequest.Method.get_hosts
@@ -14,6 +13,8 @@ data class DelugeRequest(
     val params: DelugeParams,
     val id: Int = 8888
 ) {
+    class DelugeParams(params: Collection<Any> = listOf()) : ArrayList<Any>(params)
+
     enum class Method(@JsonValue val method: String) {
         login("auth.login"),
         add_magnet("core.add_torrent_magnet"),
@@ -29,11 +30,11 @@ data class DelugeRequest(
             DelugeParams(listOf(magnet, mapOf("download_location" to downloadFolder)))
         )
 
-        fun torrents() = DelugeRequest(update_ui, torrentsParams)
+        fun torrents() = DelugeRequest(update_ui, DelugeParams(listOf(torrentFields, mapOf<Any, Any>())))
 
         fun connect(hostId: String) = DelugeRequest(connect, DelugeParams(listOf(hostId)))
 
-        fun hosts() = DelugeRequest(get_hosts, empty())
+        fun hosts() = DelugeRequest(get_hosts, DelugeParams())
 
         fun login() = DelugeRequest(login, DelugeParams(listOf("deluge")))
 
@@ -73,8 +74,4 @@ private val torrentFields: Collection<String> = listOf(
     "total_remaining",
     "completed_time",
     "time_since_transfer"
-)
-
-private val torrentsParams = DelugeParams(
-    listOf(torrentFields, mapOf<Any, Any>())
 )

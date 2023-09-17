@@ -93,6 +93,16 @@ class Bodies {
 
         const val moveResponse = """ {"result": null, "error": null, "id": 8888} """
 
+        const val addMagnetRequest = """
+            {
+                "method": "core.add_torrent_magnet",
+                "params": [ "magnet", {"download_location" : "folder"} ],
+                "id": 8888
+            }
+            """
+
+        const val addMagnetResponse = """ {"result": null, "error": null, "id": 8888} """
+
         fun stringResource(path: String) = this::class.java.getResource(path)?.readText(Charsets.UTF_8)!!
     }
 

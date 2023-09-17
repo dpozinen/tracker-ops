@@ -8,7 +8,6 @@ import com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED
 import com.marcinziolo.kotlin.wiremock.*
 import deluge.Bodies.Companion.stringResource
 import dpozinen.App
-import dpozinen.deluge.rest.DelugeRequest
 import dpozinen.deluge.rest.clients.DelugeActionsClient
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -57,7 +56,7 @@ class DelugeFeignClientFlowTest {
                 .willReturn(okJson(stringResource("/deluge-torrents-response.json")))
         }
 
-        val torrents = client.torrents(DelugeRequest.torrents()).result.torrents()
+        val torrents = client.torrents().result.torrents()
         assertTorrents(torrents)
     }
 

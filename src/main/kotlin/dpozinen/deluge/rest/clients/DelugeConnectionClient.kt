@@ -1,7 +1,7 @@
 package dpozinen.deluge.rest.clients
 
-import dpozinen.deluge.rest.DelugeParams.Companion.empty
 import dpozinen.deluge.rest.DelugeRequest
+import dpozinen.deluge.rest.DelugeRequest.DelugeParams
 import dpozinen.deluge.rest.DelugeRequest.Method.get_hosts
 import dpozinen.deluge.rest.DelugeSessionHolder
 import feign.*
@@ -22,7 +22,7 @@ interface DelugeConnectionClient {
     @PostMapping
     @Headers("Content-Type: application/json")
     fun hosts(
-        @RequestBody body: DelugeRequest = DelugeRequest(get_hosts, empty())
+        @RequestBody body: DelugeRequest = DelugeRequest(get_hosts, DelugeParams())
     ): DelugeResult<HostsResult>
 
     @PostMapping
