@@ -25,7 +25,7 @@ dependencies {
 
     implementation 'javax.xml.bind:jaxb-api:2.3.0'
 
-    runtimeOnly 'org.jetbrains.kotlin:kotlin-reflect:1.6.21'
+    runtimeOnly 'org.jetbrains.kotlin:kotlin-reflect:1.9.10'
     runtimeOnly 'org.springframework.boot:spring-boot-devtools:2.6.7'
 
     testImplementation 'org.mockito:mockito-core:4.5.1'
