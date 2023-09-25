@@ -1,21 +1,24 @@
 package deluge
 
-import Data.Companion.delugeTorrent
+import Data.Companion.delugeTorrentResponse
 import dpozinen.deluge.core.DelugeState
 import dpozinen.deluge.mutations.By
 import dpozinen.deluge.mutations.Filter
-import dpozinen.deluge.mutations.Filter.Operator.*
+import dpozinen.deluge.mutations.Filter.Operator.GREATER
+import dpozinen.deluge.mutations.Filter.Operator.IS
+import dpozinen.deluge.mutations.Filter.Operator.IS_NOT
+import dpozinen.deluge.mutations.Filter.Operator.LESS
 import org.assertj.core.api.Assertions.assertThat
 import kotlin.test.Test
 
 class FilterMutationTest {
 
-    private val a = delugeTorrent.copy(state = "Seeding", downloaded = "550.96 GiB", date = "07.10.2010", eta = "10h 7m")
-    private val b = delugeTorrent.copy(state = "Seeding", downloaded = "1550.96 GiB", date = "08.09.2010", eta = "12h 7m")
-    private val c = delugeTorrent.copy(state = "Downloading", downloaded = "0 GiB", date = "10.10.2010", eta = "10m 7s")
-    private val d = delugeTorrent.copy(state = "Error", downloaded = "11111 GiB", date = "10.11.2010", eta = "1d 4h")
-    private val e = delugeTorrent.copy(state = "Error", downloaded = "111111 MiB", date = "10.11.2010", eta = "10d 1h")
-    private val f = delugeTorrent.copy(state = "Error", downloaded = "22222111111111 KiB", date = "10.11.2010", eta = "1s")
+    private val a = delugeTorrentResponse.copy(state = "Seeding", downloaded = 550.96, date = 1, eta = 107.0)
+    private val b = delugeTorrentResponse.copy(state = "Seeding", downloaded = 1550.96, date = 2, eta = 127.0)
+    private val c = delugeTorrentResponse.copy(state = "Downloading", downloaded = 0.0, date = 3, eta = 107.0)
+    private val d = delugeTorrentResponse.copy(state = "Error", downloaded = 11111.0, date = 4, eta = 14.0)
+    private val e = delugeTorrentResponse.copy(state = "Error", downloaded = 111111.0, date = 5, eta = 101.0)
+    private val f = delugeTorrentResponse.copy(state = "Error", downloaded = 22222111111111.0, date = 6, eta = 1.0)
 
     private val state: DelugeState = DelugeState(_torrents = listOf(a, b, c, d, e, f))
 
@@ -29,39 +32,30 @@ class FilterMutationTest {
 
     @Test
     fun `should filter by size greater than or equal to 550 GiB`() {
-        val filter = Filter(By.DOWNLOADED, "550.96 GiB", listOf(IS, GREATER))
+        val filter = Filter(By.DOWNLOADED, 1550.96, listOf(IS, GREATER))
 
         val mutated = state.mutate(filter)
 
-        assertThat(mutated.torrents).containsExactlyInAnyOrder(b, d, a, f)
+        assertThat(mutated.torrents).containsExactlyInAnyOrder(b, d, e, f)
     }
 
     @Test
     fun `should filter by size greater than 550 GiB`() {
-        val filter = Filter(By.DOWNLOADED, "550.96 GiB", listOf(GREATER))
+        val filter = Filter(By.DOWNLOADED, 550.96, listOf(GREATER))
 
         val mutated = state.mutate(filter)
 
-        assertThat(mutated.torrents).containsExactlyInAnyOrder(b, d, f)
+        assertThat(mutated.torrents).containsExactlyInAnyOrder(b, e, d, f)
     }
 
     @Test
-    fun `should filter by size`() {
-        val filter = Filter(By.DOWNLOADED, "550.96 GiB", listOf(IS, GREATER))
-
-        val mutated = state.mutate(filter)
-
-        assertThat(mutated.torrents).containsExactlyInAnyOrder(b, d, a, f)
-    }
-
-    @Test
-    fun `should filter by size greater than 11111 GiB and state 'Error'`() {
-        val downloaded = Filter(By.DOWNLOADED, "11111 GiB", listOf(IS, GREATER))
+    fun `should filter by size greater than or eq to 11111 GiB and state 'Error'`() {
+        val downloaded = Filter(By.DOWNLOADED, 11111.0, listOf(IS, GREATER))
         val error = Filter(By.STATE, "Error")
 
         val mutated = state.mutate(error).mutate(downloaded)
 
-        assertThat(mutated.torrents).containsExactlyInAnyOrder(f, d)
+        assertThat(mutated.torrents).containsExactlyInAnyOrder(d, e, f)
     }
 
     @Test
@@ -75,20 +69,20 @@ class FilterMutationTest {
 
     @Test
     fun `should filter by date`() {
-        val filter = Filter(By.DATE, "10.10.2010", listOf(GREATER))
+        val filter = Filter(By.DATE, 4L, listOf(GREATER))
 
         val mutated = state.mutate(filter)
 
-        assertThat(mutated.torrents).containsExactlyInAnyOrder(d, e, f)
+        assertThat(mutated.torrents).containsExactlyInAnyOrder(e, f)
     }
 
     @Test
     fun `should filter by eta`() {
-        val filter = Filter(By.ETA, "1d 3h 59m", listOf(LESS))
+        val filter = Filter(By.ETA, 107.0, listOf(LESS))
 
         val mutated = state.mutate(filter)
 
-        assertThat(mutated.torrents).containsExactlyInAnyOrder(c, b, a, f)
+        assertThat(mutated.torrents).containsExactlyInAnyOrder(e,f,d)
     }
 
 }

@@ -4,10 +4,13 @@ import com.ninjasquad.springmockk.MockkBean
 import dpozinen.App
 import dpozinen.deluge.core.DelugeStatsService
 import io.mockk.every
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
+import org.awaitility.Durations.TEN_SECONDS
+import org.awaitility.kotlin.atMost
+import org.awaitility.kotlin.await
+import org.awaitility.kotlin.untilAsserted
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
-import java.util.concurrent.TimeUnit
 import kotlin.test.Test
 
 @SpringBootTest(
@@ -25,8 +28,7 @@ class StatJobTest {
         var counter = 0
         every { delugeStatsService.collectStats() } answers { counter++ }
 
-        TimeUnit.SECONDS.sleep(10)
-        Assertions.assertThat(counter).isEqualTo(3)
+        await atMost TEN_SECONDS untilAsserted { assertThat(counter).isEqualTo(3) }
     }
 
 }

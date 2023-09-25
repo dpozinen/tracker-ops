@@ -1,13 +1,13 @@
 package dpozinen.deluge.core
 
-import dpozinen.deluge.domain.DelugeTorrent
 import dpozinen.deluge.mutations.Mutation
+import dpozinen.deluge.rest.clients.TorrentsResult.TorrentResult
 
 class DelugeState(
-    _torrents: List<DelugeTorrent> = listOf(),
+    _torrents: List<TorrentResult> = listOf(),
     _mutations: Set<Mutation> = linkedSetOf()
 ) {
-    val torrents: MutableList<DelugeTorrent> = _torrents.toMutableList()
+    val torrents: MutableList<TorrentResult> = _torrents.toMutableList()
         get() = field.toMutableList()
 
     val mutations: MutableSet<Mutation> = _mutations.toMutableSet()
@@ -19,9 +19,9 @@ class DelugeState(
 
     fun with(vararg mutations: Mutation) = DelugeState(torrents, setOf(*mutations))
 
-    fun with(torrents: List<DelugeTorrent>) = DelugeState(torrents, mutations)
+    fun with(torrents: List<TorrentResult>) = DelugeState(torrents, mutations)
 
-    fun with(torrents: List<DelugeTorrent>, mutations: Set<Mutation>) = DelugeState(torrents, mutations)
+    fun with(torrents: List<TorrentResult>, mutations: Set<Mutation>) = DelugeState(torrents, mutations)
 
     fun mutate(): DelugeState {
         var state = DelugeState(torrents, mutations)

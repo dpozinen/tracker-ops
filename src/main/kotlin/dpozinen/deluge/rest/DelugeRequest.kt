@@ -38,7 +38,7 @@ data class DelugeRequest(
 
         fun login() = DelugeRequest(login, DelugeParams(listOf("deluge")))
 
-        fun move(ids: List<String>, to: String) = DelugeRequest(
+        fun move(to: String, vararg ids: String) = DelugeRequest(
             move_storage,
             DelugeParams(listOf(ids, to))
         )

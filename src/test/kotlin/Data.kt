@@ -1,5 +1,7 @@
+
 import dpozinen.deluge.domain.DelugeTorrent
 import dpozinen.deluge.domain.DelugeTorrents
+import dpozinen.deluge.rest.clients.TorrentsResult
 import dpozinen.tracker.Torrent
 import org.springframework.http.HttpHeaders
 import java.net.HttpCookie
@@ -70,45 +72,27 @@ class Data {
             activeDown = 0,
             activeUp = 100,
             uploaded = "53.8 TiB",
-            ratio = 67.94,
-            downloaded = "811.0 GiB",
+            ratio = 67.9,
+            downloaded = "811.39 GiB",
             downSpeed = "",
-            upSpeed = "18.0 KiB/s"
+            upSpeed = "17.58 KiB/s"
         )
 
-        val delugeTorrentResponse: Map<String, Map<String, Any>> =
-            mapOf(
-                "ee21ac410a4df9d2a09a97a6890fc74c0d143a0b"
-                        to mapOf(
-                    "upload_payload_rate" to 180,
-                    "time_added" to 1624829185,
-                    "max_upload_speed" to -1,
-                    "total_remaining" to 0,
-                    "tracker_host" to "opentrackr.org",
-                    "total_peers" to 14,
-                    "seeds_peers_ratio" to 0.5714285969734192,
-                    "total_seeds" to 8,
-                    "last_seen_complete" to 1652264788,
-                    "name" to "Rick and Morty Season 1  [2160p AI x265 FS100 Joy]",
-                    "eta" to 72600,
-                    "is_auto_managed" to true,
-                    "state" to "Seeding",
-                    "num_seeds" to 0,
-                    "download_payload_rate" to 0,
-                    "time_since_transfer" to -893996,
-                    "progress" to 100.0,
-                    "ratio" to 67.9033203125,
-                    "download_location" to "/Downloads/Show",
-                    "queue" to -1,
-                    "max_download_speed" to -1,
-                    "total_wanted" to 8712212443,
-                    "distributed_copies" to 0.0,
-                    "completed_time" to 1624881168,
-                    "num_peers" to 3,
-                    "total_uploaded" to 591588139506,
-                    "total_done" to 8712212443
-                )
-            )
+        val delugeTorrentResponse = TorrentsResult.TorrentResult(
+            id = "ee21ac410a4df9d2a09a97a6890fc74c0d143a0b",
+            name = "Rick and Morty Season 1  [2160p AI x265 FS100 Joy]",
+            state = "Seeding",
+            progress = 100.0,
+            size = 8712212443.0,
+            downloaded = 8712212443.0,
+            ratio = 67.9033203125,
+            uploaded = 591588139506.0,
+            downloadSpeed = 0.0,
+            eta = 72600.0,
+            uploadSpeed = 180.0,
+            date = 1624829185,
+            downloadLocation = "/Downloads/Show",
+        )
 
         val delugeTorrent = DelugeTorrent(
             id = "ee21ac410a4df9d2a09a97a6890fc74c0d143a0b",

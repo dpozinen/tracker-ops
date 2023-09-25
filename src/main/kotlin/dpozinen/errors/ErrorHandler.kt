@@ -13,13 +13,6 @@ class ErrorHandler {
 
     private val log = KotlinLogging.logger {}
 
-//    @ExceptionHandler(DelugeClientException::class)
-//    fun deluge(ex: DelugeClientException) : ResponseEntity<*> {
-//        log.error(ex.response?.errMsg())
-//        return ResponseEntity.internalServerError()
-//            .body(ex.response)
-//    }
-
     @ExceptionHandler(SSLHandshakeException::class)
     fun deluge(ex: SSLHandshakeException): ResponseEntity<Map<String, String>> {
         log.error(ex.message)

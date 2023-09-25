@@ -1,6 +1,10 @@
 package dpozinen.deluge.rest.clients
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dpozinen.deluge.domain.DelugeTorrent
+import dpozinen.deluge.mutations.By
+import kotlin.reflect.KProperty1
+import kotlin.reflect.full.memberProperties
 
 data class DelugeResult<T>(val result: T, val error: Any?, val id: Int)
 
@@ -35,6 +39,14 @@ data class TorrentsResult(@JsonProperty("torrents") private val torrents: Map<St
         val date: Long,
         @JsonProperty("download_location")
         val downloadLocation: String
-    )
+    ) {
+        fun <T> getterBy(by: By) =
+            this::class.memberProperties
+                .filter { it.name == by.property() }
+                .map { it.getter }
+                .filterIsInstance<KProperty1.Getter<DelugeTorrent, T>>()
+                .first()
+
+    }
 
 }

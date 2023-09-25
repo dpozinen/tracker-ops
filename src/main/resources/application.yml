@@ -10,7 +10,10 @@ tracker-ops:
     api-key: /sensitive/plex
   deluge:
     url: 192.168.0.180:8112
-    download-folder: /Downloads/running
+    folders:
+      download: /Downloads/running
+      show: /Downloads/Show
+      film: /Downloads/Film
     stats:
       poll-interval: 5m
 

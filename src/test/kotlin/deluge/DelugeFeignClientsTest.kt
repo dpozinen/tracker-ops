@@ -100,10 +100,9 @@ class DelugeFeignClientsTest {
 
         val result = client.move(
             DelugeRequest.move(
-                listOf(
-                    "ee21ac410a4df9d2a09a97a6890fc74c0d143a0b",
-                    "776551013d0d91c1d58674be34ebff91ec0c4b94"
-                ), "/Downloads/Show"
+                to = "/Downloads/Show",
+                "ee21ac410a4df9d2a09a97a6890fc74c0d143a0b",
+                "776551013d0d91c1d58674be34ebff91ec0c4b94"
             )
         ).result
 
@@ -125,7 +124,7 @@ class DelugeFeignClientsTest {
     @Test
     fun `should trigger lib scan`() {
         mockGet {
-            url equalTo "/library/sections/1/refresh"
+            urlPath equalTo "/library/sections/1/refresh"
             queryParams contains "X-Plex-Token" to "plex-key"
         } returns {
             statusCode = 200

@@ -2,7 +2,7 @@ tracker-ops:
   host: localhost
   deluge:
     url: localhost:8112
-    download-folder: /Downloads/running
+    folders.download: /Downloads/running
   plex:
     url: localhost:8112
     api-key: /sensitive/plex

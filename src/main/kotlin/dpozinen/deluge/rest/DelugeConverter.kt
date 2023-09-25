@@ -2,14 +2,10 @@ package dpozinen.deluge.rest
 
 import dpozinen.deluge.domain.DataPoint
 import dpozinen.deluge.domain.DelugeTorrent
-import dpozinen.deluge.mutations.By
-import dpozinen.deluge.mutations.By.Companion.bySize
 import dpozinen.deluge.rest.clients.TorrentsResult.TorrentResult
 import org.springframework.stereotype.Component
 import java.time.Instant
-import java.time.LocalTime
 import java.time.ZoneId
-import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatter.ofPattern
 import kotlin.math.round
@@ -18,21 +14,19 @@ import kotlin.time.Duration.Companion.seconds
 @Component
 class DelugeConverter {
 
-    fun convert(torrents: List<DelugeTorrent>) = torrents.map { convert(it) }
+    fun convert(vararg torrents: TorrentResult) = torrents.map { toDataPoint(it) }
 
-    fun convert(torrent: DelugeTorrent) = DataPoint(
-        torrentId = torrent.id,
+    private fun toDataPoint(torrent: TorrentResult) = DataPoint(
+        torrentId = torrent.id!!,
         name = torrent.name,
-        size = bySize().comparable(torrent.size).toLong(),
-        dateAdded = Instant.ofEpochSecond(By.date.comparable(torrent.date).toEpochSecond(LocalTime.NOON, ZoneOffset.UTC)),
-        upSpeed = toBytes(torrent.uploadSpeed),
-        downSpeed = toBytes(torrent.downloadSpeed),
-        uploaded = toBytes(torrent.uploaded),
-        downloaded = toBytes(torrent.downloaded),
+        size = torrent.size.toLong(),
+        dateAdded = Instant.ofEpochSecond(torrent.date),
+        upSpeed = torrent.uploadSpeed.toLong(),
+        downSpeed = torrent.downloadSpeed.toLong(),
+        uploaded = torrent.uploaded.toLong(),
+        downloaded = torrent.downloaded.toLong(),
         timestamp = Instant.now()
     )
-
-    private fun toBytes(humanReadableForm: String) = bySize().comparable(humanReadableForm).toLong()
 
     fun convert(torrent: Map.Entry<String, Map<String, *>>): DelugeTorrent {
         val id = torrent.key
@@ -56,7 +50,9 @@ class DelugeConverter {
         )
     }
 
-    fun convert(torrent: TorrentResult): DelugeTorrent {
+    fun toDelugeTorrents(torrents: List<TorrentResult>) = torrents.map { convert(it) }
+
+    private fun convert(torrent: TorrentResult): DelugeTorrent {
         val id = torrent.id!!
 
         val name = torrent.name

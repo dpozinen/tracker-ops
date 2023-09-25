@@ -1,9 +1,5 @@
 package dpozinen.deluge.domain
 
-import dpozinen.deluge.mutations.By
-import kotlin.reflect.KProperty1
-import kotlin.reflect.full.memberProperties
-
 data class DelugeTorrent(
     val id: String,
     val name: String,
@@ -19,17 +15,6 @@ data class DelugeTorrent(
     val date: String
 ) {
 
-    /**
-     * @return getter for a field corresponding to the [By]
-     * @param by getter field name
-     */
-    fun getterBy(by: By) =
-        this::class.memberProperties
-        .filter { it.name == by.property() }
-        .map { it.getter }
-        .filterIsInstance<KProperty1.Getter<DelugeTorrent, String>>()
-        .first()
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -39,9 +24,7 @@ data class DelugeTorrent(
         return id == other.id
     }
 
-    override fun hashCode(): Int {
-        return id.hashCode()
-    }
+    override fun hashCode() = id.hashCode()
 
 }
 
