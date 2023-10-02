@@ -85,8 +85,8 @@ jib {
     to {
         image="ghcr.io/$group/$rootProject.name:$version"
         auth {
-            username = "${getenv("GITHUB_ACTOR")}"
-            password = "${getenv("GITHUB_TOKEN")}"
+            username = "${getenv("GHCR_ACTOR")}"
+            password = "${getenv("GHCR_TOKEN")}"
         }
     }
 }
