@@ -9,7 +9,9 @@ import org.springframework.context.ApplicationContext
 import org.springframework.kafka.core.KafkaTemplate
 import kotlin.test.Test
 
-@SpringBootTest(classes = [App::class])
+@SpringBootTest(classes = [App::class], properties = [
+    "tracker-ops.deluge.stats.enabled=false"
+])
 class StatConfigTest {
 
     @Autowired

@@ -2,11 +2,11 @@ package dpozinen.deluge.kafka
 
 import dpozinen.deluge.domain.DataPoint
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
-import org.springframework.context.annotation.Profile
 import org.springframework.kafka.core.KafkaTemplate
 
 
@@ -14,7 +14,7 @@ import org.springframework.kafka.core.KafkaTemplate
 open class KafkaConfig {
 
     @Configuration
-    @Profile("stats")
+    @ConditionalOnProperty("tracker-ops.deluge.stats.enabled", havingValue = "true", matchIfMissing = true)
     @Import(KafkaAutoConfiguration::class)
     open class StatsKafkaConfig {
 
