@@ -34,8 +34,7 @@ interface TrueNasClient {
 
         @Bean
         open fun authHeader(
-            @Value("\${tracker-ops.truenas.api-key}") apiKeyPath: String
-        ) = TrueNasAuthInterceptor(this::class.java.getResource(apiKeyPath)?.readText() ?: "")
+            @Value("\${tracker-ops.truenas.api-key}") apiKey: String) = TrueNasAuthInterceptor(apiKey)
     }
 
     class TrueNasAuthInterceptor(private val apiKey: String) : RequestInterceptor {

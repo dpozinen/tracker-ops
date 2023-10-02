@@ -19,11 +19,9 @@ tracker-ops:
 
 server:
   port: 8133
----
 
 spring:
   kafka:
-    bootstrap-servers: 192.168.0.155:29093
     template:
       default-topic: stats
     producer:

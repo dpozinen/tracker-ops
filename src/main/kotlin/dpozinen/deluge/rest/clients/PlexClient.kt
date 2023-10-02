@@ -26,8 +26,8 @@ interface PlexClient {
 
         @Bean
         open fun authHeader(
-            @Value("\${tracker-ops.plex.api-key}") plexApiKeyPath: String
-        ) = PlexAuthInterceptor(this::class.java.getResource(plexApiKeyPath)?.readText() ?: "")
+            @Value("\${tracker-ops.plex.api-key}") plexApiKey: String
+        ) = PlexAuthInterceptor(plexApiKey)
     }
 
     class PlexAuthInterceptor(private val plexApiKey: String) : RequestInterceptor {
