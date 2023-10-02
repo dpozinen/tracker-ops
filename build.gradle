@@ -83,10 +83,11 @@ jib {
         }
     }
     to {
-        image="ghcr.io/$group/$rootProject.name:$version"
+        image="ghcr.io/$group/$rootProject.name"
         auth {
             username = "${getenv("GHCR_ACTOR")}"
             password = "${getenv("GHCR_TOKEN")}"
         }
+        tags = ["$version", 'latest']
     }
 }
