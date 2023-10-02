@@ -71,8 +71,8 @@ class DownloadedCallbacks(
             fun from(name: String) =
                 if (name.replace("FS88", "") matches(regexS) ||
                     name.replace("FS88", "") matches (regexSeason)) {
-                    TorrentType.SHOW
-                } else TorrentType.FILM
+                    SHOW
+                } else FILM
         }
     }
 }

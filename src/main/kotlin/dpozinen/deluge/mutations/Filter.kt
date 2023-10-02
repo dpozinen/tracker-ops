@@ -10,7 +10,7 @@ import java.time.LocalDate
 
 class Filter(
     private val by: By,
-    val value: Comparable<*>,
+    val value: Any,
     private val operators: List<Operator> = listOf(Operator.IS)
 ) : Mutation {
 
