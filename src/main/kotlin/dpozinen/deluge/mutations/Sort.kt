@@ -1,10 +1,12 @@
 package dpozinen.deluge.mutations
 
 import dpozinen.deluge.core.DelugeState
-import dpozinen.deluge.domain.DelugeTorrent
-import dpozinen.deluge.mutations.By.*
+import dpozinen.deluge.mutations.By.DATE
+import dpozinen.deluge.mutations.By.NAME
+import dpozinen.deluge.mutations.By.STATE
 import dpozinen.deluge.mutations.Sort.Order.ASC
 import dpozinen.deluge.mutations.Sort.Order.DESC
+import dpozinen.deluge.rest.clients.TorrentsResult.TorrentResult
 
 class Sort(private val by: By, private var order: Order = ASC) : Mutation {
     enum class Order { ASC, DESC }
@@ -25,21 +27,13 @@ class Sort(private val by: By, private var order: Order = ASC) : Mutation {
 
     private fun comparator() =
         when (by) {
-            NAME -> comparator(By.name)
-            STATE -> comparator(By.state)
-            SIZE -> comparator(By.size)
-            PROGRESS -> comparator(By.progress)
-            DOWNLOADED -> comparator(By.downloaded)
-            RATIO -> comparator(By.ratio)
-            UPLOADED -> comparator(By.uploaded)
-            ETA -> comparator(By.eta)
-            DATE -> comparator(By.date)
-            DOWNLOAD_SPEED -> comparator(By.downloadSpeed)
-            UPLOAD_SPEED -> comparator(By.uploadSpeed)
+            NAME, STATE -> typedComparator<String>()
+            DATE -> typedComparator<Long>()
+            else -> typedComparator<Double>()
         }
 
-    private fun <C : Comparable<C>> comparator(comparator: ByComparable<C>)=
-        compareBy<DelugeTorrent> { comparator.comparable(it.getterBy(by).call(it)) }
+    private fun <C : Comparable<C>> typedComparator() =
+        compareBy<TorrentResult> { it.getterBy<C>(by).call(it) }
 
     fun reverse(): Sort {
         when (this.order) {
@@ -55,9 +49,7 @@ class Sort(private val by: By, private var order: Order = ASC) : Mutation {
 
         other as Sort
 
-        if (by != other.by) return false
-
-        return true
+        return by == other.by
     }
 
     override fun hashCode() = by.hashCode()

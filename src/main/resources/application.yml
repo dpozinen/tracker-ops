@@ -1,18 +1,19 @@
 tracker-ops:
   host: 192.168.0.132
-  follow-duration: 4h
-  follow-interval: 5s
+  follow-duration: 90h
+  follow-interval: 1m
   truenas:
-    host: 192.168.0.184
+    url: 192.168.0.184
     api-key: /sensitive/trueNas
   plex:
-    host: 192.168.0.114
-    port: 32400
+    url: 192.168.0.114:32400
     api-key: /sensitive/plex
   deluge:
-    host: 192.168.0.180
-    port: 8112
-    download-folder: /Downloads/running
+    url: 192.168.0.180:8112
+    folders:
+      download: /Downloads/running
+      show: /Downloads/Show
+      film: /Downloads/Film
     stats:
       poll-interval: 5m
 

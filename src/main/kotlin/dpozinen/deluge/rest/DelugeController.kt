@@ -1,7 +1,6 @@
 package dpozinen.deluge.rest
 
 import dpozinen.deluge.core.DelugeService
-import dpozinen.deluge.core.DownloadedCallbacks
 import dpozinen.deluge.domain.DelugeTorrents
 import dpozinen.deluge.mutations.*
 import dpozinen.errors.DelugeServerDownException
@@ -9,7 +8,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.channels.produce
-import mu.KotlinLogging
+import mu.KotlinLogging.logger
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.web.bind.annotation.GetMapping
@@ -18,19 +17,15 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class DelugeController(private val service: DelugeService,
-                       private val callbacks: DownloadedCallbacks,
-                       private val template: SimpMessagingTemplate) {
-    private val log = KotlinLogging.logger {}
+class DelugeController(
+    private val service: DelugeService,
+    private val template: SimpMessagingTemplate
+) {
+    private val log = logger {}
     private var stream: Job? = null
 
-    @PostMapping("/on-downloaded")
-    fun onDownloaded(@RequestBody magnet: String) = runBlocking {
-        CoroutineScope(Dispatchers.IO).launch { callbacks.trigger() }
-    }
-
     @PostMapping("/deluge")
-    fun addMagnet(@RequestBody magnet: String) = service.addMagnet(magnet)
+    suspend fun addMagnet(@RequestBody magnet: String) = service.addMagnet(magnet)
 
     @GetMapping("/deluge/torrents")
     fun delugeTorrents() = service.statefulTorrents()
@@ -54,7 +49,8 @@ class DelugeController(private val service: DelugeService,
     }
 
     @MessageMapping("/stream/mutate/search")
-    fun streamSearch(search: Search) = if (search.name.isEmpty()) mutateAndSend(Clear.AllSearches()) else mutateAndSend(search)
+    fun streamSearch(search: Search) =
+        if (search.name.isEmpty()) mutateAndSend(Clear.AllSearches()) else mutateAndSend(search)
 
     @MessageMapping("/stream/mutate/clear")
     fun streamClear() = mutateAndSend(Clear())
@@ -83,10 +79,10 @@ class DelugeController(private val service: DelugeService,
     }
 
     private fun sendTorrents(torrents: () -> DelugeTorrents = { service.statefulTorrents() }) {
-       runCatching { template.convertAndSend("/topic/torrents", torrents()) }
-           .onFailure {
-               handleException(it)
-           }
+        runCatching { template.convertAndSend("/topic/torrents", torrents()) }
+            .onFailure {
+                handleException(it)
+            }
     }
 
     @Suppress("EXPERIMENTAL_IS_NOT_ENABLED")

@@ -1,0 +1,38 @@
+{
+  "result": {
+    "connected": true,
+    "torrents": {
+      "ee21ac410a4df9d2a09a97a6890fc74c0d143a0b": {
+        "total_done": 8712212443,
+        "distributed_copies": 0.0,
+        "num_peers": 0,
+        "download_location": "/Downloads/Show",
+        "tracker_host": "opentrackr.org",
+        "completed_time": 1624881168,
+        "total_remaining": 0,
+        "progress": 100.0,
+        "total_wanted": 8712212443,
+        "max_download_speed": -1,
+        "total_uploaded": 735679472733,
+        "num_seeds": 0,
+        "total_seeds": -1,
+        "time_added": 1624829185,
+        "queue": -1,
+        "max_upload_speed": -1,
+        "time_since_transfer": -890196,
+        "is_auto_managed": true,
+        "total_peers": -1,
+        "name": "Rick and Morty Season 1  [2160p AI x265 FS100 Joy]",
+        "last_seen_complete": 0,
+        "state": "Paused",
+        "eta": 0,
+        "download_payload_rate": 0,
+        "ratio": 84.44232177734375,
+        "seeds_peers_ratio": 1.0,
+        "upload_payload_rate": 0
+      }
+    }
+  },
+  "error": null,
+  "id": 19
+}

@@ -2,38 +2,31 @@ package dpozinen.deluge.rest
 
 import dpozinen.deluge.domain.DataPoint
 import dpozinen.deluge.domain.DelugeTorrent
-import dpozinen.deluge.mutations.By
-import dpozinen.deluge.mutations.By.Companion.bySize
+import dpozinen.deluge.rest.clients.TorrentsResult.TorrentResult
 import org.springframework.stereotype.Component
 import java.time.Instant
-import java.time.LocalTime
 import java.time.ZoneId
-import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatter.ofPattern
 import kotlin.math.round
-import kotlin.time.ExperimentalTime
+import kotlin.time.Duration.Companion.seconds
 
 @Component
-@Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
-@OptIn(ExperimentalTime::class)
 class DelugeConverter {
 
-    fun convert(torrents: List<DelugeTorrent>) = torrents.map { convert(it) }
+    fun convert(vararg torrents: TorrentResult) = torrents.map { toDataPoint(it) }
 
-    fun convert(torrent: DelugeTorrent) = DataPoint(
-        torrentId = torrent.id,
+    private fun toDataPoint(torrent: TorrentResult) = DataPoint(
+        torrentId = torrent.id!!,
         name = torrent.name,
-        size = bySize().comparable(torrent.size).toLong(),
-        dateAdded = Instant.ofEpochSecond(By.date.comparable(torrent.date).toEpochSecond(LocalTime.NOON, ZoneOffset.UTC)),
-        upSpeed = toBytes(torrent.uploadSpeed),
-        downSpeed = toBytes(torrent.downloadSpeed),
-        uploaded = toBytes(torrent.uploaded),
-        downloaded = toBytes(torrent.downloaded),
+        size = torrent.size.toLong(),
+        dateAdded = Instant.ofEpochSecond(torrent.date),
+        upSpeed = torrent.uploadSpeed.toLong(),
+        downSpeed = torrent.downloadSpeed.toLong(),
+        uploaded = torrent.uploaded.toLong(),
+        downloaded = torrent.downloaded.toLong(),
         timestamp = Instant.now()
     )
-
-    private fun toBytes(humanReadableForm: String) = bySize().comparable(humanReadableForm).toLong()
 
     fun convert(torrent: Map.Entry<String, Map<String, *>>): DelugeTorrent {
         val id = torrent.key
@@ -57,6 +50,34 @@ class DelugeConverter {
         )
     }
 
+    fun toDelugeTorrents(torrents: List<TorrentResult>) = torrents.map { convert(it) }
+
+    private fun convert(torrent: TorrentResult): DelugeTorrent {
+        val id = torrent.id!!
+
+        val name = torrent.name
+        val state = torrent.state
+        val progress = roundDouble(torrent.progress)
+        val uploaded = bytesToSize(torrent.uploaded)
+        val downloaded = bytesToSize(torrent.downloaded)
+        val size = bytesToSize(torrent.size)
+        val ratio = ratio(torrent.ratio, torrent.size, torrent.uploaded)
+
+        val eta = eta(torrent.eta)
+        val date = date(torrent.date)
+        val downSpeed = bytesToSpeed(torrent.downloadSpeed)
+        val upSpeed = bytesToSpeed(torrent.uploadSpeed)
+
+        return DelugeTorrent(
+            id, name, state, progress, size, downloaded, ratio, uploaded, downSpeed, eta, upSpeed, date
+        )
+    }
+
+    private fun ratio(ratio: Double, size: Double, uploaded: Double): String {
+        return if (ratio == -1.0) roundDouble(uploaded / size)
+        else roundDouble(ratio)
+    }
+
     private fun ratio(it: Double, fields: Map<String, *>) =
         if (it == -1.0)
             roundDouble(
@@ -76,7 +97,7 @@ class DelugeConverter {
     fun <T, R> field(map: Map<String, *>, key: String, covert: (T) -> R): R = covert(map[key] as T)
 
     private fun eta(eta: Double): String {
-        return kotlin.time.Duration.seconds(eta).toString()
+        return eta.seconds.toString()
     }
 
     companion object {

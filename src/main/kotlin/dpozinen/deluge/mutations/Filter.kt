@@ -1,90 +1,79 @@
 package dpozinen.deluge.mutations
 
 import dpozinen.deluge.core.DelugeState
-import dpozinen.deluge.mutations.By.*
-import mu.KotlinLogging
+import dpozinen.deluge.mutations.By.ByPredicate
+import dpozinen.deluge.mutations.By.DATE
+import dpozinen.deluge.mutations.By.NAME
+import dpozinen.deluge.mutations.By.STATE
+import mu.KotlinLogging.logger
 import java.time.LocalDate
 
 class Filter(
     private val by: By,
-    val value: String,
+    val value: Comparable<*>,
     private val operators: List<Operator> = listOf(Operator.IS)
 ) : Mutation {
 
-    private val log = KotlinLogging.logger {  }
-
-    private lateinit var comparable: Comparable<*>
+    private val log = logger { }
 
     override fun perform(state: DelugeState): DelugeState {
         if (invalid()) return state
 
         val mutations = addSelf(state)
 
-        val filteredTorrents = runCatching {
-             state.torrents.filter { predicate().test(it) }
+        return runCatching {
+            state.torrents.filter { predicate().test(it) }
         }.onFailure {
             log.warn { "Failed to apply '$this' due to $it. Previous state preserved." }
         }.getOrDefault(state.torrents)
-
-        return state.with(filteredTorrents, mutations)
+            .let { state.with(it, mutations) }
     }
 
-    private fun predicate(): ByPredicate {
-        return when (this.by) {
-            NAME -> predicate(By.name)
-            STATE -> predicate(By.state)
-            SIZE -> predicate(By.size)
-            PROGRESS -> predicate(By.progress)
-            DOWNLOADED -> predicate(By.downloaded)
-            RATIO -> predicate(By.ratio)
-            UPLOADED -> predicate(By.uploaded)
-            ETA -> predicate(By.eta)
-            DATE -> predicate(By.date)
-            DOWNLOAD_SPEED -> predicate(By.downloadSpeed)
-            UPLOAD_SPEED -> predicate(By.uploadSpeed)
-        }
+    private fun predicate() = when (by) {
+        NAME, STATE -> typedPredicate<String>()
+        DATE -> typedPredicate<Long>()
+        else -> typedPredicate<Double>()
     }
 
-    private inline fun <reified C : Comparable<C>> predicate(comparable: ByComparable<C>): ByPredicate {
-        this.comparable = comparable.comparable(value)
-        return operators.map { predicate(it, comparable) }.reduce { a, b -> a.or(b) }
+    private inline fun <reified C : Comparable<C>> typedPredicate(): ByPredicate {
+        return operators.map { predicate<C>(it) }.reduce { a, b -> a.or(b) }
     }
 
-    private inline fun <reified C : Comparable<C>> predicate(operator: Operator, comparable: ByComparable<C>) =
+    private inline fun <reified C : Comparable<C>> predicate(operator: Operator) =
         when (operator) {
-            Operator.IS -> predicateBy(comparable) { eq(it) }
-            Operator.IS_NOT -> predicateBy(comparable) { !eq(it) }
-            Operator.CONTAINS -> predicateBy(comparable) { contains(it) }
-            Operator.NOT_CONTAINS -> predicateBy(comparable) { !contains(it) }
-            Operator.GREATER -> predicateBy(comparable) { greater(it) }
-            Operator.LESS -> predicateBy(comparable) { less(it) }
+            Operator.IS -> predicateBy<C> { eq(it) }
+            Operator.IS_NOT -> predicateBy<C> { !eq(it) }
+            Operator.CONTAINS -> predicateBy<C> { contains(it) }
+            Operator.NOT_CONTAINS -> predicateBy<C> { !contains(it) }
+            Operator.GREATER -> predicateBy<C> { greater(it) }
+            Operator.LESS -> predicateBy<C> { less(it) }
         }
 
-    private fun <C : Comparable<C>> predicateBy(comparator: ByComparable<C>, predicate: (C) -> Boolean) =
-        ByPredicate { predicate(comparator.comparable(it.getterBy(by).call(it))) }
+    private fun <C : Comparable<C>> predicateBy(predicate: (C) -> Boolean) =
+        ByPredicate { predicate(it.getterBy<C>(by).call(it)) }
 
-    private fun eq(any: Any?) = any == comparable
+    private fun eq(any: Any?) = any == value
 
-    private fun contains(string: Any) = (string as String).contains(comparable as String)
+    private fun contains(string: Any) = (string as String).contains(value as String)
 
     private fun greater(any: Any) =
         when (any) {
-            is Double -> any > (comparable as Double)
-            is Int -> any > (comparable as Int)
-            is Short -> any > (comparable as Short)
-            is Long -> any > (comparable as Long)
-            is LocalDate -> any.isAfter(comparable as LocalDate)
-            else -> (any as Number).toLong() > (comparable as Number).toLong()
+            is Double -> any > (value as Double)
+            is Int -> any > (value as Int)
+            is Short -> any > (value as Short)
+            is Long -> any > (value as Long)
+            is LocalDate -> any.isAfter(value as LocalDate)
+            else -> (any as Number).toLong() > (value as Number).toLong()
         }
 
     private fun less(any: Any) =
         when (any) {
-            is Double -> any < (comparable as Double)
-            is Int -> any < (comparable as Int)
-            is Short -> any < (comparable as Short)
-            is Long -> any < (comparable as Long)
-            is LocalDate -> any.isBefore(comparable as LocalDate)
-            else -> (any as Number).toLong() < (comparable as Number).toLong()
+            is Double -> any < (value as Double)
+            is Int -> any < (value as Int)
+            is Short -> any < (value as Short)
+            is Long -> any < (value as Long)
+            is LocalDate -> any.isBefore(value as LocalDate)
+            else -> (any as Number).toLong() < (value as Number).toLong()
         }
 
     enum class Operator {
@@ -104,9 +93,7 @@ class Filter(
 
         other as Filter
 
-        if (by != other.by) return false
-
-        return true
+        return by == other.by
     }
 
     override fun hashCode() = by.hashCode()

@@ -17,7 +17,7 @@ class DelugeStatsService(
     private val log = KotlinLogging.logger {}
 
     fun collectStats() {
-        val stats = converter.convert(delugeService.allTorrents())
+        val stats = converter.convert(*delugeService.rawTorrents().toTypedArray())
 
         try {
             producer.send(stats)

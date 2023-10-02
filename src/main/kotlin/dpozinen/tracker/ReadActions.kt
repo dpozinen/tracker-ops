@@ -3,12 +3,12 @@ package dpozinen.tracker
 class ReadActions {
 
     fun tracker(): Trackers {
-        val tracker = readLine()!!
+        val tracker = readln()
         return Trackers.from(tracker)
     }
 
-    fun keyword() = readLine()!!
+    fun keyword() = readln()
 
-    fun torrentIndex() = readLine()?.toInt()!!
+    fun torrentIndex() = readlnOrNull()?.toInt()!!
 
 }

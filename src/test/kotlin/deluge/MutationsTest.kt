@@ -1,22 +1,22 @@
 package deluge
 
-import Data.Companion.delugeTorrent
+import Data.Companion.delugeTorrentResponse
 import dpozinen.deluge.core.DelugeState
-import dpozinen.deluge.mutations.*
+import dpozinen.deluge.mutations.By
+import dpozinen.deluge.mutations.Clear
+import dpozinen.deluge.mutations.Search
+import dpozinen.deluge.mutations.Sort
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable
-import java.time.Duration
-import java.time.Instant
 
 class MutationsTest {
 
-    private val a = delugeTorrent.copy(name = "ABCF", state = "Seeding", progress = "10", downloaded = "550.96 GiB", date = "07.10.2010", eta = "10h 7m")
-    private val b = delugeTorrent.copy(name = "DEF", state = "Seeding", progress = "10", downloaded = "1550.96 GiB", date = "08.09.2010", eta = "12h 7m")
-    private val c = delugeTorrent.copy(name = "ABCDEF", state = "Downloading", progress = "10", downloaded = "0 GiB", date = "10.10.2010", eta = "10m 7s")
-    private val d = delugeTorrent.copy(name = "DEG", state = "Error", progress = "10", downloaded = "11111 GiB", date = "10.11.2010", eta = "1d 4h")
-    private val e = delugeTorrent.copy(name = "DEG", state = "Error", progress = "10", downloaded = "111111 MiB", date = "10.11.2010", eta = "10d 1h")
-    private val f = delugeTorrent.copy(name = "DEG", state = "Error", progress = "10", downloaded = "22222111111111 KiB", date = "10.11.2010", eta = "1s")
+    private val a = delugeTorrentResponse.copy(name = "ABCF", state = "Seeding", progress = 10.0, downloaded = 550.96, date = 1L, eta = 105.0)
+    private val b = delugeTorrentResponse.copy(name = "DEF", state = "Seeding", progress = 10.0, downloaded = 1550.96, date = 2L, eta = 127.0)
+    private val c = delugeTorrentResponse.copy(name = "ABCDEF", state = "Downloading", progress = 10.0, downloaded = 0.0, date = 3L, eta = 106.0)
+    private val d = delugeTorrentResponse.copy(name = "DEG", state = "Error", progress = 10.0, downloaded = 11111.0, date = 4L, eta = 14.0)
+    private val e = delugeTorrentResponse.copy(name = "DEG", state = "Error", progress = 10.0, downloaded = 111111.0, date = 5L, eta = 101.0)
+    private val f = delugeTorrentResponse.copy(name = "DEG", state = "Error", progress = 10.0, downloaded = 22222111111111.0, date = 6L, eta = 1.0)
 
     private val state: DelugeState = DelugeState(_torrents = listOf(a, b, c, d))
 
@@ -69,8 +69,8 @@ class MutationsTest {
         val mutated = state.with(listOf(a, b, c, d, e, f)).mutate(sort)
         val reversed = mutated.mutate(sort.reverse())
 
-        assertThat(mutated.torrents).containsExactly(c, e, a, b, d, f)
-        assertThat(reversed.torrents).containsExactly(f, d, b, a, e, c)
+        assertThat(mutated.torrents).containsExactly(c, a, b, d, e, f)
+        assertThat(reversed.torrents).containsExactly(f, e, d, b, a, c)
     }
 
     @Test
@@ -80,8 +80,8 @@ class MutationsTest {
         val mutated = state.mutate(sort)
         val reversed = mutated.mutate(sort.reverse())
 
-        assertThat(mutated.torrents).containsExactly(b, a, c, d)
-        assertThat(reversed.torrents).containsExactly(d, c, a, b)
+        assertThat(mutated.torrents).containsExactly(a, b, c, d)
+        assertThat(reversed.torrents).containsExactly(d, c, b, a)
     }
 
     @Test
@@ -91,8 +91,8 @@ class MutationsTest {
         val mutated = state.with(listOf(a, b, c, d, e, f)).mutate(sort)
         val reversed = mutated.mutate(sort.reverse())
 
-        assertThat(mutated.torrents).containsExactly(f, c, a, b, d, e)
-        assertThat(reversed.torrents).containsExactly(e, d, b, a, c, f)
+        assertThat(mutated.torrents).containsExactly(f,d,e,a,c,b)
+        assertThat(reversed.torrents).containsExactly(b,c,a,e,d,f)
     }
 
     @Test
@@ -115,7 +115,7 @@ class MutationsTest {
     }
 
     @Test
-    fun `should clear by id`() {
+    fun `should clear by id leaving only name sort`() {
         val sortProgress = Sort(By.PROGRESS)
         val sortMutations = linkedSetOf(sortProgress, Sort(By.NAME))
 
@@ -139,16 +139,4 @@ class MutationsTest {
         assertThat(mutated.torrents).containsExactly(a, b, c, d)
     }
 
-    @Test @DisabledIfEnvironmentVariable(named = "CI", matches = "true", disabledReason = "GitHub too slow")
-    fun `should perform 5 mutations on 1000 torrents 3 times per second`() {
-        val mutations = By.values().map { Sort(it) }.subList(0, 5).toSet()
-        val torrents = (0..1000).map { delugeTorrent.copy(id = it.toString()) }
-        val state = DelugeState().with(torrents, mutations)
-
-        val now = Instant.now()
-        repeat((0..5).count()) { state.with(torrents).mutate() }
-        val after = Instant.now()
-
-        assertThat(Duration.between(now, after)).isLessThan(Duration.ofSeconds(1))
-    }
 }

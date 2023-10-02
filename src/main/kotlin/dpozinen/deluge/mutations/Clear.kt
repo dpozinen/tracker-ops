@@ -18,9 +18,7 @@ class Clear(private val mutation: Mutation? = null) : Mutation {
 
         other as Clear
 
-        if (mutation != other.mutation) return false
-
-        return true
+        return mutation == other.mutation
     }
 
     override fun hashCode() = mutation?.hashCode() ?: 0

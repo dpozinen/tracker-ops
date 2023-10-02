@@ -2,7 +2,7 @@ package dpozinen.deluge.mutations
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import dpozinen.deluge.core.DelugeState
-import dpozinen.deluge.domain.DelugeTorrent
+import dpozinen.deluge.rest.clients.TorrentsResult.TorrentResult
 
 class Search(@JsonProperty("name") val name: String) : Mutation {
     override fun perform(state: DelugeState): DelugeState {
@@ -13,7 +13,7 @@ class Search(@JsonProperty("name") val name: String) : Mutation {
         return state.with(filteredTorrents, addSelf(state))
     }
 
-    private fun nameContains(torrent: DelugeTorrent) =
+    private fun nameContains(torrent: TorrentResult) =
                torrent.name.contains(this.name)
             || torrent.name.lowercase().contains(this.name.lowercase())
             || torrent.name.replace(".", " ").lowercase().contains(this.name.lowercase())
@@ -24,9 +24,7 @@ class Search(@JsonProperty("name") val name: String) : Mutation {
 
         other as Search
 
-        if (name != other.name) return false
-
-        return true
+        return name == other.name
     }
 
     override fun hashCode() = name.hashCode()
