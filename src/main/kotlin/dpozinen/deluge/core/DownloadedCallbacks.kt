@@ -37,14 +37,14 @@ class DownloadedCallbacks(
         moveDownloadFolder(torrent)
     }
 
-    private fun trueNasMove() {
+    fun trueNasMove() {
         runCatching {
             trueNasClient.startCronJob()
         }.onFailure { log.error { it } }
             .onSuccess { log.info { "True nas move job succeeded" } }
     }
 
-    private fun plexScanLib() {
+    fun plexScanLib() {
         fun scan(id: Int) = runCatching { plexClient.scanLibrary(id) }
             .onFailure { log.error { it } }
             .onSuccess { log.info { "Plex scan lib $id job succeeded" } }
