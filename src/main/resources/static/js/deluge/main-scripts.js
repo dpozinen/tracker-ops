@@ -12,7 +12,7 @@ window.addEventListener('beforeunload', () => {
 });
 
 function openSocket() {
-    sock = new WebSocket(`ws://${global.host}:${global.host}/stream`);
+    sock = new WebSocket(`ws://${global.host}:${global.port}/stream`);
     sock.onclose = function () {
         receiving = false
         replaceChildrenOf("#play-pause", '<i class="fa-solid fa-play"></i>')

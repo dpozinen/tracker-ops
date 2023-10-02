@@ -160,7 +160,7 @@ function fetchLink(elem, link, cardId) {
             $('.manual-magnet', card).click(function () {
                 searchSpinner(true, true, $('.manual-magnet', card))
                 $.ajax({
-                    url: `http://${global.host}:${global.host}/deluge`,
+                    url: `http://${global.host}:${global.port}/deluge`,
                     method: "POST",
                     contentType: "text/plain",
                     data: torrent.link,
