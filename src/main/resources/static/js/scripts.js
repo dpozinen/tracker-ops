@@ -1,6 +1,7 @@
 
 let global = {
-    host : "192.168.0.184"
+    host : "192.168.0.184",
+    port : "18133"
 }
 
 window.addEventListener('DOMContentLoaded', event => {
@@ -65,7 +66,7 @@ function search(event) {
     let tracker = $('#search-form .form-check-input:checked').val();
     let keywords = $('#keywords').val();
 
-    let url = `http://${global.host}:8133/search/${tracker}/${keywords}`;
+    let url = `http://${global.host}:${global.port}/search/${tracker}/${keywords}`;
     $.ajax({
         type: "GET",
         dataType: "json",
@@ -159,7 +160,7 @@ function fetchLink(elem, link, cardId) {
             $('.manual-magnet', card).click(function () {
                 searchSpinner(true, true, $('.manual-magnet', card))
                 $.ajax({
-                    url: `http://${global.host}:8133/deluge`,
+                    url: `http://${global.host}:${global.host}/deluge`,
                     method: "POST",
                     contentType: "text/plain",
                     data: torrent.link,
