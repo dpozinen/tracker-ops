@@ -1,3 +1,5 @@
+import static java.lang.System.getenv
+
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.9.20-Beta'
     id 'application'
@@ -83,8 +85,8 @@ jib {
     to {
         image="ghcr.io/$group/$rootProject.name:$version"
         auth {
-            username = '${{ github.actor }}'
-            password = '${{ secrets.GITHUB_TOKEN }}'
+            username = "${getenv("GITHUB_ACTOR")}"
+            password = "${getenv("GITHUB_TOKEN")}"
         }
     }
 }
