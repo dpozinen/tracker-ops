@@ -28,4 +28,4 @@ jobs:
         env:
           GHCR_ACTOR: ${{ github.actor }}
           GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: ./gradlew jib
+        run: ./gradlew --debug jib
