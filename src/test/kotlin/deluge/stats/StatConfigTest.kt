@@ -1,4 +1,4 @@
-package deluge
+package deluge.stats
 
 import dpozinen.App
 import org.assertj.core.api.Assertions.assertThatThrownBy

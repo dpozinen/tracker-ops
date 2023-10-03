@@ -53,13 +53,16 @@ class DownloadedCallbacks(
         scan(2)
     }
 
-    private fun moveDownloadFolder(torrent: TorrentResult) =
-        when (TorrentType.from(torrent.name)) {
-            TorrentType.SHOW -> moveTo(torrent, showFolder)
-            TorrentType.FILM -> moveTo(torrent, filmFolder)
+    fun moveDownloadFolder(vararg torrents: TorrentResult) =
+        torrents.forEach { torrent ->
+            when (TorrentType.from(torrent.name)) {
+                TorrentType.SHOW -> moveTo(torrent, showFolder)
+                TorrentType.FILM -> moveTo(torrent, filmFolder)
+            }
         }
 
     private fun moveTo(torrent: TorrentResult, to: String) {
+        log.info { "Moving ${torrent.name} to $to" }
         delugeActionsClient.move(DelugeRequest.move(to, torrent.id!!))
     }
 

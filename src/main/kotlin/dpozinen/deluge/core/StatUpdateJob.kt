@@ -22,7 +22,7 @@ open class StatUpdateJob(
     @EventListener(value = [ApplicationReadyEvent::class])
     fun startJob() {
         GlobalScope.launch(Dispatchers.IO) {
-            repeat(Int.MAX_VALUE) {
+            while (true) {
                 runCatching { delugeStatsService.collectStats() }
                     .onFailure {
                         log.error { it }

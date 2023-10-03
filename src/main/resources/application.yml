@@ -9,9 +9,10 @@ tracker-ops:
     url: http://192.168.0.184:32400
     api-key: /sensitive/plex
   deluge:
-    url: 192.168.0.180:8112
+    url: 192.168.0.184:18112
     folders:
       download: /Downloads/running
+      done: /Downloads/done
       show: /Downloads/Show
       film: /Downloads/Film
     stats:
