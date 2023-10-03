@@ -6,7 +6,7 @@ tracker-ops:
     url: https://192.168.0.184
     api-key: /sensitive/trueNas
   plex:
-    url: 192.168.0.114:32400
+    url: http://192.168.0.184:32400
     api-key: /sensitive/plex
   deluge:
     url: 192.168.0.180:8112

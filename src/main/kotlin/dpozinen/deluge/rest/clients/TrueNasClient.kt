@@ -36,13 +36,6 @@ interface TrueNasClient {
 
     open class TrueNasClientConfig {
 
-        @Value("\${tracker-ops.truenas.keystore-path}")
-        private lateinit var keystorePath: String
-        @Value("\${tracker-ops.truenas.truststore-path}")
-        private lateinit var truststorePath: String
-        @Value("\${tracker-ops.truenas.stores-password}")
-        private lateinit var storesPassword: String
-
         @Bean
         open fun retryer() = Retryer.Default()
 
@@ -52,9 +45,13 @@ interface TrueNasClient {
 
         @Bean
         @ConditionalOnProperty("tracker-ops.truenas.tls.enabled", havingValue = "true", matchIfMissing = true)
-        open fun feignClient() = Client.Default(createSSLContext()) { _, _ -> true }
+        open fun feignClient(
+            @Value("\${tracker-ops.truenas.keystore-path}") keystorePath: String,
+            @Value("\${tracker-ops.truenas.truststore-path}") truststorePath: String,
+            @Value("\${tracker-ops.truenas.stores-password}") storesPassword: String,
+        ) = Client.Default(createSSLContext(keystorePath, truststorePath, storesPassword)) { _, _ -> true }
 
-        private fun createSSLContext(): SSLSocketFactory {
+        private fun createSSLContext(keystorePath: String, truststorePath: String, storesPassword: String): SSLSocketFactory {
             val pass = storesPassword.toCharArray()
 
             val keyStore = KeyStore.getInstance("JKS")
