@@ -27,7 +27,7 @@ interface DelugeActionsClient {
 
     @PostMapping
     @Headers("Content-Type: application/json")
-    fun addMagnet(@RequestBody body: DelugeRequest): DelugeResult<Boolean>
+    fun addMagnet(@RequestBody body: DelugeRequest): DelugeResult<String>
 
     open class DelugeClientConfig {
 

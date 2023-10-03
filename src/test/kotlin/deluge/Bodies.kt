@@ -101,7 +101,7 @@ class Bodies {
             }
             """
 
-        const val addMagnetResponse = """ {"result": null, "error": null, "id": 8888} """
+        const val addMagnetResponse = """ {"result": "28b9885fdcd79be910863837e72978f7e1aa0991", "error": null, "id": 8888} """
 
         fun stringResource(path: String) = this::class.java.getResource(path)?.readText(Charsets.UTF_8)!!
     }

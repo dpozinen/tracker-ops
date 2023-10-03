@@ -91,7 +91,7 @@ class DelugeFeignClientsTest {
         mockDeluge(Bodies.addMagnetRequest, Bodies.addMagnetResponse)
 
         val result = client.addMagnet(DelugeRequest.addMagnet("magnet", "folder")).result
-        assertThat(result).isTrue()
+        assertThat(result).isEqualTo("28b9885fdcd79be910863837e72978f7e1aa0991")
     }
 
     @Test
