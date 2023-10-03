@@ -70,6 +70,7 @@ interface TrueNasClient {
 
     class TrueNasAuthInterceptor(private val apiKey: String) : RequestInterceptor {
         override fun apply(template: RequestTemplate) {
+            template.removeHeader(AUTHORIZATION)
             template.header(AUTHORIZATION, "Bearer $apiKey".trim())
         }
     }

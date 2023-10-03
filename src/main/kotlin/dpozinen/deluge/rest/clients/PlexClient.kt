@@ -35,6 +35,7 @@ interface PlexClient {
         private val plexToken = "X-Plex-Token"
 
         override fun apply(template: RequestTemplate) {
+            template.query(plexToken) // clear
             template.query(plexToken, plexApiKey)
         }
     }
