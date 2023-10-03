@@ -25,19 +25,12 @@ class DefaultDelugeService(
 
     @OptIn(DelicateCoroutinesApi::class)
     override fun addMagnet(magnet: String) {
-        val oldTorrents = rawTorrents()
-        runBlocking {
-            delugeClient.addMagnet(DelugeRequest.addMagnet(magnet, downloadFolder))
-        }
+        val id = delugeClient.addMagnet(DelugeRequest.addMagnet(magnet, downloadFolder)).result
 
         GlobalScope.launch {
-            delay(1000)
+            delay(5000)
             rawTorrents()
-                .toMutableList()
-                .let { newTorrents ->
-                    newTorrents.removeAll(oldTorrents)
-                    newTorrents.firstOrNull()
-                }
+                .firstOrNull { it.id == id }
                 ?.also {
                     CoroutineScope(Dispatchers.IO).launch {
                         follower.follow(it) { rawTorrents() }
