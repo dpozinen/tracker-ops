@@ -9,6 +9,8 @@ tracker-ops:
   truenas:
     url: localhost:8112
     api-key: /sensitive/plex
+    tls:
+      enabled: false
 
 server:
   port: 8133

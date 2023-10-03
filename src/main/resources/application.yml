@@ -3,7 +3,7 @@ tracker-ops:
   follow-duration: 90h
   follow-interval: 1m
   truenas:
-    url: 192.168.0.184
+    url: https://192.168.0.184
     api-key: /sensitive/trueNas
   plex:
     url: 192.168.0.114:32400

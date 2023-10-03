@@ -26,7 +26,7 @@ fun interface StatsKafkaProducer {
         )
         override fun send(stats: List<DataPoint>) {
             log.trace { "Sending stats about ${stats.map { it.name }.toSet()}" }
-            kafkaTemplate.send(kafkaTemplate.defaultTopic, stats)
+            kafkaTemplate.sendDefault(stats)
         }
     }
 
