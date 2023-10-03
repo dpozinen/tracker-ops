@@ -2,6 +2,7 @@ package dpozinen.deluge.core
 
 import dpozinen.deluge.kafka.StatsKafkaProducer
 import dpozinen.deluge.rest.DelugeConverter
+import dpozinen.deluge.rest.bytesToSize
 import dpozinen.deluge.rest.clients.TorrentsResult.TorrentResult
 import kotlinx.coroutines.delay
 import mu.KotlinLogging.logger
@@ -58,7 +59,7 @@ class DelugeDownloadFollower(
     }
 
     private fun calcMoveFileDelay(torrent: TorrentResult): Duration {
-        log.info { "Torrent ${torrent.name} is sized at ${torrent.size} downloaded is ${torrent.downloaded}" }
+        log.info { "Torrent ${torrent.name} is sized at ${bytesToSize(torrent.size)} downloaded" }
         return when {
             torrent.downloaded > GIGABYTE -> { // it takes about 10 seconds per Gb
                 val timeToMove = (torrent.downloaded / GIGABYTE) * 10
