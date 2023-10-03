@@ -9,7 +9,7 @@ import dpozinen.deluge.rest.clients.TorrentsResult.TorrentResult
 import dpozinen.deluge.rest.round
 
 interface DelugeService {
-    suspend fun addMagnet(magnet: String)
+    fun addMagnet(magnet: String)
     fun statefulTorrents(): DelugeTorrents
     fun allTorrents(): List<DelugeTorrent>
     fun rawTorrents(): List<TorrentResult>

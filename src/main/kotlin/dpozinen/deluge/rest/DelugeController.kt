@@ -25,7 +25,7 @@ class DelugeController(
     private var stream: Job? = null
 
     @PostMapping("/deluge")
-    suspend fun addMagnet(@RequestBody magnet: String) = service.addMagnet(magnet)
+    fun addMagnet(@RequestBody magnet: String) = service.addMagnet(magnet)
 
     @GetMapping("/deluge/torrents")
     fun delugeTorrents() = service.statefulTorrents()

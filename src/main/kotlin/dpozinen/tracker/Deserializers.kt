@@ -3,13 +3,13 @@ package dpozinen.tracker
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.SerializerProvider
+import jakarta.annotation.PostConstruct
+import jakarta.servlet.http.HttpServletRequest
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.jackson.JsonComponent
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
 import java.io.IOException
-import jakarta.annotation.PostConstruct
-import jakarta.servlet.http.HttpServletRequest
 
 
 @JsonComponent

@@ -23,13 +23,14 @@ class DefaultDelugeService(
 
     private var state: DelugeState = DelugeState().with(Sort(By.NAME))
 
-    override suspend fun addMagnet(magnet: String) {
+    @OptIn(DelicateCoroutinesApi::class)
+    override fun addMagnet(magnet: String) {
         val oldTorrents = rawTorrents()
         runBlocking {
             delugeClient.addMagnet(DelugeRequest.addMagnet(magnet, downloadFolder))
         }
 
-        coroutineScope {
+        GlobalScope.launch {
             delay(1000)
             rawTorrents()
                 .toMutableList()
