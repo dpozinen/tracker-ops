@@ -6,27 +6,43 @@ import dpozinen.deluge.rest.bytesToSize
 import dpozinen.deluge.rest.clients.TorrentsResult.TorrentResult
 import kotlinx.coroutines.delay
 import mu.KotlinLogging.logger
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.stereotype.Component
 import org.springframework.stereotype.Service
 import java.time.Instant
 import java.time.Instant.now
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.toKotlinDuration
 
 @Service
 class DelugeDownloadFollower(
     private val converter: DelugeConverter,
     private val producer: StatsKafkaProducer,
     private val callbacks: DownloadedCallbacks,
-    @Value("\${tracker-ops.follow-duration:4h}") private val followDuration: String,
-    @Value("\${tracker-ops.follow-interval:1m}") private val followInterval: String,
+    @Value("\${tracker-ops.deluge.stats.follow.duration:4h}") private val followDuration: Duration,
+    @Value("\${tracker-ops.deluge.stats.follow.initial-delay:20s}") private val initialDelay: Duration,
+    private val delayProvider: DelayProvider
 ) {
+    @Autowired
+    constructor(
+        converter: DelugeConverter,
+        producer: StatsKafkaProducer,
+        callbacks: DownloadedCallbacks,
+        @Value("\${tracker-ops.deluge.stats.follow.duration:4h}") followDuration: String,
+        @Value("\${tracker-ops.deluge.stats.follow.initial-delay:20s}") initialDelay: String,
+        delayProvider: DelayProvider
+    ) : this(
+        converter, producer, callbacks, Duration.parse(followDuration), Duration.parse(initialDelay), delayProvider
+    )
+
     private val log = logger {}
 
+
     suspend fun follow(torrent: TorrentResult, update: () -> List<TorrentResult>) {
-        val followFor = Duration.parse(followDuration)
-        val followDelay = Duration.parse(followInterval)
-        val end = Instant.ofEpochMilli(now().toEpochMilli() + followFor.inWholeMilliseconds)
+        var followDelay = initialDelay
+        val end = Instant.ofEpochMilli(now().toEpochMilli() + followDuration.inWholeMilliseconds)
 
         log.info("Will follow torrent ${torrent.name} with id ${torrent.id} for $followDuration until $end")
         while (true) {
@@ -35,27 +51,27 @@ class DelugeDownloadFollower(
             delay(followDelay)
 
             runCatching {
-                update().firstOrNull { it.id == torrent.id }
+                update()
+                    .firstOrNull { it.id == torrent.id }
                     ?.also { victim ->
-                        run {
-                            if (victim.state != "Downloading") {
-                                val delay = calcMoveFileDelay(victim)
-                                log.info { "Torrent ${victim.name} is done downloading, triggering scan jobs with $delay delay" }
+                        if (victim.state != "Downloading") {
+                            val delay = calcMoveFileDelay(victim)
+                            log.info { "Torrent ${victim.name} is done downloading, triggering scan jobs with $delay delay" }
 
-                                delay(delay) // wait for deluge to move the torrent to 'done' folder
-                                callbacks.trigger(victim, delay)
+                            delay(delay) // wait for deluge to move the torrent to 'done' folder
+                            callbacks.trigger(victim, delay)
 
-                                return
-                            } else {
-                                log.debug { "${victim.name} is still downloading.\n $victim" }
+                            return@follow
+                        } else {
+                            followDelay = delayProvider.calculate(victim.eta)
+                            log.debug { "${victim.name} is still downloading. Next poll in $followDelay \n $victim"  }
 
-                                producer.send(converter.convert(victim))
-                            }
+                            producer.send(converter.convert(victim))
                         }
                     } ?: log.error { "${torrent.name} is not found. What the fuck" }
-            }.onFailure { log.info { "Failed to follow ${torrent.name}" } }
+            }.onFailure { log.error(it) { "Failed to follow ${torrent.name}" } }
         }
-        log.info("It took over $followFor for ${torrent.name} to complete, stopped following")
+        log.info("It took over $followDuration for ${torrent.name} to complete, stopped following")
     }
 
     private fun calcMoveFileDelay(torrent: TorrentResult): Duration {
@@ -67,6 +83,19 @@ class DelugeDownloadFollower(
             }
             torrent.downloaded < 10 -> 5.seconds
             else -> 30.seconds
+        }
+    }
+
+    @Component
+    class DelayProvider(
+        @Value("#{\${tracker-ops.deluge.stats.follow.datapoints-per-download}}")
+        private val datapointsPerDownload: Map<java.time.Duration, Int>
+    ) {
+        fun calculate(eta: Double): Duration {
+            return datapointsPerDownload.keys
+                .sorted()
+                .first { eta.seconds <= it.toKotlinDuration() }
+                .let { eta / datapointsPerDownload[it]!! }.seconds
         }
     }
 }

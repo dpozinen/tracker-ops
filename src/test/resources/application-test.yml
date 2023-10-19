@@ -3,6 +3,10 @@ tracker-ops:
   deluge:
     url: localhost:8112
     folders.download: /Downloads/running
+    stats:
+      follow:
+        duration: 6s
+        datapoints-per-download: '{ "6s": 3, "80s": 1000 }'
   plex:
     url: localhost:8112
     api-key: /sensitive/plex

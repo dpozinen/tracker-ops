@@ -1,7 +1,5 @@
 tracker-ops:
   host: 192.168.0.132
-  follow-duration: 90h
-  follow-interval: 1m
   truenas:
     url: https://192.168.0.184
     api-key: /sensitive/trueNas
@@ -16,6 +14,10 @@ tracker-ops:
       show: /Downloads/Show
       film: /Downloads/Film
     stats:
+      follow:
+        duration: 3d
+        datapoints-per-download: '{ "1d": 1000, "2d": 800, "3d": 600, "10d": 400, "30d": 200 }'
+        initial-delay: 20s
       poll-interval: 5m
 
 server:
