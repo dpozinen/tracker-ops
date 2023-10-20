@@ -29,6 +29,11 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ms-auto">
+                        <li class="nav-item mx-0 mx-lg-1">
+                            <a class="nav-link py-3 px-0 px-lg-3 rounded" data-bs-toggle="modal" data-bs-target="#addMagnetsManually">
+                                    <i class="fa-solid fa-magnet"></i>
+                            </a>
+                        </li>
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/">Search</a></li>
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#results">Torrents</a></li>
                         <li class="nav-item mx-0 mx-lg-1">
@@ -40,6 +45,35 @@
                 </div>
             </div>
         </nav>
+        <div class="modal fade" id="addMagnetsManually" tabindex="-1" aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <form id="add-magnet-form" autocomplete="off" onsubmit="downloadProvidedMagnets(event)">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Add Magnets</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body m-0">
+                            <div class="form-group p-0 m-0">
+                                <label for="add-magnets-1"></label>
+                                <input type="text" class="form-control m-0" id="add-magnets-1" placeholder="magnet link">
+                                <label for="add-magnets-2"></label>
+                                <input type="text" class="form-control m-0" id="add-magnets-2" placeholder="magnet link">
+                                <label for="add-magnets-3"></label>
+                                <input type="text" class="form-control m-0" id="add-magnets-3" placeholder="magnet link">
+                                <label for="add-magnets-4"></label>
+                                <input type="text" class="form-control mb-4" id="add-magnets-4" placeholder="magnet link">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" href="#results">Download</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
         <!-- Masthead-->
         <header class="masthead bg-primary text-white text-center" style="padding-bottom: 3rem; padding-top: calc(5rem + 74px)">
             <div class="container d-flex align-items-center flex-column">

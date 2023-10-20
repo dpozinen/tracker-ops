@@ -117,3 +117,19 @@ function showStats() {
         $selected.attr('hidden', true);
     }
 }
+
+function downloadProvidedMagnets(event) {
+    event.preventDefault()
+    $.each($('[id^="add-magnets"]'), function (ket, value) {
+        let magnet = $(value).val();
+        if (magnet) {
+            $.ajax({
+                url: `http://${global.host}:${global.port}/deluge`,
+                method: "POST",
+                contentType: "text/plain",
+                data: magnet,
+            });
+        }
+    })
+    window.location.href = '/deluge.html?sort=UPLOAD_SPEED:DESC&filter=STATE:Downloading:IS'
+}
