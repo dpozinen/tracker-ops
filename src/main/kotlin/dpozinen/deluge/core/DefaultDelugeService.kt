@@ -60,7 +60,7 @@ class DefaultDelugeService(
         synchronized(this) {
             state = state.mutate(mutation)
         }
-        log.info("Mutated $mutation")
+        log.debug { "Mutated $mutation" }
     }
 
 }
