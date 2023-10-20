@@ -30,7 +30,7 @@ dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
     implementation 'io.github.openfeign:feign-jackson:12.5'
 
-    implementation 'javax.xml.bind:jaxb-api:2.3.0'
+    implementation 'javax.xml.bind:jaxb-api:2.3.1'
 
     runtimeOnly 'org.jetbrains.kotlin:kotlin-reflect:1.9.10'
     runtimeOnly 'org.springframework.boot:spring-boot-devtools:3.1.4'
