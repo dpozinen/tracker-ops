@@ -1,4 +1,4 @@
-package dpozinen.deluge.core
+package deluge
 
 import dpozinen.deluge.core.DelugeDownloadFollower.DelayProvider
 import org.assertj.core.api.Assertions.assertThat
