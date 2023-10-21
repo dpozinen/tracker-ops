@@ -40,27 +40,6 @@ class Data {
         }
     }
 
-    class Rarbg {
-        companion object {
-            const val SEARCH_PAGE_PATH = "src/test/resources/rarbg/search.html"
-            const val TORRENT_PAGE_PATH = "src/test/resources/rarbg/torrent-page.html"
-
-            val PAGE_EXPECTED_TORRENT = Torrent(
-                "magnet:?xt=urn:btih:4d92937e338d550e09a18a6863caed3ea67e5638&dn=Diners.Drive-Ins.and.Dives.S43E11.Stuffed.Smoked.and.Wrapped.720p.WEB.h264-CAFFEiNE%5Brartv%5D&tr=http%3A%2F%2Ftracker.trackerfix.com%3A80%2Fannounce&tr=udp%3A%2F%2F9.rarbg.me%3A2720&tr=udp%3A%2F%2F9.rarbg.to%3A2950&tr=udp%3A%2F%2Ftracker.slowcheetah.org%3A14750&tr=udp%3A%2F%2Ftracker.tallpenguin.org%3A15790",
-                "Diners.Drive-Ins.and.Dives.S43E11.Stuffed.Smoked.and.Wrapped.720p.WEB.h264-CAFFEiNE[rartv]"
-            )
-
-            val SEARCH_EXPECTED_TORRENT = Torrent(
-                "/torrent/b4crw2z",
-                "Diners.Drive-Ins.and.Dives.S43E11.Stuffed.Smoked.and.Wrapped.720p.WEB.h264-CAFFEiNE[rartv]",
-                "290.03 MB",
-                63,
-                6,
-                "2022-09-18 04:42:40",
-                "rartv"
-            )
-        }
-    }
 
     companion object {
         val info: DelugeTorrents.Info = DelugeTorrents.Info(
