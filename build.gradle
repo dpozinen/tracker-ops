@@ -37,7 +37,7 @@ dependencies {
 
     testImplementation 'org.mockito:mockito-core:5.5.0'
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
-    testImplementation 'org.assertj:assertj-core:3.22.0'
+    testImplementation 'org.assertj:assertj-core:3.24.2'
     testImplementation 'org.springframework.boot:spring-boot-starter-test:3.1.4'
     testImplementation 'com.github.tomakehurst:wiremock-jre8:3.0.1'
     testImplementation 'com.marcinziolo:kotlin-wiremock:2.0.2'
