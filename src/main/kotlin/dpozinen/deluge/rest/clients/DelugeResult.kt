@@ -47,6 +47,21 @@ data class TorrentsResult(@JsonProperty("torrents") private val torrents: Map<St
                 .filterIsInstance<KProperty1.Getter<DelugeTorrent, T>>()
                 .first()
 
+        fun type() = TorrentType.from(name)
+
+        enum class TorrentType {
+            SHOW, FILM;
+            companion object {
+                private val regexS = Regex(".*S[0-9][0-9]?.*")
+                private val regexSeason = Regex(".*Season ?[0-9][0-9]?.*")
+                fun from(name: String) =
+                    if (name.replace("FS88", "") matches(regexS) ||
+                        name.replace("FS88", "") matches (regexSeason)) {
+                        SHOW
+                    } else FILM
+            }
+        }
+
     }
 
 }

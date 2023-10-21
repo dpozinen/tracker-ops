@@ -4,6 +4,8 @@ import dpozinen.deluge.rest.DelugeRequest
 import dpozinen.deluge.rest.clients.DelugeActionsClient
 import dpozinen.deluge.rest.clients.PlexClient
 import dpozinen.deluge.rest.clients.TorrentsResult.TorrentResult
+import dpozinen.deluge.rest.clients.TorrentsResult.TorrentResult.TorrentType.FILM
+import dpozinen.deluge.rest.clients.TorrentsResult.TorrentResult.TorrentType.SHOW
 import dpozinen.deluge.rest.clients.TrueNasClient
 import kotlinx.coroutines.delay
 import mu.KotlinLogging.logger
@@ -23,6 +25,9 @@ class DownloadedCallbacks(
 ) {
     private val log = logger {}
 
+    val filmLibraryId: Int = 1
+    val showLibraryId: Int = 2
+
     suspend fun trigger(torrent: TorrentResult, delay: Duration = 2.minutes) {
         log.info("Triggering true nas move job")
         trueNasMove()
@@ -31,7 +36,11 @@ class DownloadedCallbacks(
         delay(delay)
 
         log.info("Triggering plex scan lib")
-        plexScanLib()
+        plexScanLib(
+            when (torrent.type()) {
+                SHOW -> showLibraryId; FILM -> filmLibraryId
+            }
+        )
 
         log.info("Triggering true nas move download folder")
         moveDownloadFolder(torrent)
@@ -44,20 +53,19 @@ class DownloadedCallbacks(
             .onSuccess { log.info { "True nas move job succeeded" } }
     }
 
-    fun plexScanLib() {
-        fun scan(id: Int) = runCatching { plexClient.scanLibrary(id) }
-            .onFailure { log.error { it } }
-            .onSuccess { log.info { "Plex scan lib $id job succeeded" } }
-
-        scan(1)
-        scan(2)
+    fun plexScanLib(vararg ids: Int) {
+        ids.forEach { scan(it) }
     }
+
+    private fun scan(id: Int) = runCatching { plexClient.scanLibrary(id) }
+        .onFailure { log.error { it } }
+        .onSuccess { log.info { "Plex scan lib $id job succeeded" } }
 
     fun moveDownloadFolder(vararg torrents: TorrentResult) =
         torrents.forEach { torrent ->
-            when (TorrentType.from(torrent.name)) {
-                TorrentType.SHOW -> moveTo(torrent, showFolder)
-                TorrentType.FILM -> moveTo(torrent, filmFolder)
+            when (torrent.type()) {
+                SHOW -> moveTo(torrent, showFolder)
+                FILM -> moveTo(torrent, filmFolder)
             }
         }
 
@@ -66,16 +74,5 @@ class DownloadedCallbacks(
         delugeActionsClient.move(DelugeRequest.move(to, torrent.id!!))
     }
 
-    private enum class TorrentType {
-        SHOW, FILM;
-        companion object {
-            private val regexS = Regex(".*S[0-9][0-9]?.*")
-            private val regexSeason = Regex(".*Season ?[0-9][0-9]?.*")
-            fun from(name: String) =
-                if (name.replace("FS88", "") matches(regexS) ||
-                    name.replace("FS88", "") matches (regexSeason)) {
-                    SHOW
-                } else FILM
-        }
-    }
+
 }
