@@ -10,8 +10,8 @@ class Data {
 
     class OneThreeThree {
         companion object {
-            const val SEARCH_PAGE_PATH = "src/test/resources/one337xto/search.html"
-            const val TORRENT_PAGE_PATH = "src/test/resources/one337xto/torrent-page.html"
+            const val SEARCH_PAGE_PATH = "src/test/resources/1337x/search.html"
+            const val TORRENT_PAGE_PATH = "src/test/resources/1337x/torrent-page.html"
 
             val PAGE_EXPECTED_TORRENT = Torrent(
                 "magnet:?xt=urn:btih:7F7369A43153DEB61017E4E3076DD4DF6AED6F5F&dn=The+Birdcage+%281996%29+%281080p+BluRay+x265+HEVC+10bit+AAC+5.1+Panda%29+%5BQxR%5D&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=+udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Ftracker.zer0day.to%3A1337%2Fannounce&tr=udp%3A%2F%2Feddie4.nl%3A6969%2Fannounce+&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=http%3A%2F%2Ftracker.openbittorrent.com%3A80%2Fannounce&tr=udp%3A%2F%2Fopentracker.i2p.rocks%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.internetwarriors.net%3A1337%2Fannounce&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969%2Fannounce&tr=udp%3A%2F%2Fcoppersurfer.tk%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.zer0day.to%3A1337%2Fannounce",
@@ -40,6 +40,21 @@ class Data {
         }
     }
 
+    class TorrentGalaxy {
+        companion object {
+            const val SEARCH_PAGE_PATH = "src/test/resources/torrentgalaxy/search.html"
+
+            val SEARCH_EXPECTED_TORRENT = Torrent(
+                "magnet:?xt=urn:btih:7bd21e8b9906b4a9c08697c1067e3f32ce86fdb5&dn=Capote.2005.1080p.BluRay.H264.AAC-RARBG&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.cyberia.is%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexplodie.org%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.birkenwald.de%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.moeking.me%3A6969%2Fannounce&tr=udp%3A%2F%2Fipv4.tracker.harry.lu%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.tiny-vps.com%3A6969%2Fannounce",
+                "Capote.2005.1080p.BluRay.H264.AAC-RARBG",
+                "2.18 GB",
+                14,
+                6,
+                "10/10/23 23:56",
+                "indexFroggy",
+            )
+        }
+    }
 
     companion object {
         val info: DelugeTorrents.Info = DelugeTorrents.Info(

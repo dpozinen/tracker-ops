@@ -26,7 +26,20 @@ interface TrackerOps {
 
         override fun expandUrl(url: String): String = "$baseUrl/$url"
 
-        private fun keywordsSegment(keywords: List<String>) = keywords.joinToString("+")
+    }
+
+    class TorrentGalaxy : TrackerOps {
+        private val baseUrl: String = "https://torrentgalaxy.to"
+
+        override fun open(torrent: Torrent) = "" // noop
+
+        override fun search(keywords: List<String>): String =
+            session.newRequest()
+                .url("$baseUrl/torrents.php?search=${keywordsSegment(keywords)}")
+                .execute()
+                .body()
+
+        override fun expandUrl(url: String): String = "$baseUrl/$url"
 
     }
 
@@ -35,3 +48,5 @@ interface TrackerOps {
     }
 
 }
+
+fun keywordsSegment(keywords: List<String>) = keywords.joinToString("+")
