@@ -26,11 +26,17 @@ class Tracker(
         fun from(tracker: Trackers) =
             when (tracker) {
                 Trackers.OneThreeThree -> oneThreeThreeSevenXTo()
+                Trackers.TorrentGalaxy -> torrentGalaxy()
             }
 
         private fun oneThreeThreeSevenXTo() = Tracker(
             TrackerParser.OneThreeThree(),
             TrackerOps.OneThreeThree()
+        )
+
+        private fun torrentGalaxy() = Tracker(
+            TrackerParser.TorrentGalaxy(),
+            TrackerOps.TorrentGalaxy()
         )
 
     }

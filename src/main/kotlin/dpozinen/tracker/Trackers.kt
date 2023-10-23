@@ -1,14 +1,13 @@
 package dpozinen.tracker
 
 enum class Trackers {
-    OneThreeThree;
+    OneThreeThree, TorrentGalaxy;
 
     companion object {
-        fun from(name: String) : Trackers {
-            return when (name) {
-                "133" -> OneThreeThree
-                else -> throw IllegalArgumentException()
-            }
+        fun from(name: String) = when (name) {
+            "133" -> OneThreeThree
+            "torrent-galaxy" -> TorrentGalaxy
+            else -> throw IllegalArgumentException()
         }
     }
 }
