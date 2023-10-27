@@ -86,6 +86,7 @@ class Data {
             uploadSpeed = 180.0,
             date = 1624829185,
             downloadLocation = "/Downloads/Show",
+            label = ""
         )
 
         val delugeTorrent = DelugeTorrent(

@@ -35,11 +35,11 @@ class DownloadedFollowTest {
     @Test
     fun `follow torrent download`() {
         val ok = AtomicInteger(0)
-        val victim = Data.delugeTorrentResponse.copy(state = "Seeding", downloaded = 1.0, eta = 6.0)
+        val victim = Data.delugeTorrentResponse.copy(id = "2", state = "Seeding", downloaded = 1.0, eta = 6.0)
         coJustRun { downloadedCallbacks.trigger(any(), any()) }
 
         runBlocking {
-            follower.follow(Data.delugeTorrentResponse) {
+            follower.follow(Data.delugeTorrentResponse.copy(id = "2")) {
                 if (ok.get() == 2) {
                     listOf(victim)
                 } else {
@@ -55,7 +55,7 @@ class DownloadedFollowTest {
     @Test
     fun `follow torrent download for too long`() {
         val ok = AtomicInteger(0)
-        val victim = Data.delugeTorrentResponse.copy(eta = 60.0)
+        val victim = Data.delugeTorrentResponse.copy(id = "1", eta = 60.0)
         runBlocking {
             follower.follow(victim) {
                 ok.incrementAndGet()

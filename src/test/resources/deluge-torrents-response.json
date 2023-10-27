@@ -29,7 +29,8 @@
         "download_payload_rate": 0,
         "ratio": 84.44232177734375,
         "seeds_peers_ratio": 1.0,
-        "upload_payload_rate": 0
+        "upload_payload_rate": 0,
+        "label": ""
       }
     }
   },

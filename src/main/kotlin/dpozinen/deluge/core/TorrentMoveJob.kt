@@ -28,6 +28,7 @@ open class TorrentMoveJob(
                 runCatching {
                     delugeService.rawTorrents()
                         .filter { it.downloadLocation == doneFolder }
+                        .filterNot { it.isSonarrManaged() }
                         .toTypedArray()
                         .let {
                             downloadedCallbacks.moveDownloadFolder(*it)

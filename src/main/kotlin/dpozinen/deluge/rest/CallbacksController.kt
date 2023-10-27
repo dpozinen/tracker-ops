@@ -2,6 +2,10 @@ package dpozinen.deluge.rest
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import dpozinen.deluge.core.DownloadedCallbacks
+import dpozinen.deluge.core.SonarrCallbacks
+import dpozinen.deluge.domain.DownloadSonarrEvent
+import dpozinen.deluge.domain.GrabSonarrEvent
+import dpozinen.deluge.domain.SonarrEvent
 import mu.KotlinLogging.logger
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -10,7 +14,8 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class CallbacksController(
-    private val downloadedCallbacks: DownloadedCallbacks
+    private val downloadedCallbacks: DownloadedCallbacks,
+    private val sonarrCallbacks: SonarrCallbacks
 ) {
 
     private val log = logger {}
@@ -29,7 +34,11 @@ class CallbacksController(
     }
 
     @PostMapping("/api/callbacks/sonarr")
-    fun sonarr(@RequestBody body: Any) {
-        log.info { jacksonObjectMapper().writeValueAsString(body) }
+    fun sonarr(@RequestBody event: SonarrEvent) {
+        log.info { jacksonObjectMapper().writeValueAsString(event) }
+        when (event) {
+            is GrabSonarrEvent -> sonarrCallbacks.downloadStarted(event)
+            is DownloadSonarrEvent -> sonarrCallbacks.downloadCompleted(event)
+        }
     }
 }

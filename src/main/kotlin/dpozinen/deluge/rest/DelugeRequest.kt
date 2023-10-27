@@ -73,5 +73,6 @@ private val torrentFields: Collection<String> = listOf(
     "seeds_peers_ratio",
     "total_remaining",
     "completed_time",
-    "time_since_transfer"
+    "time_since_transfer",
+    "label"
 )
