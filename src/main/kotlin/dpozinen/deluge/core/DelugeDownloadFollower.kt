@@ -51,6 +51,7 @@ class DelugeDownloadFollower(
         val end = Instant.ofEpochMilli(now().toEpochMilli() + followDuration.inWholeMilliseconds)
 
         log.info("Will follow torrent ${torrent.name} with id ${torrent.id} for $followDuration until $end")
+        var notFoundCounter = 0
         while (true) {
             if (now().isAfter(end)) break
 
@@ -69,7 +70,13 @@ class DelugeDownloadFollower(
 
                             producer.send(converter.convert(victim))
                         }
-                    } ?: log.error { "${torrent.name} is not found. What the fuck" }
+                    } ?: run {
+                        log.error { "${torrent.name} is not found. What the fuck" }
+                        if (notFoundCounter++ > 10) {
+                            log.error { "Failed to follow ${torrent.name}" }
+                            return
+                        }
+                    }
             }.onFailure { log.error(it) { "Failed to follow ${torrent.name}" } }
         }
         log.info("It took over $followDuration for ${torrent.name} to complete, stopped following")
