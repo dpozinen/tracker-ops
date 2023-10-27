@@ -7,7 +7,7 @@ plugins {
 }
 
 group = 'dpozinen'
-version = '2.9-sonarr-SNAPSHOT'
+version = '2.9'
 
 repositories {
     mavenCentral()
