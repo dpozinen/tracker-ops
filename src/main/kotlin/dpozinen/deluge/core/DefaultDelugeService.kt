@@ -10,6 +10,8 @@ import dpozinen.deluge.rest.clients.DelugeActionsClient
 import kotlinx.coroutines.*
 import mu.KotlinLogging.logger
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.context.event.ApplicationReadyEvent
+import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Service
 
 @Service
@@ -22,6 +24,19 @@ class DefaultDelugeService(
     private val log = logger {}
 
     private var state: DelugeState = DelugeState().with(Sort(By.NAME))
+
+    @OptIn(DelicateCoroutinesApi::class)
+    @EventListener(ApplicationReadyEvent::class,
+        condition = "@environment.getRequiredProperty('tracker-ops.deluge.stats.follow.resume-on-startup')")
+    override fun followDownloading() {
+        delugeClient.torrents().result.torrents()
+            .filter { it.state == "Downloading" }
+            .forEach {
+                GlobalScope.launch(Dispatchers.IO) {
+                    follower.follow(it) { rawTorrents() }
+                }
+            }
+    }
 
     @OptIn(DelicateCoroutinesApi::class)
     override fun addMagnet(magnet: String) {

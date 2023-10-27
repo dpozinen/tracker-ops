@@ -38,7 +38,9 @@ data class TorrentsResult(@JsonProperty("torrents") private val torrents: Map<St
         @JsonProperty("time_added")
         val date: Long,
         @JsonProperty("download_location")
-        val downloadLocation: String
+        val downloadLocation: String,
+        @JsonProperty("label")
+        val label: String
     ) {
         fun <T> getterBy(by: By) =
             this::class.memberProperties
@@ -48,6 +50,8 @@ data class TorrentsResult(@JsonProperty("torrents") private val torrents: Map<St
                 .first()
 
         fun type() = TorrentType.from(name)
+
+        fun isSonarrManaged() = label.contains("sonarr")
 
         enum class TorrentType {
             SHOW, FILM;

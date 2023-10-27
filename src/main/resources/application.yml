@@ -9,12 +9,14 @@ tracker-ops:
   deluge:
     url: 192.168.0.184:18112
     folders:
+      root: /Downloads
       download: /Downloads/running
       done: /Downloads/done
       show: /Downloads/Show
       film: /Downloads/Film
     stats:
       follow:
+        resume-on-startup: true
         duration: 3d
         datapoints-per-download: '{ "1d": 1000, "2d": 800, "3d": 600, "10d": 400, "30d": 200 }'
         initial-delay: 20s

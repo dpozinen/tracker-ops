@@ -13,6 +13,7 @@ interface DelugeService {
     fun statefulTorrents(): DelugeTorrents
     fun allTorrents(): List<DelugeTorrent>
     fun rawTorrents(): List<TorrentResult>
+    fun followDownloading()
     fun mutate(mutation: Mutation)
 
     fun info(all: List<TorrentResult>, mutated: List<TorrentResult>): DelugeTorrents.Info {

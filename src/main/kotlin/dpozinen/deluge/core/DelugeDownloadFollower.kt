@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component
 import org.springframework.stereotype.Service
 import java.time.Instant
 import java.time.Instant.now
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.toKotlinDuration
@@ -37,14 +38,20 @@ class DelugeDownloadFollower(
         converter, producer, callbacks, Duration.parse(followDuration), Duration.parse(initialDelay), delayProvider
     )
 
+    private val following: MutableSet<String> = ConcurrentHashMap.newKeySet()
     private val log = logger {}
 
-
     suspend fun follow(torrent: TorrentResult, update: () -> List<TorrentResult>) {
+        if (!following.add(torrent.id!!)) {
+            log.info { "Already following ${torrent.name}" }
+            return
+        }
+
         var followDelay = initialDelay
         val end = Instant.ofEpochMilli(now().toEpochMilli() + followDuration.inWholeMilliseconds)
 
         log.info("Will follow torrent ${torrent.name} with id ${torrent.id} for $followDuration until $end")
+        var notFoundCounter = 0
         while (true) {
             if (now().isAfter(end)) break
 
@@ -55,23 +62,38 @@ class DelugeDownloadFollower(
                     .firstOrNull { it.id == torrent.id }
                     ?.also { victim ->
                         if (victim.state != "Downloading") {
-                            val delay = calcMoveFileDelay(victim)
-                            log.info { "Torrent ${victim.name} is done downloading, triggering scan jobs with $delay delay" }
-
-                            delay(delay) // wait for deluge to move the torrent to 'done' folder
-                            callbacks.trigger(victim, delay)
-
-                            return@follow
+                            stopFollowing(victim)
+                            return
                         } else {
                             followDelay = delayProvider.calculate(victim.eta)
                             log.debug { "${victim.name} is still downloading. Next poll in $followDelay \n $victim"  }
 
                             producer.send(converter.convert(victim))
                         }
-                    } ?: log.error { "${torrent.name} is not found. What the fuck" }
+                    } ?: run {
+                        log.error { "${torrent.name} is not found. What the fuck" }
+                        if (notFoundCounter++ > 10) {
+                            log.error { "Failed to follow ${torrent.name}" }
+                            return
+                        }
+                    }
             }.onFailure { log.error(it) { "Failed to follow ${torrent.name}" } }
         }
         log.info("It took over $followDuration for ${torrent.name} to complete, stopped following")
+    }
+
+    private suspend fun stopFollowing(victim: TorrentResult) {
+        following.remove(victim.id)
+        if (victim.isSonarrManaged()) {
+            log.info { "${victim.name} is done downloading, but it is managed by sonarr" }
+            return
+        }
+
+        val delay = calcMoveFileDelay(victim)
+        log.info { "Torrent ${victim.name} is done downloading, triggering scan jobs with $delay delay" }
+
+        delay(delay) // wait for deluge to move the torrent to 'done' folder
+        callbacks.trigger(victim, delay)
     }
 
     private fun calcMoveFileDelay(torrent: TorrentResult): Duration {
