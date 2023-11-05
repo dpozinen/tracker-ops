@@ -10,11 +10,10 @@ import com.google.cloud.translate.v3.TranslationServiceClient
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
-import org.springframework.stereotype.Service
 import java.io.InputStream
 
 
-@Service
+//@Service
 class TranslationService {
 
     private val translationServiceClient = TranslationServiceClient.create()
