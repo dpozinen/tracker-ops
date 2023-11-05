@@ -25,6 +25,13 @@ tracker-ops:
 server:
   port: 8133
 
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          filter:
+            CommonsRequestLoggingFilter: DEBUG
 spring:
   kafka:
     template:
