@@ -3,6 +3,7 @@ package dpozinen.translate
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import kotlinx.coroutines.DelicateCoroutinesApi
 import mu.KotlinLogging.logger
+import org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE
 import org.springframework.http.codec.multipart.Part
 import org.springframework.stereotype.Controller
 import org.springframework.util.MultiValueMap
@@ -17,7 +18,7 @@ class PlexWebhookController(
     private val objectMapper = jacksonObjectMapper()
 
     @OptIn(DelicateCoroutinesApi::class)
-    @PostMapping("/api/callbacks/plex-webhook")
+    @PostMapping("/api/callbacks/plex-webhook", consumes = [MULTIPART_FORM_DATA_VALUE])
     fun consume(@RequestBody parts: MultiValueMap<String, Part>) {
         log.info { "Plex event: ${objectMapper.writeValueAsString(parts)}" }
 //        objectMapper.readValue(thumb, Map::class.java)
