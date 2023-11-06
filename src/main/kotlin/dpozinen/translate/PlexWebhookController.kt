@@ -19,6 +19,9 @@ class PlexWebhookController(
     @PostMapping("/api/callbacks/plex-webhook", consumes = [MULTIPART_FORM_DATA_VALUE])
     fun consume(parts: HttpServletRequest) {
         log.info { "Plex event: ${objectMapper.writeValueAsString(parts.parts.map { it.name })}" }
+        log.info { "Plex payload: ${objectMapper.writeValueAsString(
+            parts.parts.map { part -> part.inputStream.bufferedReader().use { it.readText() }  }
+        )}" }
 //        objectMapper.readValue(thumb, Map::class.java)
 //        val event = thumb.bytes.contentToString()
 //            .let {  }
