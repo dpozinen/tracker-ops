@@ -50,7 +50,7 @@ class CallbacksControllerTest(
                 }
             }
 
-        verify { sonarrCallbacks.downloadStarted(any()) }
+        verify { sonarrCallbacks.downloadStarted() }
     }
 
     @Test

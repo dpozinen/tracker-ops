@@ -5,7 +5,6 @@ import dpozinen.deluge.core.DelugeService
 import dpozinen.deluge.core.SonarrCallbacks
 import dpozinen.deluge.domain.DownloadSonarrEvent
 import dpozinen.deluge.domain.EpisodeFile
-import dpozinen.deluge.domain.GrabSonarrEvent
 import dpozinen.deluge.domain.Series
 import dpozinen.deluge.rest.DelugeRequest
 import dpozinen.deluge.rest.DelugeRequest.Method.move_storage
@@ -42,7 +41,7 @@ class SonarrCallbacksTest {
 
     @Test
     fun `should trigger follow on download started event`() {
-        sonarrCallbacks.downloadStarted(GrabSonarrEvent(Series("")))
+        sonarrCallbacks.downloadStarted()
 
         verify { delugeService.followDownloading() }
     }

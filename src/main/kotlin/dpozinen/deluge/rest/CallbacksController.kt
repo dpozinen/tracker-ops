@@ -28,6 +28,11 @@ class CallbacksController(
         )
     }
 
+    @GetMapping("/api/callbacks/download-started")
+    fun follow() {
+        sonarrCallbacks.downloadStarted()
+    }
+
     @GetMapping("/api/callbacks/true-nas-move")
     fun trueNasMove() {
         downloadedCallbacks.trueNasMove()
@@ -37,7 +42,7 @@ class CallbacksController(
     fun sonarr(@RequestBody event: SonarrEvent) {
         log.info { jacksonObjectMapper().writeValueAsString(event) }
         when (event) {
-            is GrabSonarrEvent -> sonarrCallbacks.downloadStarted(event)
+            is GrabSonarrEvent -> sonarrCallbacks.downloadStarted()
             is DownloadSonarrEvent -> sonarrCallbacks.downloadCompleted(event)
         }
     }
