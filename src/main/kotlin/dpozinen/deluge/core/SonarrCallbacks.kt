@@ -1,7 +1,6 @@
 package dpozinen.deluge.core
 
 import dpozinen.deluge.domain.DownloadSonarrEvent
-import dpozinen.deluge.domain.GrabSonarrEvent
 import dpozinen.deluge.rest.DelugeRequest
 import dpozinen.deluge.rest.clients.DelugeActionsClient
 import mu.KotlinLogging.logger
@@ -18,7 +17,7 @@ class SonarrCallbacks(
 ) {
     private val log = logger {}
 
-    fun downloadStarted(event: GrabSonarrEvent) {
+    fun downloadStarted() {
         delugeService.followDownloading()
     }
 
