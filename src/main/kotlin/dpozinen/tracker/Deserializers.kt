@@ -68,7 +68,7 @@ open class Deserializers(@Value("\${tracker-ops.host:localhost}") private val ad
             } else if (a.contributor.isNotEmpty() && b.contributor.isEmpty()) {
                 -1
             } else {
-                1
+                a.contributor.compareTo(b.contributor)
             }
         }
     }

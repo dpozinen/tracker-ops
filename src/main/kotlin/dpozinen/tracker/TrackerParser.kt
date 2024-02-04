@@ -114,12 +114,13 @@ interface TrackerParser {
         private val ref = object : TypeReference<List<Torrent>>() {}
 
         override fun parseSearch(body: String): Torrents {
-            val torrents = mapper.readValue(body, ref).map { it.copy(link = toMagnet(it)) }
+            val torrents = mapper.readValue(body, ref)
+                .map { it.copy(link = toMagnet(it), name = it.name.replace("-", " ")) }
             return Torrents(torrents)
         }
 
         private fun toMagnet(torrent: Torrent): String {
-            val name = URLEncoder.encode(torrent.name, Charset.defaultCharset())
+            val name = URLEncoder.encode(torrent.name.replace(" ", "."), Charset.defaultCharset())
             return "magnet:?xt=urn:btih:${torrent.link}&dn=$name"
         }
 
