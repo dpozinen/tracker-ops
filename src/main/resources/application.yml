@@ -21,7 +21,10 @@ tracker-ops:
         datapoints-per-download: '{ "1d": 1000, "2d": 800, "3d": 600, "10d": 400, "30d": 200 }'
         initial-delay: 20s
       poll-interval: 5m
-
+  trackers:
+    digital-core:
+      host: "https://digitalcore.club"
+      cookie: "PHPSESSID=nijsifpskcc0qofi2ce17kdq55; uid=56474; pass=a9a5dff17373fa810a9c627909d6f4fb'"
 server:
   port: 8133
 
