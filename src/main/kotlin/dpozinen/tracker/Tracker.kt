@@ -27,6 +27,7 @@ class Tracker(
             when (tracker) {
                 Trackers.OneThreeThree -> oneThreeThreeSevenXTo()
                 Trackers.TorrentGalaxy -> torrentGalaxy()
+                Trackers.Trunk -> trunk()
             }
 
         private fun oneThreeThreeSevenXTo() = Tracker(
@@ -37,6 +38,11 @@ class Tracker(
         private fun torrentGalaxy() = Tracker(
             TrackerParser.TorrentGalaxy(),
             TrackerOps.TorrentGalaxy()
+        )
+
+        private fun trunk() = Tracker(
+            TrackerParser.Trunk(),
+            TrackerOps.Trunk()
         )
 
     }
