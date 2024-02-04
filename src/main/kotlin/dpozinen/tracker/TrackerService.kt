@@ -1,12 +1,9 @@
 package dpozinen.tracker
 
-import org.springframework.stereotype.Service
-
-@Service
-open class TrackerService(private val trackers: MutableMap<Trackers, Tracker> = mutableMapOf()) {
+open class TrackerService(private val trackers: Map<Trackers, Tracker>) {
 
     fun search(name: Trackers, keywords: String): Torrents {
-        val tracker = trackers.computeIfAbsent(name) { Tracker.from(name) }
+        val tracker = trackers[name] ?: throw IllegalArgumentException(name.name)
 
         return tracker.search(keywords)
     }

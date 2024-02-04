@@ -91,6 +91,50 @@ interface TrackerParser {
             val seeds = seedLeech.select("b").first()?.text()?.toInt() ?: 0
             val leeches = seedLeech.select("b").last()?.text()?.toInt() ?: 0
             val date = details.select("td").first { it.text().contains("Added") }
+                .select("small").text()
+
+            return Torrent(link, name, size, seeds, leeches, date, contributor)
+        }
+
+        override fun parseTorrentPage(body: String) = Torrent("", "") // noop, all info from search
+
+    }
+
+    class DigitalCore : TrackerParser {
+
+        private val log = logger {}
+
+        override fun parseSearch(body: String): Torrents {
+            val document = Jsoup.parse(body)
+
+            if (document.select("p").any { e -> e.text().contains("No results were returned") })
+                return Torrents.empty()
+
+            return Torrents(
+                document.select(".tgxtablerow")
+                    .map { toTorrent(it) }
+                    .toList()
+            )
+        }
+
+        private fun toTorrent(element: Element): Torrent {
+            val link = element.select("a[href^=magnet:]").attr("href")
+            val name = element.select("div[data-href^=/torrent/] b").text()
+
+            val details: Element = element.select(".tgxtablecell tbody tr")
+                .firstOrNull { it.select("td").text().contains("Size") }
+                ?: run {
+                    log.warn { "Torrent named $name doesn't have any details" }
+                    Element("")
+                }
+
+            val size = details.select("td").first { it.text().contains("Size") }.select("span").text()
+            val contributor = details.select(".username").first()?.text() ?: ""
+
+            val seedLeech = details.select("span[title=Seeders/Leechers]")
+            val seeds = seedLeech.select("b").first()?.text()?.toInt() ?: 0
+            val leeches = seedLeech.select("b").last()?.text()?.toInt() ?: 0
+            val date = details.select("td").first { it.text().contains("Added") }
                 ?.select("small")?.text() ?: ""
 
             return Torrent(link, name, size, seeds, leeches, date, contributor)

@@ -1,6 +1,7 @@
 package dpozinen.tracker
 
 class Tracker(
+    val tracker: Trackers,
     private val parser: TrackerParser,
     private val ops: TrackerOps,
     private val torrents: MutableMap<String, Torrents> = mutableMapOf()
@@ -19,26 +20,6 @@ class Tracker(
         val torrentPage = ops.open(torrent)
 
         return parser.parseTorrentPage(torrentPage).replaceMissing(torrent)
-    }
-
-    companion object {
-
-        fun from(tracker: Trackers) =
-            when (tracker) {
-                Trackers.OneThreeThree -> oneThreeThreeSevenXTo()
-                Trackers.TorrentGalaxy -> torrentGalaxy()
-            }
-
-        private fun oneThreeThreeSevenXTo() = Tracker(
-            TrackerParser.OneThreeThree(),
-            TrackerOps.OneThreeThree()
-        )
-
-        private fun torrentGalaxy() = Tracker(
-            TrackerParser.TorrentGalaxy(),
-            TrackerOps.TorrentGalaxy()
-        )
-
     }
 
 }
