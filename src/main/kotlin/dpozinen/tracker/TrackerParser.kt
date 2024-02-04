@@ -1,8 +1,14 @@
 package dpozinen.tracker
 
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES
+import com.fasterxml.jackson.databind.json.JsonMapper
+import com.fasterxml.jackson.module.kotlin.jacksonMapperBuilder
 import mu.KotlinLogging.logger
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
+import java.net.URLEncoder
+import java.nio.charset.Charset
 
 interface TrackerParser {
 
@@ -100,4 +106,23 @@ interface TrackerParser {
 
     }
 
+    class Trunk : TrackerParser {
+        private val mapper: JsonMapper = jacksonMapperBuilder()
+            .configure(FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .build()
+
+        private val ref = object : TypeReference<List<Torrent>>() {}
+
+        override fun parseSearch(body: String): Torrents {
+            val torrents = mapper.readValue(body, ref).map { it.copy(link = toMagnet(it)) }
+            return Torrents(torrents)
+        }
+
+        private fun toMagnet(torrent: Torrent): String {
+            val name = URLEncoder.encode(torrent.name, Charset.defaultCharset())
+            return "magnet:?xt=urn:btih:${torrent.link}&dn=$name"
+        }
+
+        override fun parseTorrentPage(body: String) = Torrent(name = "")
+    }
 }

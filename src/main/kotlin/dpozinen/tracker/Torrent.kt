@@ -1,7 +1,7 @@
 package dpozinen.tracker
 
 data class Torrent(
-    val link: String, val name: String,
+    val link: String = "", val name: String,
     val size: String = "",
     val seeds: Int = 0, val leeches: Int = 0,
     val date: String = "",
