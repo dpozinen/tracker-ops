@@ -21,7 +21,7 @@ dependencies {
     implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.18.2'
     implementation 'io.github.microutils:kotlin-logging-jvm:2.1.21'
     implementation 'ch.qos.logback:logback-classic:1.5.12'
-    implementation 'org.springframework.boot:spring-boot-starter-websocket:3.1.4'
+    implementation 'org.springframework.boot:spring-boot-starter-websocket:3.4.0'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0'
     implementation 'org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.8'
     implementation 'org.apache.httpcomponents:httpclient:4.5.13'
