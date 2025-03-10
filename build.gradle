@@ -37,7 +37,7 @@ dependencies {
     runtimeOnly 'org.jetbrains.kotlin:kotlin-reflect:2.1.10'
     runtimeOnly 'org.springframework.boot:spring-boot-devtools:3.1.4'
 
-    testImplementation 'org.mockito:mockito-core:5.15.2'
+    testImplementation 'org.mockito:mockito-core:5.16.0'
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
     testImplementation 'org.assertj:assertj-core:3.27.3'
     testImplementation 'org.springframework.boot:spring-boot-starter-test:3.1.4'
