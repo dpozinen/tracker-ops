@@ -1,7 +1,7 @@
 import static java.lang.System.getenv
 
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '2.2.0'
+    id 'org.jetbrains.kotlin.jvm' version '2.2.10'
     id 'application'
     id 'com.google.cloud.tools.jib' version '3.4.5'
 }
@@ -34,7 +34,7 @@ dependencies {
 
     implementation 'javax.xml.bind:jaxb-api:2.3.1'
 
-    runtimeOnly 'org.jetbrains.kotlin:kotlin-reflect:2.2.0'
+    runtimeOnly 'org.jetbrains.kotlin:kotlin-reflect:2.2.10'
     runtimeOnly 'org.springframework.boot:spring-boot-devtools:3.1.4'
 
     testImplementation 'org.mockito:mockito-core:5.18.0'
