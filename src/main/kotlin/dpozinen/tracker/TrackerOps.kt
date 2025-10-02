@@ -16,17 +16,20 @@ interface TrackerOps {
     fun expandUrl(url: String): String
 
     class OneThreeThree : TrackerOps {
+        private val cookie: String = System.getenv("ONE_THREE_THREE_COOKIE") ?: ""
         private val baseUrl: String = "https://1337x.to"
 
         override fun open(torrent: Torrent): String =
             session.newRequest()
                 .url("$baseUrl${torrent.link}")
+                .header("Cookie", cookie)
                 .execute()
                 .body()
 
         override fun search(keywords: List<String>): String =
             session.newRequest()
                 .url("$baseUrl/search/${keywordsSegment(keywords)}/1/")
+                .header("Cookie", cookie)
                 .execute()
                 .body()
 

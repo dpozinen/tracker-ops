@@ -131,5 +131,5 @@ function downloadProvidedMagnets(event) {
             });
         }
     })
-    window.location.href = '/deluge.html?sort=UPLOAD_SPEED:DESC&filter=STATE:Downloading:IS'
+    bootstrap.Modal.getInstance(document.getElementById('addMagnetsManually')).hide()
 }

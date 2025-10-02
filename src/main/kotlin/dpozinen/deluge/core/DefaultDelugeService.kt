@@ -5,9 +5,13 @@ import dpozinen.deluge.domain.DelugeTorrents
 import dpozinen.deluge.mutations.By
 import dpozinen.deluge.mutations.Mutation
 import dpozinen.deluge.mutations.Sort
-import dpozinen.deluge.rest.*
+import dpozinen.deluge.rest.DelugeConverter
+import dpozinen.deluge.rest.DelugeRequest
 import dpozinen.deluge.rest.clients.DelugeActionsClient
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import mu.KotlinLogging.logger
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.event.ApplicationReadyEvent
@@ -16,38 +20,37 @@ import org.springframework.stereotype.Service
 
 @Service
 class DefaultDelugeService(
-    @Value("\${tracker-ops.deluge.folders.download}") private val downloadFolder: String,
+    @param:Value("\${tracker-ops.deluge.folders.download}") private val downloadFolder: String,
     private val delugeClient: DelugeActionsClient,
     private val converter: DelugeConverter,
     private val follower: DelugeDownloadFollower
 ) : DelugeService {
     private val log = logger {}
+    private val delugeScope = CoroutineScope(Dispatchers.IO)
 
     private var state: DelugeState = DelugeState().with(Sort(By.NAME))
 
-    @OptIn(DelicateCoroutinesApi::class)
     @EventListener(ApplicationReadyEvent::class,
         condition = "@environment.getRequiredProperty('tracker-ops.deluge.stats.follow.resume-on-startup')")
     override fun followDownloading() {
         delugeClient.torrents().result.torrents()
             .filter { it.state == "Downloading" }
             .forEach {
-                GlobalScope.launch(Dispatchers.IO) {
+                delugeScope.launch {
                     follower.follow(it) { rawTorrents() }
                 }
             }
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
     override fun addMagnet(magnet: String) {
         val id = delugeClient.addMagnet(DelugeRequest.addMagnet(magnet, downloadFolder)).result
 
-        GlobalScope.launch {
+        delugeScope.launch {
             delay(5000)
             rawTorrents()
                 .firstOrNull { it.id == id }
                 ?.also {
-                    CoroutineScope(Dispatchers.IO).launch {
+                    delugeScope.launch {
                         follower.follow(it) { rawTorrents() }
                     }
                     log.info { "Follow for ${it.name} triggered" }
