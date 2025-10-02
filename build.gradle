@@ -92,3 +92,9 @@ jib {
         tags = ["$version", 'latest']
     }
 }
+
+tasks.register('printProjectVersion') {
+    doLast {
+        println project.version
+    }
+}
