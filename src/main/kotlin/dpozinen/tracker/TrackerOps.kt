@@ -16,7 +16,7 @@ interface TrackerOps {
     fun expandUrl(url: String): String
 
     class OneThreeThree : TrackerOps {
-        private val cookie: String = System.getenv("ONE_THREE_THREE_COOKIE") ?: ""
+        private val headers: String = System.getenv("ONE_THREE_THREE_HEADERS") ?: ""
         private val baseUrl: String = "https://1337x.to"
 
         override fun open(torrent: Torrent): String =
@@ -25,10 +25,6 @@ interface TrackerOps {
                 .headers(readHeaders())
                 .execute()
                 .body()
-
-        private fun readHeaders(): Map<String, String> {
-            return cookie.split(": ").zipWithNext().associate { it.first to it.second }
-        }
 
         override fun search(keywords: List<String>): String =
             session.newRequest()
@@ -39,6 +35,9 @@ interface TrackerOps {
 
         override fun expandUrl(url: String): String = "$baseUrl/$url"
 
+        private fun readHeaders(): Map<String, String> {
+            return headers.split("|").map { it.trim() }.filter { it.contains(": ") }.map { it.split(": ")[0] to it.split(": ")[1] }.associate { it.first to it.second }
+        }
     }
 
     class TorrentGalaxy : TrackerOps {
