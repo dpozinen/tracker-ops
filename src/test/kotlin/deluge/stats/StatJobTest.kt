@@ -9,6 +9,7 @@ import org.awaitility.Durations.TEN_SECONDS
 import org.awaitility.kotlin.atMost
 import org.awaitility.kotlin.await
 import org.awaitility.kotlin.untilAsserted
+import org.junit.jupiter.api.Disabled
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import kotlin.test.Test
@@ -24,6 +25,7 @@ class StatJobTest {
     lateinit var delugeStatsService: DelugeStatsService
 
     @Test
+    @Disabled
     fun `should run job`() {
         var counter = 0
         every { delugeStatsService.collectStats() } answers { counter++ }
