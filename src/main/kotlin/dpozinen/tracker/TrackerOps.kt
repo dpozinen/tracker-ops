@@ -22,14 +22,18 @@ interface TrackerOps {
         override fun open(torrent: Torrent): String =
             session.newRequest()
                 .url("$baseUrl${torrent.link}")
-                .header("Cookie", cookie)
+                .headers(readHeaders())
                 .execute()
                 .body()
+
+        private fun readHeaders(): Map<String, String> {
+            return cookie.split(": ").zipWithNext().associate { it.first to it.second }
+        }
 
         override fun search(keywords: List<String>): String =
             session.newRequest()
                 .url("$baseUrl/search/${keywordsSegment(keywords)}/1/")
-                .header("Cookie", cookie)
+                .headers(readHeaders())
                 .execute()
                 .body()
 
@@ -89,3 +93,18 @@ interface TrackerOps {
 }
 
 fun keywordsSegment(keywords: List<String>) = keywords.joinToString("+")
+
+// read all torrents
+// for each torrent find one in toloka.to
+// if found:
+//    trigger download
+//    log new name + name of already downloaded
+//
+// on download complete: (what if pod restarts - match would be lost. Schedlock? Metadata in db or just some file?)
+//    find the match
+//    try to trigger Extract+Add audio job on server with params == names of matches
+//    schedule torrent for deletion (?)
+//
+// Extract+Add audio:
+// consider series: consider different namings of sub folders and episodes
+//
