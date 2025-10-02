@@ -37,7 +37,7 @@ jobs:
         run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Push Docker image
-        run: docker push ghcr.io/dpozinen/rodin:${{ env.PROJECT_VERSION }}
+        run: docker push ghcr.io/dpozinen/tracker-ops:${{ env.PROJECT_VERSION }}
 
   auto-merge-dependabot:
     runs-on: ubuntu-latest
