@@ -198,6 +198,31 @@ function showSpinner(elem) {
 }
 
 
+function submitCookies(event) {
+    event.preventDefault()
+
+    var tracker = $('#tracker-select').val();
+    var cookies = $('#cookie-input').val().trim();
+
+    var url = `http://${global.host}:${global.port}/cookies/${tracker}`;
+
+    $.ajax({
+        type: "POST",
+        contentType: "text/plain",
+        url: url,
+        data: cookies,
+        success: function() {
+            $('#cookie-status')
+                .html('<span class="text-success"><i class="fa-solid fa-check"></i> Cookies saved successfully!</span>')
+            $('#cookie-input').val('');
+        },
+        error: function() {
+            $('#cookie-status')
+                .html('<span class="text-danger"><i class="fa-solid fa-exclamation-triangle"></i> Failed to save cookies</span>')
+        }
+    });
+}
+
 // dptodo: separate into several files
 // dptodo: add constants
 // dptodo: checkboxes for other buttons

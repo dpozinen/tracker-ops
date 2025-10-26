@@ -28,4 +28,10 @@ class ErrorHandler {
         return ResponseEntity.status(SERVICE_UNAVAILABLE).build()
     }
 
+    @ExceptionHandler(CloudFlareException::class)
+    fun delugeServerDown(ex: CloudFlareException): ResponseEntity<Any> {
+        log.error("${ex.message}")
+        return ResponseEntity.status(SERVICE_UNAVAILABLE).build()
+    }
+
 }

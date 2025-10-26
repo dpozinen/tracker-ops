@@ -23,6 +23,7 @@ interface TrackerOps {
             session.newRequest()
                 .url("$baseUrl${torrent.link}")
                 .headers(readHeaders())
+                .cookies(readCookies())
                 .execute()
                 .body()
 
@@ -30,6 +31,7 @@ interface TrackerOps {
             session.newRequest()
                 .url("$baseUrl/search/${keywordsSegment(keywords)}/1/")
                 .headers(readHeaders())
+                .cookies(readCookies())
                 .execute()
                 .body()
 
@@ -37,6 +39,16 @@ interface TrackerOps {
 
         private fun readHeaders(): Map<String, String> {
             return headers.split("|").map { it.trim() }.filter { it.contains(": ") }.map { it.split(": ")[0] to it.split(": ")[1] }.associate { it.first to it.second }
+        }
+
+        private fun readCookies(): Map<String, String> {
+            val cookieString = CookieStore.get(Trackers.OneThreeThree) ?: return emptyMap()
+            return cookieString.split(";")
+                .map { it.trim() }
+                .filter { it.contains("=") }.associate {
+                    val parts = it.split("=", limit = 2)
+                    parts[0] to parts[1]
+                }
         }
     }
 
