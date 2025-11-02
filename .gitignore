@@ -75,3 +75,16 @@ outTmp/
 /kotlin-native/dist
 kotlin-ide/
 logs
+
+project_status.md
+claude.md
+
+# Frontend build output
+src/main/resources/static/
+
+# Frontend build cache
+frontend/.vite/
+
+keystore.jks
+tracker_ops_trust_store
+sensitive/

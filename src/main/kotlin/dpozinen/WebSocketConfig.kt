@@ -15,8 +15,8 @@ open class WebSocketConfig : WebSocketMessageBrokerConfigurer {
     }
 
     override fun registerStompEndpoints(registry: StompEndpointRegistry) {
-        registry.addEndpoint("/stream")
-        registry.addEndpoint("/stream").withSockJS()
+        registry.addEndpoint("/api/stream")
+        registry.addEndpoint("/api/stream").withSockJS()
     }
 
 }

@@ -29,6 +29,18 @@ interface DelugeActionsClient {
     @Headers("Content-Type: application/json")
     fun addMagnet(@RequestBody body: DelugeRequest): DelugeResult<String>
 
+    @PostMapping
+    @Headers("Content-Type: application/json")
+    fun removeTorrent(@RequestBody body: DelugeRequest): DelugeResult<Boolean>
+
+    @PostMapping
+    @Headers("Content-Type: application/json")
+    fun pauseTorrent(@RequestBody body: DelugeRequest): DelugeResult<Boolean>
+
+    @PostMapping
+    @Headers("Content-Type: application/json")
+    fun resumeTorrent(@RequestBody body: DelugeRequest): DelugeResult<Boolean>
+
     open class DelugeClientConfig {
 
         @Bean

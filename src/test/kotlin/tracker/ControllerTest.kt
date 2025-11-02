@@ -40,7 +40,7 @@ class ControllerTest(@Autowired val mockMvc: MockMvc,
                 SEARCH_EXPECTED_TORRENT.copy(contributor = "qxr"),
             )))
 
-        mockMvc.get("/search/133/abc abc")
+        mockMvc.get("/api/search/133/abc abc")
             .andExpect {
                 jsonPath<String>("[0].contributor", `is`("qxr"))
                 jsonPath<String>("[1].contributor", `is`("QxR"))
@@ -54,7 +54,7 @@ class ControllerTest(@Autowired val mockMvc: MockMvc,
         every { service.search(Trackers.OneThreeThree, "abc abc") }
             .returns(Torrents(listOf(SEARCH_EXPECTED_TORRENT)))
 
-        mockMvc.get("/search/133/abc abc")
+        mockMvc.get("/api/search/133/abc abc")
             .andExpect {
                 jsonPath<String>("[0].name", `is`(SEARCH_EXPECTED_TORRENT.name))
                 jsonPath<String>("[0].size", `is`(SEARCH_EXPECTED_TORRENT.size))
@@ -63,7 +63,7 @@ class ControllerTest(@Autowired val mockMvc: MockMvc,
                 jsonPath<String>("[0].date", `is`(SEARCH_EXPECTED_TORRENT.date))
                 jsonPath<String>("[0].contributor", `is`(SEARCH_EXPECTED_TORRENT.contributor))
                 jsonPath<Int>("[0].index", `is`(0))
-                jsonPath<String>("[0].link", `is`("http://$host:$port/search/133/abc%20abc/select/0"))
+                jsonPath<String>("[0].link", `is`("http://$host:$port/api/search/133/abc%20abc/select/0"))
             }
     }
 
@@ -72,7 +72,7 @@ class ControllerTest(@Autowired val mockMvc: MockMvc,
         every { service.select(Trackers.OneThreeThree, "abc abc", 0) }
             .returns(PAGE_EXPECTED_TORRENT)
 
-        mockMvc.get("/search/133/abc abc/select/0")
+        mockMvc.get("/api/search/133/abc abc/select/0")
             .andExpect {
                 jsonPath<String>("name", `is`(PAGE_EXPECTED_TORRENT.name))
                 jsonPath<String>("link", `is`(PAGE_EXPECTED_TORRENT.link))

@@ -21,7 +21,10 @@ data class DelugeRequest(
         update_ui("web.update_ui"),
         get_hosts("web.get_hosts"),
         connect("web.connect"),
-        move_storage("core.move_storage")
+        move_storage("core.move_storage"),
+        remove_torrent("core.remove_torrent"),
+        pause_torrent("core.pause_torrent"),
+        resume_torrent("core.resume_torrent")
     }
 
     companion object {
@@ -41,6 +44,21 @@ data class DelugeRequest(
         fun move(to: String, vararg ids: String) = DelugeRequest(
             move_storage,
             DelugeParams(listOf(ids, to))
+        )
+
+        fun removeTorrent(torrentId: String, removeData: Boolean = true) = DelugeRequest(
+            Method.remove_torrent,
+            DelugeParams(listOf(torrentId, removeData))
+        )
+
+        fun pauseTorrent(torrentId: String) = DelugeRequest(
+            Method.pause_torrent,
+            DelugeParams(listOf(listOf(torrentId)))
+        )
+
+        fun resumeTorrent(torrentId: String) = DelugeRequest(
+            Method.resume_torrent,
+            DelugeParams(listOf(listOf(torrentId)))
         )
 
     }
