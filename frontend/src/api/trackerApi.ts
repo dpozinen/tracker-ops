@@ -3,9 +3,14 @@ import { Tracker } from "../types/api";
 import { getMockDataForTracker } from "../mocks/torrents.mock";
 
 // Configuration
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "/api";
 const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === "true";
 const MOCK_DELAY_MS = parseInt(import.meta.env.VITE_MOCK_DELAY || "800");
+
+// Build API base URL dynamically like Deluge WebSocket does
+const getApiBaseUrl = (): string => {
+  // In development with Vite proxy, or in production served from same origin
+  return `${window.location.protocol}//${window.location.host}/api`;
+};
 
 // Helper function to simulate network delay
 const delay = (ms: number): Promise<void> =>
@@ -31,7 +36,7 @@ export const searchTorrents = async (params: SearchParams): Promise<Torrents> =>
   // Real API mode
   try {
     const encodedKeywords = encodeURIComponent(keywords);
-    const url = `${API_BASE_URL}/search/${tracker}/${encodedKeywords}`;
+    const url = `${getApiBaseUrl()}/search/${tracker}/${encodedKeywords}`;
 
     console.log(`[API] Fetching: ${url}`);
 
@@ -87,7 +92,7 @@ export const selectTorrent = async (
   // Real API mode
   try {
     const encodedKeywords = encodeURIComponent(keywords);
-    const url = `${API_BASE_URL}/search/${tracker}/${encodedKeywords}/select/${index}`;
+    const url = `${getApiBaseUrl()}/search/${tracker}/${encodedKeywords}/select/${index}`;
 
     console.log(`[API] Fetching: ${url}`);
 
@@ -119,7 +124,7 @@ export const selectTorrent = async (
  * Get current API configuration (useful for debugging)
  */
 export const getApiConfig = () => ({
-  baseUrl: API_BASE_URL,
+  baseUrl: getApiBaseUrl(),
   useMockData: USE_MOCK_DATA,
   mockDelay: MOCK_DELAY_MS,
 });

@@ -49,6 +49,14 @@ dependencies {
 
 test {
     useJUnitPlatform()
+
+    testLogging {
+        events "passed", "skipped", "failed", "standardOut", "standardError"
+        exceptionFormat "full"
+        showExceptions true
+        showCauses true
+        showStackTraces true
+    }
 }
 
 application {
@@ -95,13 +103,24 @@ tasks.register('printProjectVersion') {
 // Frontend build tasks
 tasks.register('installFrontend', Exec) {
     workingDir 'frontend'
-    commandLine 'npm', 'install'
+    def isCI = getenv('CI') != null
+
+    if (isCI) {
+        // In CI with setup-node action, npm ci should work reliably
+        commandLine 'npm', 'ci', '--prefer-offline', '--no-audit'
+    } else {
+        commandLine 'npm', 'install'
+    }
+
+    ignoreExitValue = false
 }
 
 tasks.register('buildFrontend', Exec) {
     dependsOn 'installFrontend'
     workingDir 'frontend'
     commandLine 'npm', 'run', 'build'
+    // Don't ignore exit code for build - we need to know if it fails
+    ignoreExitValue = false
 }
 
 tasks.register('copyFrontend', Copy) {

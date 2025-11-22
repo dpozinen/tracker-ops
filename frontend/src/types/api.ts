@@ -11,7 +11,7 @@ export interface Torrent {
 export type Torrents = Torrent[];
 
 export const Tracker = {
-  ONE_THREE_THREE: "one-three-three",
+  ONE_THREE_THREE: "133",
   TORRENT_GALAXY: "torrent-galaxy",
   TRUNK: "trunk",
 } as const;

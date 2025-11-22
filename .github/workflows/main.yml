@@ -22,6 +22,12 @@ jobs:
         with:
           java-version: '21'
           distribution: 'adopt'
+      - name: Set up Node.js
+        uses: actions/setup-node@v6.0.0
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: 'frontend/package-lock.json'
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Build
