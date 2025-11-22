@@ -59,6 +59,21 @@ class DefaultDelugeService(
         }
     }
 
+    override fun removeTorrent(torrentId: String, removeData: Boolean) {
+        log.info { "Removing torrent $torrentId, removeData=$removeData" }
+        delugeClient.removeTorrent(DelugeRequest.removeTorrent(torrentId, removeData))
+    }
+
+    override fun pauseTorrent(torrentId: String) {
+        log.info { "Pausing torrent $torrentId" }
+        delugeClient.pauseTorrent(DelugeRequest.pauseTorrent(torrentId))
+    }
+
+    override fun resumeTorrent(torrentId: String) {
+        log.info { "Resuming torrent $torrentId" }
+        delugeClient.resumeTorrent(DelugeRequest.resumeTorrent(torrentId))
+    }
+
     override fun statefulTorrents(): DelugeTorrents {
         val torrents = rawTorrents()
         val mutated = state.with(torrents).mutate().torrents

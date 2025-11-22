@@ -7,7 +7,7 @@ plugins {
 }
 
 group = 'dpozinen'
-version = '2.11.2'
+version = '3.0.0'
 
 repositories {
     mavenCentral()
@@ -49,14 +49,14 @@ dependencies {
 
 test {
     useJUnitPlatform()
-}
 
-compileKotlin {
-    kotlinOptions.jvmTarget = '17'
-}
-
-compileTestKotlin {
-    kotlinOptions.jvmTarget = '17'
+    testLogging {
+        events "passed", "skipped", "failed", "standardOut", "standardError"
+        exceptionFormat "full"
+        showExceptions true
+        showCauses true
+        showStackTraces true
+    }
 }
 
 application {
@@ -66,8 +66,9 @@ application {
 run {
     standardInput = System.in
 }
+
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(21)
 }
 
 jib {
@@ -97,4 +98,47 @@ tasks.register('printProjectVersion') {
     doLast {
         println project.version
     }
+}
+
+// Frontend build tasks
+tasks.register('installFrontend', Exec) {
+    workingDir 'frontend'
+    def isCI = getenv('CI') != null
+
+    if (isCI) {
+        // In CI with setup-node action, npm ci should work reliably
+        commandLine 'npm', 'ci', '--prefer-offline', '--no-audit'
+    } else {
+        commandLine 'npm', 'install'
+    }
+
+    ignoreExitValue = false
+}
+
+tasks.register('buildFrontend', Exec) {
+    dependsOn 'installFrontend'
+    workingDir 'frontend'
+    commandLine 'npm', 'run', 'build'
+    // Don't ignore exit code for build - we need to know if it fails
+    ignoreExitValue = false
+}
+
+tasks.register('copyFrontend', Copy) {
+    dependsOn 'buildFrontend'
+    from 'frontend/dist'
+    into 'src/main/resources/static'
+}
+
+// Make processResources depend on copyFrontend so frontend is included in the JAR
+processResources {
+    dependsOn 'copyFrontend'
+}
+
+// Also make jib depend on it
+tasks.named('jib') {
+    dependsOn 'copyFrontend'
+}
+
+tasks.named('jibDockerBuild') {
+    dependsOn 'copyFrontend'
 }

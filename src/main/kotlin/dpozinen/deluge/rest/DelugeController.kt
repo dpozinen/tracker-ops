@@ -16,6 +16,15 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
+data class RemoveTorrentRequest(
+    val torrentId: String,
+    val removeData: Boolean = true
+)
+
+data class TorrentActionRequest(
+    val torrentId: String
+)
+
 @RestController
 class DelugeController(
     private val service: DelugeService,
@@ -24,10 +33,19 @@ class DelugeController(
     private val log = logger {}
     private var stream: Job? = null
 
-    @PostMapping("/deluge")
+    @PostMapping("/api/deluge")
     fun addMagnet(@RequestBody magnet: String) = service.addMagnet(magnet)
 
-    @GetMapping("/deluge/torrents")
+    @PostMapping("/api/deluge/remove")
+    fun removeTorrent(@RequestBody request: RemoveTorrentRequest) = service.removeTorrent(request.torrentId, request.removeData)
+
+    @PostMapping("/api/deluge/pause")
+    fun pauseTorrent(@RequestBody request: TorrentActionRequest) = service.pauseTorrent(request.torrentId)
+
+    @PostMapping("/api/deluge/resume")
+    fun resumeTorrent(@RequestBody request: TorrentActionRequest) = service.resumeTorrent(request.torrentId)
+
+    @GetMapping("/api/deluge/torrents")
     fun delugeTorrents() = service.statefulTorrents()
 
     @MessageMapping("/stream/stop")

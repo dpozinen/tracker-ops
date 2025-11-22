@@ -10,6 +10,9 @@ import dpozinen.deluge.rest.round
 
 interface DelugeService {
     fun addMagnet(magnet: String)
+    fun removeTorrent(torrentId: String, removeData: Boolean = false)
+    fun pauseTorrent(torrentId: String)
+    fun resumeTorrent(torrentId: String)
     fun statefulTorrents(): DelugeTorrents
     fun allTorrents(): List<DelugeTorrent>
     fun rawTorrents(): List<TorrentResult>
