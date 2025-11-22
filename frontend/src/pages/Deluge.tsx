@@ -47,6 +47,7 @@ export const Deluge = () => {
   const [magnetDialogOpen, setMagnetDialogOpen] = useState(false);
   const observerRef = useRef<IntersectionObserver | null>(null);
   const { navbarAnimationsComplete } = useNavigation();
+  const [initializedFromUrl, setInitializedFromUrl] = useState(false);
 
   // Connect to WebSocket for real-time torrent data (via Vite proxy with correct Origin)
   const wsUrl = window.location.protocol === 'https:'
@@ -59,6 +60,50 @@ export const Deluge = () => {
     reconnectInterval: 3000,   // Wait 3 seconds between reconnection attempts
     maxReconnectAttempts: 10,  // Try up to 10 times before giving up
   });
+
+  // Initialize from URL query parameters on mount
+  useEffect(() => {
+    if (initializedFromUrl || !hasReceivedData) return;
+
+    const params = new URLSearchParams(window.location.search);
+    const sortParam = params.get('sort');
+    const filterParam = params.get('filter');
+
+    // Apply sort from URL (using frontend field names like 'name', 'uploaded')
+    if (sortParam) {
+      const sorts = sortParam.split(',');
+      sorts.forEach(sortSpec => {
+        const [field, order] = sortSpec.split(':');
+        const backendField = SORT_FIELD_TO_BACKEND[field as SortField];
+
+        if (backendField) {
+          const validOrder = (order === 'ASC' || order === 'DESC') ? order : 'ASC';
+          setSortField(field as SortField);
+          setSortOrder(validOrder);
+          sendSortMutation(backendField, validOrder);
+        }
+      });
+    }
+
+    // Apply filters from URL (using filter IDs)
+    if (filterParam) {
+      const filterIds = filterParam.split(',');
+      const newActiveFilters = new Set<string>();
+
+      filterIds.forEach(filterId => {
+        const filter = FILTER_OPTIONS.find(f => f.id === filterId);
+
+        if (filter) {
+          newActiveFilters.add(filter.id);
+          addFilter(filter.field, filter.value, [filter.operator]);
+        }
+      });
+
+      setActiveFilters(newActiveFilters);
+    }
+
+    setInitializedFromUrl(true);
+  }, [hasReceivedData, initializedFromUrl, addFilter, sendSortMutation]);
 
   // Show cards only after ALL animations complete AND torrents are available
   useEffect(() => {
