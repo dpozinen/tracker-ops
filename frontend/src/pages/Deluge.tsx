@@ -318,30 +318,27 @@ export const Deluge = () => {
             alignItems: 'center',
           }}>
             <Tooltip title="Add Magnets">
-              <span>
-                <IconButton
-                  onClick={() => setMagnetDialogOpen(true)}
-                  disabled={isLoading}
-                  sx={{
-                    height: { xs: 44, md: 56 },
-                    width: { xs: 44, md: 56 },
-                    flexShrink: 0,
-                    backgroundColor: '#8fc5e8',
-                    border: '1px solid',
-                    borderColor: 'divider',
-                    transition: 'all 0.2s',
-                    '&:hover': {
-                      backgroundColor: '#7ab5d8',
-                      borderColor: '#2196f3',
-                    },
-                    '&:active': {
-                      borderColor: '#2196f3',
-                    }
-                  }}
-                >
-                  <FontAwesomeIcon icon={faMagnet} style={{ fontSize: '18px' }} />
-                </IconButton>
-              </span>
+              <IconButton
+                onClick={() => setMagnetDialogOpen(true)}
+                sx={{
+                  height: { xs: 44, md: 56 },
+                  width: { xs: 44, md: 56 },
+                  flexShrink: 0,
+                  backgroundColor: '#8fc5e8',
+                  border: '1px solid',
+                  borderColor: 'divider',
+                  transition: 'all 0.2s',
+                  '&:hover': {
+                    backgroundColor: '#7ab5d8',
+                    borderColor: '#2196f3',
+                  },
+                  '&:active': {
+                    borderColor: '#2196f3',
+                  }
+                }}
+              >
+                <FontAwesomeIcon icon={faMagnet} style={{ fontSize: '18px' }} />
+              </IconButton>
             </Tooltip>
 
             <TextField
