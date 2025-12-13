@@ -21,6 +21,14 @@ tracker-ops:
         datapoints-per-download: '{ "1d": 1000, "2d": 800, "3d": 600, "10d": 400, "30d": 200 }'
         initial-delay: 20s
       poll-interval: 5m
+  health:
+    heartbeat:
+      cron: '0 30 * * * *'
+    telegram:
+      healthcheck:
+        cron: '*/30 * * * * *'
+      host: "https://api.telegram.org"
+      bot-segment: TG_HC_BOT_SEGMENT
 
 server:
   port: 8133

@@ -76,7 +76,7 @@ test {
 }
 
 application {
-    mainClassName = 'dpozinen.AppKt'
+    mainClass = 'dpozinen.AppKt'
 }
 
 run {
