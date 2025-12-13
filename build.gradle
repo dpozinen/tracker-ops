@@ -4,6 +4,8 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version '2.2.21'
     id 'application'
     id 'com.google.cloud.tools.jib' version '3.5.1'
+    id 'org.springframework.boot' version '3.4.1'
+    id 'io.spring.dependency-management' version '1.1.7'
 }
 
 group = 'dpozinen'
@@ -14,34 +16,48 @@ repositories {
     mavenLocal()
 }
 
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:2024.0.0"
+    }
+}
+
 dependencies {
+    // Non-Spring dependencies with explicit versions
     implementation 'org.jsoup:jsoup:1.21.2'
     implementation 'com.jayway.jsonpath:json-path:2.10.0'
-    implementation 'org.springframework.boot:spring-boot-starter-web:3.1.4'
-    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.20.1'
     implementation 'io.github.microutils:kotlin-logging-jvm:2.1.21'
-    implementation 'ch.qos.logback:logback-classic:1.5.21'
-    implementation 'org.springframework.boot:spring-boot-starter-websocket:3.1.4'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2'
     implementation 'org.jetbrains.kotlinx:kotlinx-collections-immutable:0.4.0'
-    implementation 'org.apache.httpcomponents:httpclient:4.5.13'
-    implementation 'org.springframework.kafka:spring-kafka:3.0.11'
-    implementation 'org.springframework.boot:spring-boot-starter-actuator:3.1.4'
-    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:4.0.4'
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
-    implementation 'io.github.openfeign:feign-jackson:12.5'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
-
     implementation 'javax.xml.bind:jaxb-api:2.3.1'
 
-    runtimeOnly 'org.jetbrains.kotlin:kotlin-reflect:2.2.21'
-    runtimeOnly 'org.springframework.boot:spring-boot-devtools:3.1.4'
+    // Spring Boot starters (versions managed by Spring Boot BOM)
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
-    testImplementation 'org.mockito:mockito-core:5.20.0'
+    // Spring-managed dependencies (no explicit versions)
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
+    implementation 'org.springframework.kafka:spring-kafka'
+    implementation('org.apache.httpcomponents:httpclient:4.5.14') {
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+
+    // Spring Cloud dependencies (version managed by Spring Cloud BOM)
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
+    // OpenFeign non-Spring dependency
+    implementation 'io.github.openfeign:feign-jackson:12.5'
+
+    runtimeOnly 'org.jetbrains.kotlin:kotlin-reflect:2.2.21'
+    runtimeOnly 'org.springframework.boot:spring-boot-devtools'
+
+    // Test dependencies (versions managed by Spring Boot BOM where applicable)
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
-    testImplementation 'org.assertj:assertj-core:3.27.6'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test:3.1.4'
-    testImplementation 'com.github.tomakehurst:wiremock-jre8:3.0.1'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.wiremock:wiremock-standalone:3.10.0'
     testImplementation 'com.marcinziolo:kotlin-wiremock:2.1.1'
     testImplementation 'com.ninja-squad:springmockk:4.0.2'
     testImplementation 'org.awaitility:awaitility-kotlin:4.3.0'
