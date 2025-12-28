@@ -15,7 +15,7 @@ class Telegram(private val client: RestClient) {
 
     var offset: Long? = null
 
-    val chatId = "211015066"
+    val chatId: Long = 211015066
     val heart: String = "\uD83E\uDEC0"
     val healthMessage: String = "ﮩ٨ـﮩﮩ٨ـ\uD83E\uDEC0ﮩ٨ـﮩﮩ٨ـ"
 
@@ -25,12 +25,12 @@ class Telegram(private val client: RestClient) {
             .takeIf { it.isNotEmpty() }
             ?.also {
                 offset = it.last().updateId + 1
-            }?.find {
+            }?.filter {
                 it.message.text.contains("")
-            }?.also { update ->
+            }?.forEach { update ->
                 log.info("Found health check message: {}", update)
                 sendMessage(
-                    chatId = chatId,
+                    chatId = update.message.chat.id,
                     text = healthMessage
                 )
             }
@@ -56,7 +56,7 @@ class Telegram(private val client: RestClient) {
     }
 
     fun sendMessage(
-        chatId: String,
+        chatId: Long,
         text: String,
         markdown: Boolean = false,
         hidePreview: Boolean = true,
@@ -72,7 +72,7 @@ class Telegram(private val client: RestClient) {
     }
 
     private fun requestBody(
-        chatId: String,
+        chatId: Long,
         text: String,
         hidePreview: Boolean,
         markdown: Boolean
