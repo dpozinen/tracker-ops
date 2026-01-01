@@ -3,8 +3,7 @@ package dpozinen.deluge.kafka
 import dpozinen.deluge.domain.DataPoint
 import mu.KotlinLogging.logger
 import org.springframework.kafka.core.KafkaTemplate
-import org.springframework.retry.annotation.Backoff
-import org.springframework.retry.annotation.Retryable
+import org.springframework.resilience.annotation.Retryable
 
 fun interface StatsKafkaProducer {
 
@@ -17,12 +16,9 @@ fun interface StatsKafkaProducer {
         private val log = logger {}
 
         @Retryable(
-            maxAttemptsExpression = "\${kafka.producer.retryCount:3}",
-            backoff = Backoff(
-                delayExpression = "\${kafka.producer.retryDelayMillis:10000}",
-                multiplierExpression = "\${kafka.producer.retryMultiplier:2}",
-                random = true
-            )
+            maxRetriesString = "\${kafka.producer.retryCount:3}",
+            delayString = "\${kafka.producer.retryDelayMillis:10000}",
+            multiplierString = "\${kafka.producer.retryMultiplier:2}"
         )
         override fun send(stats: List<DataPoint>) {
             log.trace { "Sending stats about ${stats.map { it.name }.toSet()}" }

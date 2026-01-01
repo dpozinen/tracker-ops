@@ -126,7 +126,7 @@ class DelugeController(
     }
 
     private fun notifyAndStop(payload: Map<String, Any>) {
-        template.convertAndSend("/topic/torrents/stop", payload)
+        template.convertAndSend("/topic/torrents/stop", payload as Any)
         streamStop()
     }
 

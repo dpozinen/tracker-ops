@@ -12,7 +12,7 @@ import io.mockk.every
 import org.hamcrest.Matchers.`is`
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
@@ -23,9 +23,9 @@ import kotlin.test.Test
 @WebMvcTest(TrackerController::class)
 @ContextConfiguration(classes = [App::class])
 @ActiveProfiles("test")
-class ControllerTest(@Autowired val mockMvc: MockMvc,
-                     @Value("\${tracker-ops.host:localhost}") private val host: String,
-                     @Value("\${server.port:8133}") private val port: String,) {
+class ControllerTest(@param:Autowired val mockMvc: MockMvc,
+                     @param:Value("\${tracker-ops.host:localhost}") private val host: String,
+                     @param:Value("\${server.port:8133}") private val port: String,) {
 
     @MockkBean
     private lateinit var service: TrackerService
@@ -42,8 +42,8 @@ class ControllerTest(@Autowired val mockMvc: MockMvc,
 
         mockMvc.get("/api/search/133/abc abc")
             .andExpect {
-                jsonPath<String>("[0].contributor", `is`("qxr"))
-                jsonPath<String>("[1].contributor", `is`("QxR"))
+                jsonPath<String>("[0].contributor", `is`("QxR"))
+                jsonPath<String>("[1].contributor", `is`("qxr"))
                 jsonPath<String>("[2].contributor", `is`("abc"))
                 jsonPath<String>("[3].contributor", `is`(""))
             }

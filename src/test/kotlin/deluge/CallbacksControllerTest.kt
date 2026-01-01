@@ -7,7 +7,7 @@ import dpozinen.deluge.core.SonarrCallbacks
 import dpozinen.deluge.rest.CallbacksController
 import io.mockk.verify
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
@@ -20,7 +20,7 @@ import kotlin.test.Test
 @ContextConfiguration(classes = [App::class])
 @ActiveProfiles("test")
 class CallbacksControllerTest(
-    @Autowired val mockMvc: MockMvc
+    @param:Autowired val mockMvc: MockMvc
 ) {
 
     @MockkBean(relaxed = true)

@@ -2,7 +2,7 @@ package dpozinen
 
 import dpozinen.deluge.rest.clients.*
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration
+import org.springframework.boot.kafka.autoconfigure.KafkaAutoConfiguration
 import org.springframework.boot.runApplication
 import org.springframework.cloud.openfeign.EnableFeignClients
 
