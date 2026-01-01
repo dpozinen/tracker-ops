@@ -1,11 +1,8 @@
 package dpozinen.tracker
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize
-
 private const val separator =
     "--------------------------------------------------------------------\n"
 
-@JsonSerialize(using = Deserializers.TorrentsDeserializer::class)
 class Torrents(val torrents: List<Torrent>) {
 
     override fun toString() =

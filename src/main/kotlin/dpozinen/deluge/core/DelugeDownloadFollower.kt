@@ -22,8 +22,8 @@ class DelugeDownloadFollower(
     private val converter: DelugeConverter,
     private val producer: StatsKafkaProducer,
     private val callbacks: DownloadedCallbacks,
-    @Value("\${tracker-ops.deluge.stats.follow.duration:4h}") private val followDuration: Duration,
-    @Value("\${tracker-ops.deluge.stats.follow.initial-delay:20s}") private val initialDelay: Duration,
+    @param:Value("\${tracker-ops.deluge.stats.follow.duration:4h}") private val followDuration: Duration,
+    @param:Value("\${tracker-ops.deluge.stats.follow.initial-delay:20s}") private val initialDelay: Duration,
     private val delayProvider: DelayProvider
 ) {
     @Autowired
