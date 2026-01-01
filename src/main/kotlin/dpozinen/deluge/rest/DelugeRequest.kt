@@ -46,7 +46,7 @@ data class DelugeRequest(
             DelugeParams(listOf(ids, to))
         )
 
-        fun removeTorrent(torrentId: String, removeData: Boolean = true) = DelugeRequest(
+        fun removeTorrent(torrentId: String, removeData: Boolean = false) = DelugeRequest(
             Method.remove_torrent,
             DelugeParams(listOf(torrentId, removeData))
         )

@@ -43,7 +43,11 @@ class DefaultDelugeService(
     }
 
     override fun addMagnet(magnet: String) {
-        val id = delugeClient.addMagnet(DelugeRequest.addMagnet(magnet, downloadFolder)).result
+        val id = if (magnet.startsWith("magnet:")) {
+             delugeClient.addMagnet(DelugeRequest.addMagnet(magnet, downloadFolder)).result
+        } else {
+            delugeClient.addMagnet(DelugeRequest.addMagnet("magnet:?xt=urn:btih:$magnet", downloadFolder))
+        }
 
         delugeScope.launch {
             delay(5000)

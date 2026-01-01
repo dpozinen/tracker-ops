@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController
 
 data class RemoveTorrentRequest(
     val torrentId: String,
-    val removeData: Boolean = true
+    val removeData: Boolean = false
 )
 
 data class TorrentActionRequest(
