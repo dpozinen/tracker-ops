@@ -1,4 +1,4 @@
-tracker-ops:
+zoe:
   host: localhost
   deluge:
     url: localhost:8112

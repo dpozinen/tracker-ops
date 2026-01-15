@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody
 
 @FeignClient(
     name = "deluge-auth",
-    url = "\${tracker-ops.deluge.url}",
+    url = "\${zoe.deluge.url}",
     path = "/json"
 )
 interface DelugeAuthClient {

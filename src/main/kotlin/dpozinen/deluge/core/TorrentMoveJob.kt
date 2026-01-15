@@ -10,12 +10,12 @@ import org.springframework.stereotype.Component
 import kotlin.time.Duration
 
 @Component
-@ConditionalOnProperty("tracker-ops.deluge.folders.cleanup.enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty("zoe.deluge.folders.cleanup.enabled", havingValue = "true", matchIfMissing = true)
 open class TorrentMoveJob(
     private val delugeService: DelugeService,
     private val downloadedCallbacks: DownloadedCallbacks,
-    @Value("\${tracker-ops.deluge.folders.cleanup.interval:24h}") private val interval: String,
-    @Value("\${tracker-ops.deluge.folders.done}") private val doneFolder: String
+    @Value("\${zoe.deluge.folders.cleanup.interval:24h}") private val interval: String,
+    @Value("\${zoe.deluge.folders.done}") private val doneFolder: String
 ) {
     private val log = KotlinLogging.logger { }
 

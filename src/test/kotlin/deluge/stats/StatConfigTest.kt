@@ -11,7 +11,7 @@ import org.springframework.test.context.ActiveProfiles
 import kotlin.test.Test
 
 @SpringBootTest(classes = [App::class], properties = [
-    "tracker-ops.deluge.stats.enabled=false"
+    "zoe.deluge.stats.enabled=false"
 ])
 @ActiveProfiles("test")
 class StatConfigTest {

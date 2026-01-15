@@ -10,11 +10,11 @@ import org.springframework.stereotype.Component
 import kotlin.time.Duration
 
 @Component
-@ConditionalOnProperty("tracker-ops.deluge.stats.enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty("zoe.deluge.stats.enabled", havingValue = "true", matchIfMissing = true)
 open class StatUpdateJob(
     private val delugeStatsService: DelugeStatsService,
     private val delugeService: DelugeService,
-    @Value("\${tracker-ops.deluge.stats.poll-interval}") private val interval: String
+    @Value("\${zoe.deluge.stats.poll-interval}") private val interval: String
 ) {
     private val log = KotlinLogging.logger { }
 

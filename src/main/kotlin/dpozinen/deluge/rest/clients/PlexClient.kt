@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable
 
 @FeignClient(
     name = "plex",
-    url = "\${tracker-ops.plex.url}",
+    url = "\${zoe.plex.url}",
     configuration = [PlexClient.PlexClientConfig::class]
 )
 interface PlexClient {
@@ -26,7 +26,7 @@ interface PlexClient {
 
         @Bean
         open fun authHeader(
-            @Value("\${tracker-ops.plex.api-key}") plexApiKey: String
+            @Value("\${zoe.plex.api-key}") plexApiKey: String
         ) = PlexAuthInterceptor(plexApiKey)
     }
 

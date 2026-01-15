@@ -1,4 +1,4 @@
-tracker-ops:
+zoe:
   tracker:
     announce-list:
       - udp://tracker.opentrackr.org:1337/announce

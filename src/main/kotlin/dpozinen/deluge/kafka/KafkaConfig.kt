@@ -14,7 +14,7 @@ import org.springframework.kafka.core.KafkaTemplate
 open class KafkaConfig {
 
     @Configuration
-    @ConditionalOnProperty("tracker-ops.deluge.stats.enabled", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnProperty("zoe.deluge.stats.enabled", havingValue = "true", matchIfMissing = true)
     @Import(KafkaAutoConfiguration::class)
     open class StatsKafkaConfig {
 

@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component
 
 @Component
 class SonarrCallbacks(
-    @Value("\${tracker-ops.deluge.folders.done}") private val doneFolder: String,
-    @Value("\${tracker-ops.deluge.folders.root}") private val rootFolder: String,
+    @Value("\${zoe.deluge.folders.done}") private val doneFolder: String,
+    @Value("\${zoe.deluge.folders.root}") private val rootFolder: String,
     private val delugeService: DelugeService,
     private val delugeActionsClient: DelugeActionsClient
 ) {

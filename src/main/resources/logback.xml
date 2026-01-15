@@ -1,5 +1,5 @@
 <configuration>
-    <property name="LOG_FILE" value="logs/tracker-ops"/>
+    <property name="LOG_FILE" value="logs/zoe"/>
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_FILE}.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">

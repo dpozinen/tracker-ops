@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody
 
 @FeignClient(
     name = "deluge-connect",
-    url = "\${tracker-ops.deluge.url}",
+    url = "\${zoe.deluge.url}",
     path = "/json",
     configuration = [DelugeConnectionClient.DelugeConnectionClientConfig::class]
 )

@@ -13,7 +13,7 @@ import java.io.IOException
 
 
 @JacksonComponent
-open class Deserializers(@param:Value("\${tracker-ops.host:localhost}") private val address: String,
+open class Deserializers(@param:Value("\${zoe.host:localhost}") private val address: String,
                          @param:Value("\${server.port:8133}") private val port: String,
 ) {
 

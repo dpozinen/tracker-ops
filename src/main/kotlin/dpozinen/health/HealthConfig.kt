@@ -12,8 +12,8 @@ open class HealthConfig {
 
     @Bean
     open fun restClient(
-        @Value("\${tracker-ops.health.telegram.host}") host: String,
-        @Value("\${tracker-ops.health.telegram.bot-segment}") botSegment: String,
+        @Value("\${zoe.health.telegram.host}") host: String,
+        @Value("\${zoe.health.telegram.bot-segment}") botSegment: String,
     ): RestClient {
         return RestClient.builder()
             .baseUrl("$host/$botSegment")

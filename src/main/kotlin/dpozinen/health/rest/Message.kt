@@ -2,7 +2,6 @@ package dpozinen.health.rest
 
 
 data class Message(
-    val id: Long,
     val from: FromResponse,
     val chat: ChatResponse,
     val text: String

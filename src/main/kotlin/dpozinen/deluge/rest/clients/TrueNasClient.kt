@@ -19,7 +19,7 @@ import javax.net.ssl.SSLSocketFactory
 
 @FeignClient(
     name = "truenas",
-    url = "\${tracker-ops.truenas.url}",
+    url = "\${zoe.truenas.url}",
     path = "/api/v2.0",
     configuration = [TrueNasClient.TrueNasClientConfig::class]
 )
@@ -41,14 +41,14 @@ interface TrueNasClient {
 
         @Bean
         open fun authHeader(
-            @Value("\${tracker-ops.truenas.api-key}") apiKey: String) = TrueNasAuthInterceptor(apiKey)
+            @Value("\${zoe.truenas.api-key}") apiKey: String) = TrueNasAuthInterceptor(apiKey)
 
         @Bean
-        @ConditionalOnProperty("tracker-ops.truenas.tls.enabled", havingValue = "true", matchIfMissing = true)
+        @ConditionalOnProperty("zoe.truenas.tls.enabled", havingValue = "true", matchIfMissing = true)
         open fun feignClient(
-            @Value("\${tracker-ops.truenas.keystore-path}") keystorePath: String,
-            @Value("\${tracker-ops.truenas.truststore-path}") truststorePath: String,
-            @Value("\${tracker-ops.truenas.stores-password}") storesPassword: String,
+            @Value("\${zoe.truenas.keystore-path}") keystorePath: String,
+            @Value("\${zoe.truenas.truststore-path}") truststorePath: String,
+            @Value("\${zoe.truenas.stores-password}") storesPassword: String,
         ) = Client.Default(createSSLContext(keystorePath, truststorePath, storesPassword)) { _, _ -> true }
 
         private fun createSSLContext(keystorePath: String, truststorePath: String, storesPassword: String): SSLSocketFactory {
