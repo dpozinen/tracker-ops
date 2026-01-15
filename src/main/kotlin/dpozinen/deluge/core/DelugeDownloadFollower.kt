@@ -22,8 +22,8 @@ class DelugeDownloadFollower(
     private val converter: DelugeConverter,
     private val producer: StatsKafkaProducer,
     private val callbacks: DownloadedCallbacks,
-    @param:Value("\${tracker-ops.deluge.stats.follow.duration:4h}") private val followDuration: Duration,
-    @param:Value("\${tracker-ops.deluge.stats.follow.initial-delay:20s}") private val initialDelay: Duration,
+    @param:Value("\${zoe.deluge.stats.follow.duration:4h}") private val followDuration: Duration,
+    @param:Value("\${zoe.deluge.stats.follow.initial-delay:20s}") private val initialDelay: Duration,
     private val delayProvider: DelayProvider
 ) {
     @Autowired
@@ -31,8 +31,8 @@ class DelugeDownloadFollower(
         converter: DelugeConverter,
         producer: StatsKafkaProducer,
         callbacks: DownloadedCallbacks,
-        @Value("\${tracker-ops.deluge.stats.follow.duration:4h}") followDuration: String,
-        @Value("\${tracker-ops.deluge.stats.follow.initial-delay:20s}") initialDelay: String,
+        @Value("\${zoe.deluge.stats.follow.duration:4h}") followDuration: String,
+        @Value("\${zoe.deluge.stats.follow.initial-delay:20s}") initialDelay: String,
         delayProvider: DelayProvider
     ) : this(
         converter, producer, callbacks, Duration.parse(followDuration), Duration.parse(initialDelay), delayProvider
@@ -110,7 +110,7 @@ class DelugeDownloadFollower(
 
     @Component
     class DelayProvider(
-        @Value("#{\${tracker-ops.deluge.stats.follow.datapoints-per-download}}")
+        @Value("#{\${zoe.deluge.stats.follow.datapoints-per-download}}")
         private val datapointsPerDownload: Map<java.time.Duration, Int>
     ) {
         fun calculate(eta: Double): Duration {

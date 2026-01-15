@@ -24,7 +24,7 @@ import kotlin.test.Test
 @ContextConfiguration(classes = [App::class])
 @ActiveProfiles("test")
 class ControllerTest(@param:Autowired val mockMvc: MockMvc,
-                     @param:Value("\${tracker-ops.host:localhost}") private val host: String,
+                     @param:Value("\${zoe.host:localhost}") private val host: String,
                      @param:Value("\${server.port:8133}") private val port: String,) {
 
     @MockkBean

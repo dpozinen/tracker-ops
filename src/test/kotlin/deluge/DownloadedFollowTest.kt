@@ -17,8 +17,8 @@ import java.util.concurrent.atomic.AtomicInteger
 
 @SpringBootTest(
     properties = [
-        "tracker-ops.deluge.stats.follow.duration=PT6S",
-        "tracker-ops.deluge.stats.follow.initial-delay=PT2S",
+        "zoe.deluge.stats.follow.duration=PT6S",
+        "zoe.deluge.stats.follow.initial-delay=PT2S",
         "logging.level.dpozinen.deluge.core.DownloadedCallbacks=debug"],
     classes = [App::class],
     webEnvironment = SpringBootTest.WebEnvironment.NONE

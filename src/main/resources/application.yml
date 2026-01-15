@@ -1,4 +1,4 @@
-tracker-ops:
+zoe:
   host: 192.168.0.132
   truenas:
     url: https://192.168.0.184

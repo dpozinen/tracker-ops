@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class DefaultDelugeService(
-    @param:Value("\${tracker-ops.deluge.folders.download}") private val downloadFolder: String,
+    @param:Value("\${zoe.deluge.folders.download}") private val downloadFolder: String,
     private val delugeClient: DelugeActionsClient,
     private val converter: DelugeConverter,
     private val follower: DelugeDownloadFollower
@@ -31,7 +31,7 @@ class DefaultDelugeService(
     private var state: DelugeState = DelugeState().with(Sort(By.NAME))
 
     @EventListener(ApplicationReadyEvent::class,
-        condition = "@environment.getRequiredProperty('tracker-ops.deluge.stats.follow.resume-on-startup')")
+        condition = "@environment.getRequiredProperty('zoe.deluge.stats.follow.resume-on-startup')")
     override fun followDownloading() {
         delugeClient.torrents().result.torrents()
             .filter { it.state == "Downloading" }

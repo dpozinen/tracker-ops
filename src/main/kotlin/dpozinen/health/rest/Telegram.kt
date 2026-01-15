@@ -19,7 +19,7 @@ class Telegram(private val client: RestClient) {
     val heart: String = "\uD83E\uDEC0"
     val healthMessage: String = "ﮩ٨ـﮩﮩ٨ـ\uD83E\uDEC0ﮩ٨ـﮩﮩ٨ـ"
 
-    @Scheduled(cron = "\${tracker-ops.health.telegram.healthcheck.cron}")
+    @Scheduled(cron = "\${zoe.health.telegram.healthcheck.cron}")
     fun monitorHealthCheck() {
         getUpdates(offset).result
             .takeIf { it.isNotEmpty() }
@@ -36,7 +36,7 @@ class Telegram(private val client: RestClient) {
             }
     }
 
-    @Scheduled(cron = "\${tracker-ops.health.heartbeat.cron}")
+    @Scheduled(cron = "\${zoe.health.heartbeat.cron}")
     fun heartbeat() {
         sendMessage(
             chatId = chatId,

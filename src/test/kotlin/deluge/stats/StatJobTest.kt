@@ -17,7 +17,7 @@ import kotlin.test.Test
 @Disabled
 @SpringBootTest(
     classes = [App::class],
-    properties = ["tracker-ops.deluge.stats.poll-interval=3s"]
+    properties = ["zoe.deluge.stats.poll-interval=3s"]
 )
 @ActiveProfiles("test", "stats", "job-test")
 class StatJobTest {

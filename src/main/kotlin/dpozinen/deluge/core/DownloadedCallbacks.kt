@@ -20,8 +20,8 @@ class DownloadedCallbacks(
     private val trueNasClient: TrueNasClient,
     private val plexClient: PlexClient,
     private val delugeActionsClient: DelugeActionsClient,
-    @Value("\${tracker-ops.deluge.folders.show}") private val showFolder: String,
-    @Value("\${tracker-ops.deluge.folders.film}") private val filmFolder: String
+    @param:Value("\${zoe.deluge.folders.show}") private val showFolder: String,
+    @param:Value("\${zoe.deluge.folders.film}") private val filmFolder: String
 ) {
     private val log = logger {}
 
