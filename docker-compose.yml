@@ -1,0 +1,92 @@
+services:
+
+  zoe:
+    image: ghcr.io/dpozinen/zoe:4.0.0
+    ports:
+      - '8133:8133'
+    depends_on:
+      - kafka
+      - tracker-stats
+    environment:
+      ZOE_DELUGE_URL: 192.168.0.184:18112
+      ZOE_TRUENAS_URL: https://192.168.0.184
+      ZOE_TRUENAS_TLS_ENABLED: 'false'
+      ZOE_PLEX_URL: http://192.168.0.184:32400
+      ZOE_DELUGE_STATS_ENABLED: 'true'
+      SPRING_PROFILES_ACTIVE: stats
+      SPRING_KAFKA_BOOTSTRAP-SERVERS: kafka:29092
+    volumes:
+      - /mnt/zoom/apps/tracker-ops:/data
+    restart: unless-stopped
+
+  tracker-stats:
+    image: ghcr.io/dpozinen/tracker-stats:1.0.1.Satie
+    ports:
+      - '8134:8134'
+    depends_on:
+      - influxdb
+      - kafka
+      - postgres
+    environment:
+      INFLUX_URL: http://influxdb:8086
+      INFLUX_ORG: zoe
+      INFLUX_BUCKET: torrents
+      KAFKA_ADDRESS: http://kafka:29092
+      KAFKA_TOPIC: stats
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/torrents
+      SPRING_DATASOURCE_USERNAME: zoe
+      SPRING_DATASOURCE_PASSWORD: zoe
+    restart: unless-stopped
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    volumes:
+      - /mnt/zoom/apps/kafka:/tmp/kraft-combined-logs
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:29093
+      KAFKA_LISTENERS: PLAINTEXT://kafka:29092,CONTROLLER://kafka:29093,PLAINTEXT_HOST://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+    restart: unless-stopped
+
+  influxdb:
+    image: influxdb:latest
+    ports:
+      - '8086:8086'
+    volumes:
+      - /mnt/zoom/apps/influxdb:/var/lib/influxdb2
+    environment:
+      INFLUXDB_DB: yggdrasil
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:latest
+    ports:
+      - '5432:5432'
+    volumes:
+      - /mnt/zoom/apps/postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: zoe
+      POSTGRES_PASSWORD: zoe
+      POSTGRES_DB: torrents
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - '3000:3000'
+    volumes:
+      - /mnt/zoom/apps/grafana:/var/lib/grafana
+    depends_on:
+      - influxdb
+    restart: unless-stopped
