@@ -6,37 +6,39 @@ services:
       - '8133:8133'
     depends_on:
       - kafka
-      - tracker-stats
     environment:
-      ZOE_DELUGE_URL: 192.168.0.184:18112
-      ZOE_TRUENAS_URL: https://192.168.0.184
-      ZOE_TRUENAS_TLS_ENABLED: 'false'
-      ZOE_PLEX_URL: http://192.168.0.184:32400
-      ZOE_DELUGE_STATS_ENABLED: 'true'
-      SPRING_PROFILES_ACTIVE: stats
       SPRING_KAFKA_BOOTSTRAP-SERVERS: kafka:29092
+      #      SPRING_PROFILES_ACTIVE: stats
+      #      ZOE_DELUGE_STATS_ENABLED: "true"
+      ZOE_DELUGE_URL: 192.168.0.184:8112
+      ZOE_TRUENAS_URL: https://192.168.0.184
+      ZOE_TRUENAS_TLS_ENABLED: "false"
+      ZOE_TRUENAS_API-KEY: <truenas-api-key>
+      ZOE_PLEX_URL: http://192.168.0.184:32400
+      ZOE_PLEX_API-KEY: <plex-api-key>
+      ZOE_HEALTH_TELEGRAM_BOT-SEGMENT: <bot-segment>
     volumes:
       - /mnt/zoom/apps/tracker-ops:/data
     restart: unless-stopped
 
-  tracker-stats:
-    image: ghcr.io/dpozinen/tracker-stats:1.0.1.Satie
-    ports:
-      - '8134:8134'
-    depends_on:
-      - influxdb
-      - kafka
-      - postgres
-    environment:
-      INFLUX_URL: http://influxdb:8086
-      INFLUX_ORG: zoe
-      INFLUX_BUCKET: torrents
-      KAFKA_ADDRESS: http://kafka:29092
-      KAFKA_TOPIC: stats
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/torrents
-      SPRING_DATASOURCE_USERNAME: zoe
-      SPRING_DATASOURCE_PASSWORD: zoe
-    restart: unless-stopped
+#  tracker-stats:
+#    image: ghcr.io/dpozinen/tracker-stats:1.0.1.Satie
+#    ports:
+#      - '8134:8134'
+#    depends_on:
+#      - influxdb
+#      - kafka
+#      - postgres
+#    environment:
+#      INFLUX_URL: http://influxdb:8086
+#      INFLUX_ORG: zoe
+#      INFLUX_BUCKET: torrents
+#      KAFKA_ADDRESS: http://kafka:29092
+#      KAFKA_TOPIC: stats
+#      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/torrents
+#      SPRING_DATASOURCE_USERNAME: zoe
+#      SPRING_DATASOURCE_PASSWORD: zoe
+#    restart: unless-stopped
 
   kafka:
     image: confluentinc/cp-kafka:latest
@@ -70,7 +72,7 @@ services:
     restart: unless-stopped
 
   postgres:
-    image: postgres:latest
+    image: postgres:16
     ports:
       - '5432:5432'
     volumes:
