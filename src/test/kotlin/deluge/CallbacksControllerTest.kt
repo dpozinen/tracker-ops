@@ -80,4 +80,15 @@ class CallbacksControllerTest(
         verify { sonarrCallbacks.downloadCompleted(any()) }
     }
 
+    @Test
+    fun `should return 200 on Test event`() {
+        mockMvc.post("/api/callbacks/sonarr") {
+            contentType = MediaType.APPLICATION_JSON
+            content = """{ "eventType": "Test" }"""
+        }
+            .andExpect {
+                status { is2xxSuccessful() }
+            }
+    }
+
 }

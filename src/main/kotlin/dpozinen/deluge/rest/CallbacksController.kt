@@ -6,6 +6,7 @@ import dpozinen.deluge.core.SonarrCallbacks
 import dpozinen.deluge.domain.DownloadSonarrEvent
 import dpozinen.deluge.domain.GrabSonarrEvent
 import dpozinen.deluge.domain.SonarrEvent
+import dpozinen.deluge.domain.TestSonarrEvent
 import mu.KotlinLogging.logger
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -44,6 +45,7 @@ class CallbacksController(
         when (event) {
             is GrabSonarrEvent -> sonarrCallbacks.downloadStarted()
             is DownloadSonarrEvent -> sonarrCallbacks.downloadCompleted(event)
+            is TestSonarrEvent -> log.info { "Sonarr test event received" }
         }
     }
 }
