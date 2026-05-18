@@ -49,7 +49,7 @@ dependencies {
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
     // OpenFeign non-Spring dependency
-    implementation 'io.github.openfeign:feign-jackson:13.9'
+    implementation 'io.github.openfeign:feign-jackson:13.12'
 
     runtimeOnly 'org.jetbrains.kotlin:kotlin-reflect:2.3.21'
     runtimeOnly 'org.springframework.boot:spring-boot-devtools'
