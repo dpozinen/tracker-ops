@@ -1,7 +1,7 @@
 import static java.lang.System.getenv
 
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '2.3.21'
+    id 'org.jetbrains.kotlin.jvm' version '2.4.0'
     id 'application'
     id 'com.google.cloud.tools.jib' version '3.5.3'
     id 'org.springframework.boot' version '4.0.6'
@@ -51,7 +51,7 @@ dependencies {
     // OpenFeign non-Spring dependency
     implementation 'io.github.openfeign:feign-jackson:13.9'
 
-    runtimeOnly 'org.jetbrains.kotlin:kotlin-reflect:2.3.21'
+    runtimeOnly 'org.jetbrains.kotlin:kotlin-reflect:2.4.0'
     runtimeOnly 'org.springframework.boot:spring-boot-devtools'
 
     // Test dependencies (versions managed by Spring Boot BOM where applicable)
