@@ -51,7 +51,7 @@ data class TorrentsResult(@JsonProperty("torrents") private val torrents: Map<St
 
         fun type() = TorrentType.from(name)
 
-        fun isSonarrManaged() = label.contains("sonarr")
+        fun isExternallyManaged() = label.isNotEmpty()
 
         enum class TorrentType {
             SHOW, FILM;
