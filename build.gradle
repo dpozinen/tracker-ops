@@ -1,7 +1,7 @@
 import static java.lang.System.getenv
 
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '2.4.0'
+    id 'org.jetbrains.kotlin.jvm' version '2.4.10'
     id 'application'
     id 'com.google.cloud.tools.jib' version '3.5.3'
     id 'org.springframework.boot' version '4.1.0'
