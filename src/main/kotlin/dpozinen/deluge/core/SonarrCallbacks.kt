@@ -28,7 +28,7 @@ class SonarrCallbacks(
         val torrentName = path.substringBefore("/")
 
         delugeService.rawTorrents()
-            .first { it.isSonarrManaged() && it.name == torrentName }
+            .first { it.isExternallyManaged() && it.name == torrentName }
             .also {
                 log.info { "Matched ${event.episodeFile.path} with ${it.name}" }
                 if (it.downloadLocation != doneFolder) {
