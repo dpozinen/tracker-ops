@@ -25,11 +25,13 @@ Soulseek connection alive between runs. The Spring app submits jobs via HTTP.
 
 ```
 src/main/kotlin/dpozinen/music/
-  MusicSyncJob.kt          — @Scheduled orchestrator
-  SpotifyClient.kt         — @FeignClient for Spotify Web API
-  SpotifyTokenProvider.kt  — OAuth access token refresh/cache (RequestInterceptor)
-  SockseekClient.kt        — @FeignClient for sockseek daemon HTTP API
-  MusicConfig.kt           — @ConfigurationProperties for zoe.music.*
+  MusicSyncJob.kt              — @Scheduled orchestrator
+  MusicConfig.kt               — @ConfigurationProperties for zoe.music.*
+  spotify/
+    SpotifyClient.kt           — @FeignClient for Spotify Web API
+    SpotifyTokenProvider.kt    — OAuth access token refresh/cache (RequestInterceptor)
+  sockseek/
+    SockseekClient.kt          — @FeignClient for sockseek daemon HTTP API
 ```
 
 `App.kt` — add `SpotifyClient`, `SockseekClient` to `@EnableFeignClients`.
