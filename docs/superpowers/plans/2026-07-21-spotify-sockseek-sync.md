@@ -81,31 +81,40 @@ git commit -m "feat: add sockseek compose service and music config"
 
 - [ ] **Step 1: Create MusicConfig.kt**
 
+Data class with constructor binding — credentials have no defaults so Spring fails at startup with a clear `BindException` if env vars are absent.
+
 ```kotlin
 package dpozinen.music
 
 import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.stereotype.Component
 
-@Component
 @ConfigurationProperties(prefix = "zoe.music")
-class MusicConfig {
-	var cron: String = "0 0 3 * * *"
-	var spotify: SpotifyConfig = SpotifyConfig()
-	var sockseek: SockseekConfig = SockseekConfig()
+data class MusicConfig(
+	val cron: String = "0 0 3 * * *",
+	val spotify: SpotifyConfig,
+	val sockseek: SockseekConfig = SockseekConfig(),
+) {
+	data class SpotifyConfig(
+		val clientId: String,
+		val clientSecret: String,
+		val refreshToken: String,
+		val includeCollaborative: Boolean = false,
+		val additionalPlaylists: List<String> = emptyList(),
+	)
 
-	class SpotifyConfig {
-		var clientId: String = ""
-		var clientSecret: String = ""
-		var refreshToken: String = ""
-		var includeCollaborative: Boolean = false
-		var additionalPlaylists: List<String> = emptyList()
-	}
-
-	class SockseekConfig {
-		var url: String = "http://sockseek:5030"
-	}
+	data class SockseekConfig(
+		val url: String = "http://sockseek:5030",
+	)
 }
+```
+
+Also add `@ConfigurationPropertiesScan` to `App.kt` (next to `@EnableFeignClients`) so Spring picks up the data class without needing `@Component`:
+
+```kotlin
+@ConfigurationPropertiesScan("dpozinen.music")
+@EnableFeignClients(...)
+@SpringBootApplication(...)
+open class App
 ```
 
 - [ ] **Step 2: Verify it binds — run the app and check startup**
@@ -114,7 +123,7 @@ class MusicConfig {
 ./gradlew bootRun
 ```
 
-Expected: app starts without `ConfigurationPropertiesBindException`. If it fails, check that `@Component` is on `MusicConfig` and the yml key casing matches (Spring binds kebab-case to camelCase automatically).
+Expected: app starts without `BindException`. Without the env vars set it should fail with `Failed to bind properties under 'zoe.music.spotify'` — that's correct behaviour, not a bug.
 
 - [ ] **Step 3: Commit**
 
@@ -651,11 +660,14 @@ class MusicSyncJobTest {
 
 	@BeforeEach
 	fun setup() {
-		val config = MusicConfig().apply {
-			spotify = MusicConfig.SpotifyConfig().apply {
-				additionalPlaylists = listOf("Extra Mix")
-			}
-		}
+		val config = MusicConfig(
+			spotify = MusicConfig.SpotifyConfig(
+				clientId = "id",
+				clientSecret = "secret",
+				refreshToken = "refresh",
+				additionalPlaylists = listOf("Extra Mix"),
+			),
+		)
 		job = MusicSyncJob(spotify, sockseek, telegram, config)
 		every { spotify.getMe() } returns SpotifyUser("me")
 		every { sockseek.submitJob(any()) } returns SockseekJobResponse("id1", "queued")
