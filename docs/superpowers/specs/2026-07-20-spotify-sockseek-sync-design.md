@@ -84,7 +84,7 @@ rather than in CLI flags — keeps the compose file stable.
 
 2. For each source (sequential — Soulseek rate-limit safe):
      SockseekClient.submit(sourceUrl)
-       on network error / 5xx → retry up to 3× (2s / 4s / 8s backoff)
+       Feign Retryer handles network/5xx retries (configured in SockseekClient config)
        on 4xx               → no retry; Telegram failure alert immediately
 
 3. Telegram end-of-run summary (one message):
