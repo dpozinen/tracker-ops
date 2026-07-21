@@ -2,7 +2,6 @@ package dpozinen.music.spotify
 
 import dpozinen.music.MusicConfig
 import feign.Retryer
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.context.annotation.Bean
 import org.springframework.web.bind.annotation.GetMapping
@@ -29,9 +28,7 @@ interface SpotifyClient {
 		open fun retryer() = Retryer.Default()
 
 		@Bean
-		open fun spotifyAuth(
-			@Autowired config: MusicConfig,
-		) = SpotifyTokenProvider(config.spotify)
+		open fun spotifyAuth(config: MusicConfig) = SpotifyTokenProvider(config.spotify)
 	}
 }
 

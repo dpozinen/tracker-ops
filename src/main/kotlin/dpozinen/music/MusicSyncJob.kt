@@ -53,7 +53,7 @@ class MusicSyncJob(
 					log.info { "Skipping playlist: ${pl.name} (owner: ${pl.owner.id})" }
 				}
 			}
-			offset += 50
+			offset += page.items.size
 		} while (page.next != null)
 		return playlists
 	}
