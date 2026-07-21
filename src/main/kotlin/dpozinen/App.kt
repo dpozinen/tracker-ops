@@ -1,6 +1,7 @@
 package dpozinen
 
 import dpozinen.deluge.rest.clients.*
+import dpozinen.music.spotify.SpotifyClient
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 import org.springframework.boot.kafka.autoconfigure.KafkaAutoConfiguration
@@ -14,6 +15,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients
         DelugeConnectionClient::class,
         DelugeActionsClient::class,
         PlexClient::class,
+        SpotifyClient::class,
     ]
 )
 @SpringBootApplication(exclude = [KafkaAutoConfiguration::class])
