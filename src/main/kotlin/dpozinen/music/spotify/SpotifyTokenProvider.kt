@@ -25,6 +25,7 @@ class SpotifyTokenProvider(
 		template.header("Authorization", "Bearer $token")
 	}
 
+	// ponytail: no locking — concurrent first-calls race harmlessly, both tokens are valid
 	private fun refresh() {
 		val credentials = Base64.getEncoder()
 			.encodeToString("${config.clientId}:${config.clientSecret}".toByteArray())
