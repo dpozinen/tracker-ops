@@ -15,6 +15,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients
         DelugeAuthClient::class,
         DelugeConnectionClient::class,
         DelugeActionsClient::class,
+        TrueNasClient::class,
         PlexClient::class,
         SpotifyClient::class,
         SockseekClient::class,

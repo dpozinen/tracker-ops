@@ -82,7 +82,12 @@ class MusicSyncJobTest {
 
 		job.sync()
 
-		assertThat(captured.map { it.url }).contains("https://open.spotify.com/playlist/pl2")
+		assertThat(captured.map { it.url }).isEqualTo(listOf(
+			"https://open.spotify.com/playlist/pl1",
+			"https://open.spotify.com/playlist/pl2",
+			"spotify:liked",
+			"spotify:albums",
+		))
 	}
 
 	@Test
@@ -126,7 +131,7 @@ class MusicSyncJobTest {
 			items = listOf(SpotifyPlaylist("pl1", "Page 1 Mix", SpotifyOwner("me"), false)),
 			next = "https://api.spotify.com/v1/me/playlists?offset=50",
 		)
-		every { spotify.getPlaylists(50, 50) } returns SpotifyPagedPlaylists(
+		every { spotify.getPlaylists(50, 1) } returns SpotifyPagedPlaylists(
 			items = listOf(SpotifyPlaylist("pl2", "Page 2 Mix", SpotifyOwner("me"), false)),
 			next = null,
 		)
@@ -135,9 +140,11 @@ class MusicSyncJobTest {
 
 		job.sync()
 
-		assertThat(captured.map { it.url }).contains(
+		assertThat(captured.map { it.url }).isEqualTo(listOf(
 			"https://open.spotify.com/playlist/pl1",
 			"https://open.spotify.com/playlist/pl2",
-		)
+			"spotify:liked",
+			"spotify:albums",
+		))
 	}
 }
