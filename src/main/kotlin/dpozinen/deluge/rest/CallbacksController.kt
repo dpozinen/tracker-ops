@@ -3,7 +3,6 @@ package dpozinen.deluge.rest
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import dpozinen.deluge.core.DownloadedCallbacks
 import dpozinen.deluge.core.SonarrCallbacks
-import dpozinen.deluge.domain.DownloadSonarrEvent
 import dpozinen.deluge.domain.GrabSonarrEvent
 import dpozinen.deluge.domain.SonarrEvent
 import dpozinen.deluge.domain.TestSonarrEvent
@@ -44,7 +43,6 @@ class CallbacksController(
         log.info { jacksonObjectMapper().writeValueAsString(event) }
         when (event) {
             is GrabSonarrEvent -> sonarrCallbacks.downloadStarted()
-            is DownloadSonarrEvent -> sonarrCallbacks.downloadCompleted(event)
             is TestSonarrEvent -> log.info { "Sonarr test event received" }
         }
     }

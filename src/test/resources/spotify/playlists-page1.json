@@ -1,0 +1,7 @@
+{
+  "items": [
+    {"id": "pl1", "name": "My Mix", "owner": {"id": "dpozinen"}, "collaborative": false},
+    {"id": "pl2", "name": "Someone Else Mix", "owner": {"id": "other"}, "collaborative": false}
+  ],
+  "next": null
+}
