@@ -3,6 +3,11 @@ zoe:
   truenas:
     url: https://192.168.0.184
     api-key: /sensitive/trueNas
+    tls:
+      enabled: false
+    keystore-path: /Users/dpozinenko/IdeaProjects/1337xto/src/main/resources/keystore.jks
+    truststore-path: /Users/dpozinenko/IdeaProjects/1337xto/src/main/resources/tracker_ops_trust_store
+    stores-password: changeit
   plex:
     url: http://192.168.0.184:32400
     api-key: /sensitive/plex
@@ -15,6 +20,7 @@ zoe:
       show: /Downloads/Show
       film: /Downloads/Film
     stats:
+      enabled: false
       follow:
         resume-on-startup: true
         duration: 3d
@@ -29,6 +35,16 @@ zoe:
         cron: '*/30 * * * * *'
       host: "https://api.telegram.org"
       bot-segment: TG_HC_BOT_SEGMENT
+  music:
+    cron: '0 0 3 * * *'
+    spotify:
+      client-id: ${SPOTIFY_CLIENT_ID}
+      client-secret: ${SPOTIFY_CLIENT_SECRET}
+      refresh-token: ${SPOTIFY_REFRESH_TOKEN}
+      include-collaborative: false
+      additional-playlists: []
+    sockseek:
+      url: http://sockseek:5030
 
 server:
   port: 8133

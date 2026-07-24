@@ -84,8 +84,8 @@ class DelugeDownloadFollower(
 
     private suspend fun stopFollowing(victim: TorrentResult) {
         following.remove(victim.id)
-        if (victim.isSonarrManaged()) {
-            log.info { "${victim.name} is done downloading, but it is managed by sonarr" }
+        if (victim.isExternallyManaged()) {
+            log.info { "${victim.name} is done downloading, but it is managed by someone else" }
             return
         }
 
