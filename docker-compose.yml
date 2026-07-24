@@ -22,10 +22,10 @@ services:
     restart: unless-stopped
 
   sockseek:
-    build: ./sockseek
+    image: ghcr.io/dpozinen/sockseek:3.0.4
     volumes:
       - /mnt/zoom/apps/sockseek:/config
-      - /mnt/music:/music
+      - /mnt/chute/Song:/music
     command: daemon --server-ip 0.0.0.0 --server-port 5030
     restart: unless-stopped
 
