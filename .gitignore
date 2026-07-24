@@ -89,4 +89,4 @@ keystore.jks
 tracker_ops_trust_store
 sensitive/
 docker-compose.local.yml
-local-data/
+local-data/sockseek/sockseek

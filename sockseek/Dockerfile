@@ -1,14 +1,10 @@
-FROM alpine:3.20
+FROM debian:bookworm-slim
 
-ARG VERSION=3.0.4
-ARG ARCH=linux-x64
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends libicu72 \
+ && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN apk add --no-cache libstdc++ libgcc icu-libs wget ca-certificates \
- && wget -qO /tmp/sockseek.tar.gz \
-      "https://github.com/fiso64/sockseek/releases/download/v${VERSION}/sockseek_${VERSION}_${ARCH}.tar.gz" \
- && tar -xzf /tmp/sockseek.tar.gz -C /usr/local/bin \
- && chmod +x /usr/local/bin/sockseek \
- && rm /tmp/sockseek.tar.gz
+COPY sockseek /usr/local/bin/sockseek
 
 EXPOSE 5030
 
