@@ -8,8 +8,10 @@ import dpozinen.music.spotify.SpotifyPlaylist
 import feign.FeignException
 import mu.KotlinLogging.logger
 import org.springframework.boot.context.event.ApplicationReadyEvent
+import org.springframework.context.annotation.Profile
 import org.springframework.context.event.EventListener
 import org.springframework.scheduling.annotation.Scheduled
+import org.springframework.stereotype.Component
 import org.springframework.stereotype.Service
 
 @Service
@@ -21,7 +23,6 @@ class MusicSyncJob(
 ) {
 	private val log = logger {}
 
-	@EventListener(ApplicationReadyEvent::class)
 	@Scheduled(cron = "\${zoe.music.cron}")
 	fun sync() {
 		log.info { "Starting music sync" }
@@ -80,7 +81,14 @@ class MusicSyncJob(
 		}
 	}
 
-	private fun buildSummary(results: Map<String, String>): String {
+	@Component
+@Profile("!test")
+private class MusicSyncStartup(private val job: MusicSyncJob) {
+	@EventListener(ApplicationReadyEvent::class)
+	fun onReady() = job.sync()
+}
+
+private fun buildSummary(results: Map<String, String>): String {
 		val lines = results.entries.joinToString("\n") { (name, status) ->
 			if (status.startsWith("failed")) "❌ $name — $status"
 			else "✓ $name — $status"
