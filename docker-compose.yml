@@ -22,7 +22,7 @@ services:
     restart: unless-stopped
 
   sockseek:
-    image: ghcr.io/fiso64/sockseek:0.9.0
+    build: ./sockseek
     volumes:
       - /mnt/zoom/apps/sockseek:/config
       - /mnt/music:/music

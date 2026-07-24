@@ -6,8 +6,9 @@ import feign.RequestInterceptor
 import feign.RequestTemplate
 import mu.KotlinLogging.logger
 import org.springframework.web.client.RestClient
+import org.springframework.web.client.body
 import java.time.Instant
-import java.util.Base64
+import java.util.*
 
 class SpotifyTokenProvider(
 	private val config: MusicConfig.SpotifyConfig,
@@ -36,7 +37,7 @@ class SpotifyTokenProvider(
 			.header("Content-Type", "application/x-www-form-urlencoded")
 			.body("grant_type=refresh_token&refresh_token=${config.refreshToken}")
 			.retrieve()
-			.body(TokenResponse::class.java)!!
+			.body<TokenResponse>()!!
 
 		token = response.accessToken
 		expiresAt = Instant.now().plusSeconds(response.expiresIn)
@@ -44,7 +45,7 @@ class SpotifyTokenProvider(
 	}
 
 	private data class TokenResponse(
-		@JsonProperty("access_token") val accessToken: String,
-		@JsonProperty("expires_in") val expiresIn: Long,
+		@param:JsonProperty("access_token") val accessToken: String,
+		@param:JsonProperty("expires_in") val expiresIn: Long,
 	)
 }
