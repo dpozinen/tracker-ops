@@ -61,7 +61,7 @@ class MusicSyncJobTest {
 
 		job.sync()
 
-		assertThat(captured.map { it.url }).isEqualTo(listOf(
+		assertThat(captured.map { it.input }).isEqualTo(listOf(
 			"https://open.spotify.com/playlist/pl1",
 			"spotify:liked",
 			"spotify:albums",
@@ -82,7 +82,7 @@ class MusicSyncJobTest {
 
 		job.sync()
 
-		assertThat(captured.map { it.url }).isEqualTo(listOf(
+		assertThat(captured.map { it.input }).isEqualTo(listOf(
 			"https://open.spotify.com/playlist/pl1",
 			"https://open.spotify.com/playlist/pl2",
 			"spotify:liked",
@@ -140,7 +140,7 @@ class MusicSyncJobTest {
 
 		job.sync()
 
-		assertThat(captured.map { it.url }).isEqualTo(listOf(
+		assertThat(captured.map { it.input }).isEqualTo(listOf(
 			"https://open.spotify.com/playlist/pl1",
 			"https://open.spotify.com/playlist/pl2",
 			"spotify:liked",

@@ -65,8 +65,8 @@ class MusicSyncJob(
 	private fun submit(name: String, url: String): String {
 		return try {
 			val response = sockseek.submitJob(SockseekJobRequest(url))
-			log.info { "Submitted $name → job ${response.id} (${response.status})" }
-			response.status
+			log.info { "Submitted $name → job ${response.jobId} (${response.lifecycleState})" }
+			response.lifecycleState
 		} catch (e: FeignException.FeignClientException) {
 			// 4xx — no retry, alert immediately
 			val msg = "❌ Music sync failed: $name — ${e.status()} ${e.message}"

@@ -13,8 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody
 )
 interface SockseekClient {
 
-	// ponytail: path assumed from plan; verify against /api/openapi.json on the running daemon
-	@PostMapping("/api/download")
+	@PostMapping("/api/jobs/extract")
 	fun submitJob(@RequestBody request: SockseekJobRequest): SockseekJobResponse
 
 	open class Config {
@@ -23,9 +22,12 @@ interface SockseekClient {
 	}
 }
 
-data class SockseekJobRequest(val url: String)
+data class SockseekJobRequest(
+	val input: String,
+	val autoStartExtractedResult: Boolean = true,
+)
 
 data class SockseekJobResponse(
-	val id: String,
-	val status: String,
+	val jobId: String,
+	val lifecycleState: String,
 )

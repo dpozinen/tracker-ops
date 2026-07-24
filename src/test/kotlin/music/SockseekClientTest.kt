@@ -24,15 +24,18 @@ class SockseekClientTest {
 		.target(SockseekClient::class.java, "http://localhost:9996")
 
 	@Test
-	fun `submitJob posts source url and returns job response`() {
+	fun `submitJob posts input url and returns job response`() {
 		stubFor(
-			post(urlEqualTo("/api/download"))
-				.withRequestBody(matchingJsonPath("$.url", equalTo("https://open.spotify.com/playlist/abc")))
-				.willReturn(okJson("""{"id":"abc123","status":"queued"}"""))
+			post(urlEqualTo("/api/jobs/extract"))
+				.withRequestBody(matchingJsonPath("$.input", equalTo("https://open.spotify.com/playlist/abc")))
+				.withRequestBody(matchingJsonPath("$.autoStartExtractedResult", equalTo("true")))
+				.willReturn(okJson("""{"jobId":"abc123","lifecycleState":"Queued"}"""))
 		)
 
 		val response = client.submitJob(SockseekJobRequest("https://open.spotify.com/playlist/abc"))
 
-		assertThat(response.id).isEqualTo("abc123")
+		assertThat(response).isEqualTo(
+			dpozinen.music.sockseek.SockseekJobResponse(jobId = "abc123", lifecycleState = "Queued")
+		)
 	}
 }

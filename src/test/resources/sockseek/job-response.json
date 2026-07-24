@@ -1,1 +1,1 @@
-{"id": "abc123", "status": "queued"}
+{"jobId": "abc123", "lifecycleState": "Queued"}
