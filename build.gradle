@@ -1,10 +1,10 @@
 import static java.lang.System.getenv
 
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '2.3.21'
+    id 'org.jetbrains.kotlin.jvm' version '2.4.10'
     id 'application'
-    id 'com.google.cloud.tools.jib' version '3.5.3'
-    id 'org.springframework.boot' version '4.0.6'
+    id 'com.google.cloud.tools.jib' version '3.5.4'
+    id 'org.springframework.boot' version '4.1.0'
     id 'io.spring.dependency-management' version '1.1.7'
 }
 
@@ -18,7 +18,7 @@ repositories {
 
 dependencyManagement {
     imports {
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:2025.1.1"
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:2025.1.2"
     }
 }
 
@@ -27,8 +27,8 @@ dependencies {
     implementation 'org.jsoup:jsoup:1.22.2'
     implementation 'com.jayway.jsonpath:json-path:3.0.0'
     implementation 'io.github.microutils:kotlin-logging-jvm:3.0.5'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2'
-    implementation 'org.jetbrains.kotlinx:kotlinx-collections-immutable:0.4.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-collections-immutable:0.5.1'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3'
     implementation 'javax.xml.bind:jaxb-api:2.3.1'
 
@@ -51,7 +51,7 @@ dependencies {
     // OpenFeign non-Spring dependency
     implementation 'io.github.openfeign:feign-jackson:13.9'
 
-    runtimeOnly 'org.jetbrains.kotlin:kotlin-reflect:2.3.21'
+    runtimeOnly 'org.jetbrains.kotlin:kotlin-reflect:2.4.0'
     runtimeOnly 'org.springframework.boot:spring-boot-devtools'
 
     // Test dependencies (versions managed by Spring Boot BOM where applicable)
