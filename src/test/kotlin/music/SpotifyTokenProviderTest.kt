@@ -2,6 +2,7 @@ package music
 
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import com.github.tomakehurst.wiremock.junit5.WireMockTest
+import com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED
 import dpozinen.music.MusicConfig
 import dpozinen.music.spotify.SpotifyTokenProvider
 import feign.RequestTemplate
@@ -49,5 +50,22 @@ class SpotifyTokenProviderTest {
 		provider.apply(template)
 
 		verify(1, postRequestedFor(urlEqualTo("/api/token")))
+	}
+
+	@Test
+	fun `retries token fetch on 429`() {
+		stubFor(post(urlEqualTo("/api/token")).inScenario("rate-limit")
+			.whenScenarioStateIs(STARTED)
+			.willReturn(aResponse().withStatus(429).withHeader("Retry-After", "0"))
+			.willSetStateTo("recovered"))
+		stubFor(post(urlEqualTo("/api/token")).inScenario("rate-limit")
+			.whenScenarioStateIs("recovered")
+			.willReturn(okJson("""{"access_token":"tok123","expires_in":3600}""")))
+
+		val template = RequestTemplate()
+		provider.apply(template)
+
+		assertThat(template.headers()["Authorization"]).isEqualTo(listOf("Bearer tok123"))
+		verify(2, postRequestedFor(urlEqualTo("/api/token")))
 	}
 }

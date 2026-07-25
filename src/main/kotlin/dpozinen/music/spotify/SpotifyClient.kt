@@ -25,7 +25,7 @@ interface SpotifyClient {
 
 	open class Config {
 		@Bean
-		open fun retryer() = Retryer.Default()
+		open fun retryer(): Retryer = SpotifyRetryer()
 
 		@Bean
 		open fun spotifyAuth(config: MusicConfig) = SpotifyTokenProvider(config.spotify)
