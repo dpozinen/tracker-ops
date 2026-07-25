@@ -1,0 +1,2 @@
+{ "summary": { "jobId": "song-2", "workflowId": "wf-1", "kind": "song", "lifecycleState": "Terminal", "terminalOutcome": "Succeeded", "parentJobId": "jl-1" },
+  "payload": { "kind": "song", "downloadPath": "/music/.opus", "downloadSource": "Fallback" } }
