@@ -56,7 +56,11 @@ class MusicSyncJob(
 
 		telegram.sendMessage(telegram.chatId, buildSummary(results))
 
-		if (config.plex.enabled) syncToPlex(jobs)
+		if (config.plex.enabled) runCatching { syncToPlex(jobs) }
+			.onFailure {
+				log.error(it) { "Plex sync failed" }
+				telegram.sendMessage(telegram.chatId, "❌ Plex sync failed — ${it.message}")
+			}
 		log.info { "Music sync complete" }
 	}
 
@@ -78,6 +82,7 @@ class MusicSyncJob(
 			delay(config.plex.wait.interval.toMillis())
 		}
 		log.warn { "Downloads still running after cap; syncing what resolved" }
+		telegram.sendMessage(telegram.chatId, "⚠️ Downloads still running after cap; Plex sync may be incomplete")
 	}
 
 	private fun awaitScan() = runBlocking {
@@ -89,6 +94,7 @@ class MusicSyncJob(
 			delay(config.plex.wait.interval.toMillis())
 		}
 		log.warn { "Plex scan still running after cap; proceeding" }
+		telegram.sendMessage(telegram.chatId, "⚠️ Plex scan still running after cap; playlists may be incomplete")
 	}
 
 	private fun submit(name: String, url: String): SockseekJobResponse {
@@ -111,7 +117,8 @@ class MusicSyncJob(
 
 	private fun buildPlexSummary(results: List<PlaylistResult>): String {
 		val lines = results.joinToString("\n") {
-			"✓ ${it.name} — +${it.added}/-${it.removed}" +
+			if (it.failed) "❌ ${it.name} — sync failed"
+			else "✓ ${it.name} — +${it.added}/-${it.removed}" +
 				if (it.unresolved > 0) " (${it.unresolved} not in plex)" else ""
 		}
 		return "🎧 Plex playlists synced\n$lines"

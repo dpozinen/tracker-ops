@@ -1,2 +1,0 @@
-{ "summary": { "jobId": "ex-1", "workflowId": "wf-1", "kind": "extract", "lifecycleState": "Terminal", "terminalOutcome": "Succeeded", "resultJobId": "jl-1" },
-  "payload": { "kind": "extract", "input": "https://open.spotify.com/playlist/x", "resultJobId": "jl-1" } }

@@ -5,7 +5,13 @@ import mu.KotlinLogging.logger
 import org.springframework.stereotype.Service
 import java.text.Normalizer
 
-data class PlaylistResult(val name: String, val added: Int, val removed: Int, val unresolved: Int)
+data class PlaylistResult(
+	val name: String,
+	val added: Int,
+	val removed: Int,
+	val unresolved: Int,
+	val failed: Boolean = false,
+)
 
 @Service
 class PlexPlaylistSyncer(
@@ -60,7 +66,7 @@ class PlexPlaylistSyncer(
 		PlaylistResult(name, added = adds.size, removed = removes.size, unresolved = unresolved)
 	}.getOrElse {
 		log.error(it) { "Failed to sync playlist $name" }
-		PlaylistResult(name, added = 0, removed = 0, unresolved = paths.size)
+		PlaylistResult(name, added = 0, removed = 0, unresolved = paths.size, failed = true)
 	}
 
 	private fun create(name: String, machineId: String, keys: Set<String>): String =

@@ -67,4 +67,7 @@ data class SockseekPayload(
 
 object SockseekStates {
 	const val TERMINAL = "Terminal"
+	const val SONG = "song"
+	const val SUCCEEDED = "Succeeded"
+	const val SOULSEEK = "Soulseek"
 }

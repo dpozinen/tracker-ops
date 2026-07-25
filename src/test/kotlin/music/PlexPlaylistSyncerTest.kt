@@ -33,7 +33,7 @@ class PlexPlaylistSyncerTest {
 			),
 		))
 		every { plex.playlists() } returns PlexPlaylists(PlexPlaylists.Container(listOf(
-			PlexPlaylist("900", "My Mix", "audio"),
+			PlexPlaylist("900", "My Mix"),
 		)))
 		every { plex.playlistItems("900") } returns PlexPlaylistItems(PlexPlaylistItems.Container(listOf(
 			PlexPlaylistItem("101", 5001),   // stays
@@ -64,7 +64,7 @@ class PlexPlaylistSyncerTest {
 	fun `creates playlist when none exists`() {
 		every { plex.playlists() } returns PlexPlaylists(PlexPlaylists.Container(emptyList()))
 		every { plex.createPlaylist(any(), any(), any(), any()) } returns
-			PlexPlaylists(PlexPlaylists.Container(listOf(PlexPlaylist("901", "Fresh", "audio"))))
+			PlexPlaylists(PlexPlaylists.Container(listOf(PlexPlaylist("901", "Fresh"))))
 		every { plex.playlistItems("901") } returns PlexPlaylistItems(PlexPlaylistItems.Container(emptyList()))
 
 		val result = syncer.sync(mapOf("Fresh" to listOf("/music/A/Album/01. a.flac")))
