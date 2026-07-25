@@ -24,9 +24,12 @@ class PlexPlaylistSyncer(
 	private val addChunk = 200
 
 	fun sync(playlists: Map<String, List<String>>): List<PlaylistResult> {
+		log.info { "Building Plex track index (section ${plexConfig.libraryId})" }
 		val index = buildIndex()
+		log.info { "Indexed ${index.size} Plex tracks" }
 		val machineId = plex.identity().container.machineIdentifier
 		val existing = plex.playlists().container.metadata.associate { it.title to it.ratingKey }
+		log.info { "Found ${existing.size} existing Plex playlists; syncing ${playlists.size}" }
 		return playlists.map { (name, paths) -> syncOne(name, paths, index, machineId, existing) }
 	}
 
@@ -52,8 +55,12 @@ class PlexPlaylistSyncer(
 			val key = index[nfc(path.replaceFirst(plexConfig.sockseekPathPrefix, plexConfig.plexPathPrefix))]
 			if (key != null) resolved.add(key) else unresolved++
 		}
+		log.info { "Playlist '$name': resolved ${resolved.size}, unresolved $unresolved of ${paths.size} tracks" }
 
-		val playlistId = existing[name] ?: create(name, machineId, resolved)
+		val existingId = existing[name]
+		val playlistId = existingId ?: create(name, machineId, resolved)
+		if (existingId == null) log.info { "Created Plex playlist '$name' ($playlistId)" }
+
 		val current = plex.playlistItems(playlistId).container.metadata
 			.associate { it.ratingKey to it.playlistItemID }
 
@@ -62,6 +69,7 @@ class PlexPlaylistSyncer(
 
 		adds.chunked(addChunk).forEach { plex.addItems(playlistId, uri(machineId, it)) }
 		removes.values.forEach { plex.removeItem(playlistId, it) }
+		log.info { "Playlist '$name' ($playlistId) synced: +${adds.size}/-${removes.size}" }
 
 		PlaylistResult(name, added = adds.size, removed = removes.size, unresolved = unresolved)
 	}.getOrElse {

@@ -39,6 +39,7 @@ class MusicSyncJob(
 		log.info { "Starting music sync" }
 		val myId = spotify.getMe().id
 		val playlists = fetchAllPlaylists(myId)
+		log.info { "Fetched ${playlists.size} spotify playlists for user $myId" }
 
 		val results = mutableMapOf<String, String>()
 		val jobs = LinkedHashMap<String, String>()   // playlistName -> extract jobId
@@ -56,29 +57,48 @@ class MusicSyncJob(
 
 		telegram.sendMessage(telegram.chatId, buildSummary(results))
 
-		if (config.plex.enabled) runCatching { syncToPlex(jobs) }
-			.onFailure {
-				log.error(it) { "Plex sync failed" }
-				telegram.sendMessage(telegram.chatId, "❌ Plex sync failed — ${it.message}")
-			}
+		if (config.plex.enabled) {
+			runCatching { syncToPlex(jobs) }
+				.onFailure {
+					log.error(it) { "Plex sync failed" }
+					telegram.sendMessage(telegram.chatId, "❌ Plex sync failed — ${it.message}")
+				}
+		} else {
+			log.info { "Plex sync disabled (zoe.music.plex.enabled=false)" }
+		}
 		log.info { "Music sync complete" }
 	}
 
 	private fun syncToPlex(jobs: Map<String, String>) {
-		if (jobs.isEmpty()) return
+		if (jobs.isEmpty()) {
+			log.info { "No playlists with sockseek jobs — skipping Plex sync" }
+			return
+		}
+		log.info { "Starting Plex sync for ${jobs.size} playlists: ${jobs.keys}" }
 		awaitDownloads(jobs.values)
 		awaitScan()
-		val resolved = jobs.mapValues { (_, jobId) -> harvester.resolve(jobId) }
-		telegram.sendMessage(telegram.chatId, buildPlexSummary(syncer.sync(resolved)))
+		val resolved = jobs.mapValues { (name, jobId) ->
+			harvester.resolve(jobId).also {
+				log.info { "Resolved ${it.size} downloaded tracks for '$name' (job $jobId)" }
+			}
+		}
+		val results = syncer.sync(resolved)
+		telegram.sendMessage(telegram.chatId, buildPlexSummary(results))
+		log.info { "Plex sync complete: ${results.joinToString { "${it.name}(+${it.added}/-${it.removed})" }}" }
 	}
 
 	private fun awaitDownloads(jobIds: Collection<String>) = runBlocking {
 		val workflows = jobIds.map { sockseek.getJob(it).summary.workflowId }.toSet()
-		repeat(config.plex.wait.maxAttempts) {
-			val done = workflows.all { wf ->
+		log.info { "Waiting for ${workflows.size} download workflow(s): $workflows" }
+		repeat(config.plex.wait.maxAttempts) { attempt ->
+			val pending = workflows.filterNot { wf ->
 				sockseek.getJobs(wf, includeAll = true).all { it.lifecycleState == SockseekStates.TERMINAL }
 			}
-			if (done) return@runBlocking
+			if (pending.isEmpty()) {
+				log.info { "All downloads terminal after ${attempt + 1} poll(s)" }
+				return@runBlocking
+			}
+			log.info { "Downloads still running: ${pending.size}/${workflows.size} workflow(s), poll ${attempt + 1}/${config.plex.wait.maxAttempts}" }
 			delay(config.plex.wait.interval.toMillis())
 		}
 		log.warn { "Downloads still running after cap; syncing what resolved" }
@@ -86,11 +106,16 @@ class MusicSyncJob(
 	}
 
 	private fun awaitScan() = runBlocking {
+		log.info { "Triggering Plex library scan (section ${config.plex.libraryId})" }
 		plex.scan(config.plex.libraryId)
-		repeat(config.plex.wait.maxAttempts) {
+		repeat(config.plex.wait.maxAttempts) { attempt ->
 			val refreshing = plex.sections().container.directory
 				.firstOrNull { it.key == config.plex.libraryId.toString() }?.refreshing ?: false
-			if (!refreshing) return@runBlocking
+			if (!refreshing) {
+				log.info { "Plex scan finished after ${attempt + 1} poll(s)" }
+				return@runBlocking
+			}
+			log.info { "Plex scan still running, poll ${attempt + 1}/${config.plex.wait.maxAttempts}" }
 			delay(config.plex.wait.interval.toMillis())
 		}
 		log.warn { "Plex scan still running after cap; proceeding" }
