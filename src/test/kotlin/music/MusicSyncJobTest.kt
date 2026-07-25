@@ -30,6 +30,7 @@ import io.mockk.verifyOrder
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
+import java.time.Duration
 import kotlin.test.Test
 
 @ExtendWith(MockKExtension::class)
@@ -52,6 +53,9 @@ class MusicSyncJobTest {
 				clientSecret = "secret",
 				refreshToken = "refresh",
 				additionalPlaylists = listOf("Extra Mix"),
+			),
+			plex = MusicConfig.PlexConfig(
+				wait = MusicConfig.PlexConfig.Wait(interval = Duration.ofMillis(1), maxAttempts = 3),
 			),
 		)
 		job = MusicSyncJob(spotify, sockseek, telegram, config, harvester, syncer, plexClient)
@@ -191,5 +195,49 @@ class MusicSyncJobTest {
 			"My Mix" to listOf("/music/A/Album/01. a.flac"),
 			"Liked Songs" to listOf("/music/L/Liked/02. l.flac"),
 		))
+	}
+
+	@Test
+	fun `polls downloads until terminal before scanning`() {
+		every { spotify.getPlaylists(50, 0) } returns SpotifyPagedPlaylists(
+			items = listOf(SpotifyPlaylist("pl1", "My Mix", SpotifyOwner("me"), false)),
+			next = null,
+		)
+		every { sockseek.submitJob(SockseekJobRequest("https://open.spotify.com/playlist/pl1")) } returns
+			SockseekJobResponse("job-pl1", "Queued")
+		every { sockseek.getJob("job-pl1") } returns SockseekJobDetail(
+			SockseekJobSummary("job-pl1", "wf", "extract", "Terminal", "Succeeded"), null)
+		every { sockseek.getJobs("wf", true) } returnsMany listOf(
+			listOf(SockseekJobSummary("s", "wf", "song", "Running")),
+			listOf(SockseekJobSummary("s", "wf", "song", "Terminal", "Succeeded")),
+		)
+
+		job.sync()
+
+		verify(exactly = 2) { sockseek.getJobs("wf", true) }
+		verifyOrder {
+			sockseek.getJobs("wf", true)
+			plexClient.scan(11)
+		}
+	}
+
+	@Test
+	fun `alerts telegram when downloads never finish within the cap`() {
+		every { spotify.getPlaylists(50, 0) } returns SpotifyPagedPlaylists(
+			items = listOf(SpotifyPlaylist("pl1", "My Mix", SpotifyOwner("me"), false)),
+			next = null,
+		)
+		every { sockseek.getJobs("wf", true) } returns
+			listOf(SockseekJobSummary("s", "wf", "song", "Running"))
+
+		job.sync()
+
+		verify(exactly = 3) { sockseek.getJobs("wf", true) }
+		verify {
+			telegram.sendMessage(
+				telegram.chatId,
+				"⚠️ Downloads still running after cap; Plex sync may be incomplete",
+			)
+		}
 	}
 }

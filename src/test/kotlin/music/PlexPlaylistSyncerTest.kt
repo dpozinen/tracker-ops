@@ -75,4 +75,24 @@ class PlexPlaylistSyncerTest {
 		}
 		assertThat(result).isEqualTo(listOf(PlaylistResult("Fresh", added = 1, removed = 0, unresolved = 0)))
 	}
+
+	@Test
+	fun `one playlist failure is isolated and marked failed, others still sync`() {
+		every { plex.playlists() } returns PlexPlaylists(PlexPlaylists.Container(listOf(
+			PlexPlaylist("900", "Good"),
+			PlexPlaylist("901", "Bad"),
+		)))
+		every { plex.playlistItems("900") } returns PlexPlaylistItems(PlexPlaylistItems.Container(emptyList()))
+		every { plex.playlistItems("901") } throws RuntimeException("plex down")
+
+		val result = syncer.sync(mapOf(
+			"Good" to listOf("/music/A/Album/01. a.flac"),
+			"Bad" to listOf("/music/B/Album/02. b.flac"),
+		))
+
+		assertThat(result).isEqualTo(listOf(
+			PlaylistResult("Good", added = 1, removed = 0, unresolved = 0),
+			PlaylistResult("Bad", added = 0, removed = 0, unresolved = 1, failed = true),
+		))
+	}
 }
