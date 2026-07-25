@@ -240,4 +240,34 @@ class MusicSyncJobTest {
 			)
 		}
 	}
+
+	@Test
+	fun `recovers when sockseek 404s on a freshly submitted job`() {
+		every { spotify.getPlaylists(50, 0) } returns SpotifyPagedPlaylists(
+			items = listOf(SpotifyPlaylist("pl1", "My Mix", SpotifyOwner("me"), false)),
+			next = null,
+		)
+		every { sockseek.submitJob(SockseekJobRequest("https://open.spotify.com/playlist/pl1")) } returns
+			SockseekJobResponse("job-pl1", "Queued")
+		val notFound = FeignException.NotFound(
+			"not found",
+			Request.create(Request.HttpMethod.GET, "http://sockseek/api/jobs/job-pl1", emptyMap(), null, null, null),
+			null,
+			emptyMap(),
+		)
+		val detail = SockseekJobDetail(
+			SockseekJobSummary("job-pl1", "wf", "extract", "Terminal", "Succeeded"), null)
+		every { sockseek.getJob("job-pl1") } throws notFound andThen detail
+
+		job.sync()
+
+		verify(atLeast = 2) { sockseek.getJob("job-pl1") }
+		verifyOrder {
+			plexClient.scan(11)
+			syncer.sync(any())
+		}
+		verify(exactly = 0) {
+			telegram.sendMessage(any(), match<String> { it.startsWith("❌ Plex sync failed") })
+		}
+	}
 }

@@ -78,9 +78,10 @@ class MusicSyncJob(
 		awaitDownloads(jobs.values)
 		awaitScan()
 		val resolved = jobs.mapValues { (name, jobId) ->
-			harvester.resolve(jobId).also {
-				log.info { "Resolved ${it.size} downloaded tracks for '$name' (job $jobId)" }
-			}
+			runCatching { harvester.resolve(jobId) }
+				.onFailure { log.error(it) { "Failed to harvest '$name' (job $jobId)" } }
+				.getOrDefault(emptyList())
+				.also { log.info { "Resolved ${it.size} downloaded tracks for '$name' (job $jobId)" } }
 		}
 		val results = syncer.sync(resolved)
 		telegram.sendMessage(telegram.chatId, buildPlexSummary(results))
@@ -88,20 +89,33 @@ class MusicSyncJob(
 	}
 
 	private fun awaitDownloads(jobIds: Collection<String>) = runBlocking {
-		val workflows = jobIds.map { sockseek.getJob(it).summary.workflowId }.toSet()
-		log.info { "Waiting for ${workflows.size} download workflow(s): $workflows" }
+		val expected = jobIds.toSet()
+		log.info { "Waiting for ${expected.size} download job(s): $expected" }
+		// jobId -> workflowId, resolved lazily: a freshly-submitted job 404s until sockseek registers it
+		val workflowByJob = HashMap<String, String>()
 		repeat(config.plex.wait.maxAttempts) { attempt ->
-			val pending = workflows.filterNot { wf ->
-				sockseek.getJobs(wf, includeAll = true).all { it.lifecycleState == SockseekStates.TERMINAL }
+			expected.forEach { jobId ->
+				if (jobId !in workflowByJob) {
+					runCatching { sockseek.getJob(jobId).summary.workflowId }
+						.onSuccess { workflowByJob[jobId] = it }
+						.onFailure { log.info { "Job $jobId not queryable yet (${it.message})" } }
+				}
 			}
-			if (pending.isEmpty()) {
+			val allResolved = workflowByJob.keys.containsAll(expected)
+			val allTerminal = workflowByJob.values.toSet().all { wf ->
+				runCatching {
+					sockseek.getJobs(wf, includeAll = true)
+						.let { jobs -> jobs.isNotEmpty() && jobs.all { it.lifecycleState == SockseekStates.TERMINAL } }
+				}.getOrDefault(false)
+			}
+			if (allResolved && allTerminal) {
 				log.info { "All downloads terminal after ${attempt + 1} poll(s)" }
 				return@runBlocking
 			}
-			log.info { "Downloads still running: ${pending.size}/${workflows.size} workflow(s), poll ${attempt + 1}/${config.plex.wait.maxAttempts}" }
+			log.info { "Waiting on downloads: ${workflowByJob.size}/${expected.size} jobs resolved, poll ${attempt + 1}/${config.plex.wait.maxAttempts}" }
 			delay(config.plex.wait.interval.toMillis())
 		}
-		log.warn { "Downloads still running after cap; syncing what resolved" }
+		log.warn { "Downloads not all terminal after cap; syncing what resolved" }
 		telegram.sendMessage(telegram.chatId, "⚠️ Downloads still running after cap; Plex sync may be incomplete")
 	}
 
