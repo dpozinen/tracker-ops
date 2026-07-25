@@ -24,6 +24,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
+import io.mockk.slot
 import io.mockk.verify
 import io.mockk.verifyOrder
 import org.assertj.core.api.Assertions.assertThat
@@ -166,7 +167,7 @@ class MusicSyncJobTest {
 	}
 
 	@Test
-	fun `syncs resolved playlists to plex after downloads finish`() {
+	fun `syncs playlists and liked songs to plex after downloads, not saved albums`() {
 		every { spotify.getPlaylists(50, 0) } returns SpotifyPagedPlaylists(
 			items = listOf(SpotifyPlaylist("pl1", "My Mix", SpotifyOwner("me"), false)),
 			next = null,
@@ -176,12 +177,19 @@ class MusicSyncJobTest {
 		every { sockseek.getJob("job-pl1") } returns SockseekJobDetail(
 			SockseekJobSummary("job-pl1", "wf", "extract", "Terminal", "Succeeded"), null)
 		every { harvester.resolve("job-pl1") } returns listOf("/music/A/Album/01. a.flac")
+		every { harvester.resolve("job-x") } returns listOf("/music/L/Liked/02. l.flac")
+		val synced = slot<Map<String, List<String>>>()
+		every { syncer.sync(capture(synced)) } returns emptyList()
 
 		job.sync()
 
 		verifyOrder {
 			plexClient.scan(11)
-			syncer.sync(match { it["My Mix"] == listOf("/music/A/Album/01. a.flac") })
+			syncer.sync(any())
 		}
+		assertThat(synced.captured).isEqualTo(linkedMapOf(
+			"My Mix" to listOf("/music/A/Album/01. a.flac"),
+			"Liked Songs" to listOf("/music/L/Liked/02. l.flac"),
+		))
 	}
 }

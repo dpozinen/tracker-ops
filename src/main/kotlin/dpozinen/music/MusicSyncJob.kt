@@ -49,7 +49,9 @@ class MusicSyncJob(
 			results[playlist.name] = response.lifecycleState
 			response.jobId?.let { jobs[playlist.name] = it }
 		}
-		results["Liked Songs"] = submit("Liked Songs", "spotify:liked").lifecycleState
+		val liked = submit("Liked Songs", "spotify:liked")
+		results["Liked Songs"] = liked.lifecycleState
+		liked.jobId?.let { jobs["Liked Songs"] = it }
 		results["Saved Albums"] = submit("Saved Albums", "spotify:albums").lifecycleState
 
 		telegram.sendMessage(telegram.chatId, buildSummary(results))
