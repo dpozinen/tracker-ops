@@ -1,5 +1,6 @@
 package dpozinen.music.spotify
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import dpozinen.music.MusicConfig
@@ -63,6 +64,7 @@ interface SpotifyAuthClient {
 	): TokenResponse
 }
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class TokenResponse(
 	@param:JsonProperty("access_token") val accessToken: String,
 	@param:JsonProperty("expires_in") val expiresIn: Long,

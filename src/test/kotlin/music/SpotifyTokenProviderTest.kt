@@ -29,7 +29,7 @@ class SpotifyTokenProviderTest {
 	fun `injects bearer token from spotify token endpoint`() {
 		stubFor(
 			post(urlEqualTo("/api/token"))
-				.willReturn(okJson("""{"access_token":"tok123","expires_in":3600}"""))
+				.willReturn(okJson("""{"access_token":"tok123","token_type":"Bearer","expires_in":3600,"scope":"playlist-read-private"}"""))
 		)
 
 		val template = RequestTemplate()
@@ -42,7 +42,7 @@ class SpotifyTokenProviderTest {
 	fun `reuses cached token without re-fetching`() {
 		stubFor(
 			post(urlEqualTo("/api/token"))
-				.willReturn(okJson("""{"access_token":"tok123","expires_in":3600}"""))
+				.willReturn(okJson("""{"access_token":"tok123","token_type":"Bearer","expires_in":3600,"scope":"playlist-read-private"}"""))
 		)
 
 		val template = RequestTemplate()
@@ -60,7 +60,7 @@ class SpotifyTokenProviderTest {
 			.willSetStateTo("recovered"))
 		stubFor(post(urlEqualTo("/api/token")).inScenario("rate-limit")
 			.whenScenarioStateIs("recovered")
-			.willReturn(okJson("""{"access_token":"tok123","expires_in":3600}""")))
+			.willReturn(okJson("""{"access_token":"tok123","token_type":"Bearer","expires_in":3600,"scope":"playlist-read-private"}""")))
 
 		val template = RequestTemplate()
 		provider.apply(template)
