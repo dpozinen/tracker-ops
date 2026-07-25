@@ -1,0 +1,7 @@
+[
+  { "jobId": "ex-1",   "workflowId": "wf-1", "kind": "extract",  "lifecycleState": "Terminal", "terminalOutcome": "Succeeded", "parentJobId": null },
+  { "jobId": "jl-1",   "workflowId": "wf-1", "kind": "job-list", "lifecycleState": "Terminal", "terminalOutcome": "Succeeded", "parentJobId": "ex-1" },
+  { "jobId": "song-1", "workflowId": "wf-1", "kind": "song",     "lifecycleState": "Terminal", "terminalOutcome": "Succeeded", "parentJobId": "jl-1" },
+  { "jobId": "song-2", "workflowId": "wf-1", "kind": "song",     "lifecycleState": "Terminal", "terminalOutcome": "Succeeded", "parentJobId": "jl-1" },
+  { "jobId": "song-3", "workflowId": "wf-1", "kind": "song",     "lifecycleState": "Terminal", "terminalOutcome": "Failed",    "parentJobId": "jl-1" }
+]

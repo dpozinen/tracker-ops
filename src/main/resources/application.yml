@@ -45,6 +45,14 @@ zoe:
       additional-playlists: []
     sockseek:
       url: http://sockseek:5030
+    plex:
+      enabled: true
+      library-id: 11
+      sockseek-path-prefix: /music/
+      plex-path-prefix: /media/chute/Song/
+      wait:
+        interval: 30s
+        max-attempts: 240
 
 server:
   port: 8133
