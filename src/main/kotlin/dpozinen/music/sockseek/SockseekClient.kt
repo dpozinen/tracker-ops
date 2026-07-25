@@ -41,7 +41,7 @@ data class SockseekJobRequest(
 )
 
 data class SockseekJobResponse(
-	val jobId: String,
+	val jobId: String?,
 	val lifecycleState: String,
 )
 
