@@ -89,4 +89,6 @@ keystore.jks
 tracker_ops_trust_store
 sensitive/
 docker-compose.local.yml
-local-data/sockseek/sockseek
+local-data/
+sockseek/sockseek
+docs/superpowers/
