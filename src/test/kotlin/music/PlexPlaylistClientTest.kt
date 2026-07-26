@@ -52,4 +52,12 @@ class PlexPlaylistClientTest {
 		assertThat(client.playlistItems("900").container.metadata.map { it.ratingKey to it.playlistItemID })
 			.isEqualTo(listOf("101" to 5001, "199" to 5002))
 	}
+
+	@Test
+	fun `empty playlist without Metadata deserializes to empty list`() {
+		stubFor(get(urlPathEqualTo("/playlists/901/items"))
+			.willReturn(okJson("""{"MediaContainer":{"size":0}}""")))
+
+		assertThat(client.playlistItems("901").container.metadata).isEmpty()
+	}
 }

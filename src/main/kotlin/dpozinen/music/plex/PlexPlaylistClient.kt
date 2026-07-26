@@ -2,9 +2,12 @@ package dpozinen.music.plex
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import feign.RequestInterceptor
 import feign.RequestTemplate
 import feign.Retryer
+import feign.codec.Decoder
+import feign.jackson.JacksonDecoder
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.context.annotation.Bean
@@ -58,6 +61,10 @@ interface PlexPlaylistClient {
 		@Bean open fun retryer() = Retryer.Default()
 		@Bean open fun plexAuth(@Value("\${zoe.plex.api-key}") key: String) =
 			RequestInterceptor { t: RequestTemplate -> t.query("X-Plex-Token"); t.query("X-Plex-Token", key) }
+
+		// Kotlin-aware decoder so absent JSON fields fall back to the data-class defaults
+		// (e.g. an empty playlist omits "Metadata"); Spring's default decoder passes null → NPE.
+		@Bean open fun decoder(): Decoder = JacksonDecoder(jacksonObjectMapper())
 	}
 }
 
