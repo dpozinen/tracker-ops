@@ -4,11 +4,13 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import com.github.tomakehurst.wiremock.junit5.WireMockTest
 import dpozinen.music.plex.PlexPlaylistClient
+import dpozinen.music.plex.PlexPlaylistItems
 import feign.Feign
 import feign.jackson.JacksonDecoder
 import feign.jackson.JacksonEncoder
 import org.assertj.core.api.Assertions.assertThat
 import org.springframework.cloud.openfeign.support.SpringMvcContract
+import tools.jackson.databind.json.JsonMapper
 import kotlin.test.Test
 
 @WireMockTest(httpPort = 9995)
@@ -53,11 +55,15 @@ class PlexPlaylistClientTest {
 			.isEqualTo(listOf("101" to 5001, "199" to 5002))
 	}
 
+	// Production decodes with Spring Boot 4's Jackson 3 mapper (tools.jackson) + auto-discovered
+	// kotlin module. Verify our DTOs apply their emptyList() defaults there — an empty Plex
+	// playlist omits "Metadata" entirely, which previously NPE'd the non-null param.
 	@Test
-	fun `empty playlist without Metadata deserializes to empty list`() {
-		stubFor(get(urlPathEqualTo("/playlists/901/items"))
-			.willReturn(okJson("""{"MediaContainer":{"size":0}}""")))
+	fun `plex dtos apply defaults under jackson 3 kotlin module`() {
+		val jackson3 = JsonMapper.builder().findAndAddModules().build()
 
-		assertThat(client.playlistItems("901").container.metadata).isEmpty()
+		val items = jackson3.readValue("""{"MediaContainer":{"size":0}}""", PlexPlaylistItems::class.java)
+
+		assertThat(items.container.metadata).isEmpty()
 	}
 }
