@@ -21,7 +21,11 @@ object SpringFeignCodec {
 
 	fun encoder(): Encoder = SpringEncoder(single(converters()))
 
-	private fun converters() = FeignHttpMessageConverters(empty(), empty())
+	// FeignHttpMessageConverters.getConverters() lazily builds its list without synchronization: it
+	// assigns an empty list, then fills it. Concurrent first encodes (e.g. a startup job coroutine and a
+	// client call) can observe the half-built empty list → "no suitable HttpMessageConverter". Force the
+	// init here, single-threaded, before the shared instance escapes.
+	private fun converters() = FeignHttpMessageConverters(empty(), empty()).apply { converters }
 
 	private fun <T : Any> single(value: T): ObjectProvider<T> = object : ObjectProvider<T> {
 		override fun getObject(): T = value

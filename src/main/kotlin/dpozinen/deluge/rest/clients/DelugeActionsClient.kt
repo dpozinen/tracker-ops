@@ -1,5 +1,6 @@
 package dpozinen.deluge.rest.clients
 
+import dpozinen.SpringFeignCodec
 import dpozinen.deluge.rest.DelugeRequest
 import dpozinen.deluge.rest.DelugeSessionHolder
 import feign.*
@@ -51,6 +52,9 @@ interface DelugeActionsClient {
 
         @Bean
         open fun decoder() = DelugeResponseDecoder()
+
+        @Bean
+        open fun encoder() = SpringFeignCodec.encoder()
 
         @Bean
         open fun authHeader(sessionHolder: DelugeSessionHolder) = DelugeAuthInterceptor(sessionHolder)
