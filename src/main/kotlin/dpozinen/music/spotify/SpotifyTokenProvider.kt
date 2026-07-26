@@ -2,13 +2,11 @@ package dpozinen.music.spotify
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import dpozinen.SpringFeignCodec
 import dpozinen.music.MusicConfig
 import feign.Feign
 import feign.RequestInterceptor
 import feign.RequestTemplate
-import feign.codec.Encoder
-import feign.jackson.JacksonDecoder
 import mu.KotlinLogging.logger
 import org.springframework.cloud.openfeign.support.SpringMvcContract
 import org.springframework.http.MediaType
@@ -30,8 +28,8 @@ class SpotifyTokenProvider(
 	// 429s on the token endpoint are handled by SpotifyRetryer, same as the API client
 	private val auth: SpotifyAuthClient = Feign.builder()
 		.contract(SpringMvcContract())
-		.encoder(Encoder.Default())
-		.decoder(JacksonDecoder(jacksonObjectMapper()))
+		.encoder(SpringFeignCodec.encoder())
+		.decoder(SpringFeignCodec.decoder())
 		.retryer(SpotifyRetryer())
 		.target(SpotifyAuthClient::class.java, tokenBaseUrl)
 

@@ -1,6 +1,5 @@
 package dpozinen.deluge.rest
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import dpozinen.deluge.core.DownloadedCallbacks
 import dpozinen.deluge.core.SonarrCallbacks
 import dpozinen.deluge.domain.GrabSonarrEvent
@@ -11,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
+import tools.jackson.databind.json.JsonMapper
 
 @RestController
 class CallbacksController(
@@ -19,6 +19,7 @@ class CallbacksController(
 ) {
 
     private val log = logger {}
+    private val mapper = JsonMapper.builder().findAndAddModules().build()
 
     @GetMapping("/api/callbacks/plex-scan")
     fun plexScanLibs() {
@@ -40,7 +41,7 @@ class CallbacksController(
 
     @PostMapping("/api/callbacks/sonarr")
     fun sonarr(@RequestBody event: SonarrEvent) {
-        log.info { jacksonObjectMapper().writeValueAsString(event) }
+        log.info { mapper.writeValueAsString(event) }
         when (event) {
             is GrabSonarrEvent -> sonarrCallbacks.downloadStarted()
             is TestSonarrEvent -> log.info { "Sonarr test event received" }

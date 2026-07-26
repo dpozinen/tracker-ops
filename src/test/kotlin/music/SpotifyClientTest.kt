@@ -1,14 +1,12 @@
 package music
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import com.github.tomakehurst.wiremock.junit5.WireMockTest
 import com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED
+import dpozinen.SpringFeignCodec
 import dpozinen.music.spotify.SpotifyClient
 import dpozinen.music.spotify.SpotifyRetryer
 import feign.Feign
-import feign.jackson.JacksonDecoder
-import feign.jackson.JacksonEncoder
 import org.assertj.core.api.Assertions.assertThat
 import org.springframework.cloud.openfeign.support.SpringMvcContract
 import kotlin.test.Test
@@ -16,12 +14,10 @@ import kotlin.test.Test
 @WireMockTest(httpPort = 9997)
 class SpotifyClientTest {
 
-	private val mapper = jacksonObjectMapper()
-
 	private val client: SpotifyClient = Feign.builder()
 		.contract(SpringMvcContract())
-		.encoder(JacksonEncoder(mapper))
-		.decoder(JacksonDecoder(mapper))
+		.encoder(SpringFeignCodec.encoder())
+		.decoder(SpringFeignCodec.decoder())
 		.retryer(SpotifyRetryer(defaultWaitMs = 0))
 		.target(SpotifyClient::class.java, "http://localhost:9997")
 

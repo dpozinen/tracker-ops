@@ -1,12 +1,11 @@
 package dpozinen.deluge.rest.clients
 
-import com.fasterxml.jackson.module.kotlin.KotlinModule
+import dpozinen.SpringFeignCodec
 import dpozinen.deluge.rest.DelugeRequest
 import dpozinen.deluge.rest.DelugeSessionHolder
 import dpozinen.errors.DelugeDisconnectedException
 import dpozinen.errors.DelugeSessionExpiredException
 import feign.*
-import feign.jackson.JacksonDecoder
 import org.springframework.cloud.openfeign.support.ResponseEntityDecoder
 import org.springframework.http.HttpHeaders
 import java.io.IOException
@@ -15,7 +14,7 @@ import kotlin.text.Charsets.UTF_8
 
 
 class DelugeResponseDecoder : ResponseEntityDecoder(
-    JacksonDecoder(listOf(KotlinModule.Builder().build()))
+    SpringFeignCodec.decoder()
 ) {
 
     @Throws(IOException::class)

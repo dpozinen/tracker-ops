@@ -1,9 +1,5 @@
 package dpozinen.tracker
 
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES
-import com.fasterxml.jackson.databind.json.JsonMapper
-import com.fasterxml.jackson.module.kotlin.jacksonMapperBuilder
 import mu.KotlinLogging.logger
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
@@ -11,6 +7,9 @@ import java.net.URLEncoder
 import java.nio.charset.Charset.defaultCharset
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
+import tools.jackson.core.type.TypeReference
+import tools.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES
+import tools.jackson.databind.json.JsonMapper
 
 interface TrackerParser {
 
@@ -109,7 +108,8 @@ interface TrackerParser {
     }
 
     class Trunk : TrackerParser {
-        private val mapper: JsonMapper = jacksonMapperBuilder()
+        private val mapper: JsonMapper = JsonMapper.builder()
+            .findAndAddModules()
             .configure(FAIL_ON_UNKNOWN_PROPERTIES, false)
             .build()
 

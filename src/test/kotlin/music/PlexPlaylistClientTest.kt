@@ -1,13 +1,11 @@
 package music
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import com.github.tomakehurst.wiremock.junit5.WireMockTest
+import dpozinen.SpringFeignCodec
 import dpozinen.music.plex.PlexPlaylistClient
 import dpozinen.music.plex.PlexPlaylistItems
 import feign.Feign
-import feign.jackson.JacksonDecoder
-import feign.jackson.JacksonEncoder
 import org.assertj.core.api.Assertions.assertThat
 import org.springframework.cloud.openfeign.support.SpringMvcContract
 import tools.jackson.databind.json.JsonMapper
@@ -16,11 +14,10 @@ import kotlin.test.Test
 @WireMockTest(httpPort = 9995)
 class PlexPlaylistClientTest {
 
-	private val mapper = jacksonObjectMapper()
 	private val client: PlexPlaylistClient = Feign.builder()
 		.contract(SpringMvcContract())
-		.encoder(JacksonEncoder(mapper))
-		.decoder(JacksonDecoder(mapper))
+		.encoder(SpringFeignCodec.encoder())
+		.decoder(SpringFeignCodec.decoder())
 		.target(PlexPlaylistClient::class.java, "http://localhost:9995")
 
 	private fun res(path: String) =

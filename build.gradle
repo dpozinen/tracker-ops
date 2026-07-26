@@ -37,8 +37,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
-    // Spring-managed dependencies (no explicit versions)
-    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
     // Jackson 3 kotlin module — Spring Boot 4's HTTP converters use Jackson 3 (tools.jackson);
     // without this its shared ObjectMapper can't apply Kotlin data-class defaults/nullability.
     implementation 'tools.jackson.module:jackson-module-kotlin'
@@ -50,9 +48,6 @@ dependencies {
 
     // Spring Cloud dependencies (version managed by Spring Cloud BOM)
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
-
-    // OpenFeign non-Spring dependency
-    implementation 'io.github.openfeign:feign-jackson:13.9'
 
     runtimeOnly 'org.jetbrains.kotlin:kotlin-reflect:2.4.10'
     runtimeOnly 'org.springframework.boot:spring-boot-devtools'
