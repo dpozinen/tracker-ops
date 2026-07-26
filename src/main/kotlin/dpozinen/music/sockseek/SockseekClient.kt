@@ -56,6 +56,7 @@ data class SockseekJobSummary(
 	val kind: String,
 	val lifecycleState: String,
 	val terminalOutcome: String? = null,
+	val skipReason: String? = null,
 	val parentJobId: String? = null,
 )
 
@@ -63,11 +64,14 @@ data class SockseekJobSummary(
 data class SockseekPayload(
 	val downloadPath: String? = null,
 	val downloadSource: String? = null,
+	val skipReason: String? = null,
 )
 
 object SockseekStates {
 	const val TERMINAL = "Terminal"
 	const val SONG = "song"
 	const val SUCCEEDED = "Succeeded"
+	const val SKIPPED = "Skipped"
 	const val SOULSEEK = "Soulseek"
+	const val ALREADY_EXISTS = "AlreadyExists"
 }
