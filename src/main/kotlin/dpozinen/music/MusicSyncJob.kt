@@ -61,7 +61,7 @@ class MusicSyncJob(
 			runCatching { syncToPlex(jobs) }
 				.onFailure {
 					log.error(it) { "Plex sync failed" }
-					telegram.sendMessage(telegram.chatId, "❌ Plex sync failed — ${it.message}")
+					telegram.sendMessage(telegram.chatId, "Plex sync failed — ${it.message}")
 				}
 		} else {
 			log.info { "Plex sync disabled (zoe.music.plex.enabled=false)" }
@@ -142,12 +142,12 @@ class MusicSyncJob(
 			log.info { "Submitted $name → job ${response.jobId} (${response.lifecycleState})" }
 			response
 		} catch (e: FeignException.FeignClientException) {
-			val msg = "❌ Music sync failed: $name — ${e.status()} ${e.message}"
+			val msg = "Music sync failed: $name — ${e.status()} ${e.message}"
 			log.error { msg }
 			telegram.sendMessage(telegram.chatId, msg)
 			SockseekJobResponse(jobId = null, lifecycleState = "failed (${e.status()})")
 		} catch (e: Exception) {
-			val msg = "❌ Music sync failed: $name — ${e.message}"
+			val msg = "Music sync failed: $name — ${e.message}"
 			log.error(e) { msg }
 			telegram.sendMessage(telegram.chatId, msg)
 			SockseekJobResponse(jobId = null, lifecycleState = "failed")
@@ -156,11 +156,11 @@ class MusicSyncJob(
 
 	private fun buildPlexSummary(results: List<PlaylistResult>): String {
 		val lines = results.joinToString("\n") {
-			if (it.failed) "❌ ${it.name} — sync failed"
+			if (it.failed) "${it.name} — sync failed"
 			else "✓ ${it.name} — +${it.added}/-${it.removed}" +
 				if (it.unresolved > 0) " (${it.unresolved} not in plex)" else ""
 		}
-		return "🎧 Plex playlists synced\n$lines"
+		return "Plex playlists synced\n$lines"
 	}
 
 	private fun fetchAllPlaylists(myId: String): List<SpotifyPlaylist> {
@@ -193,8 +193,8 @@ class MusicSyncJob(
 
 private fun buildSummary(results: Map<String, String>): String {
 	val lines = results.entries.joinToString("\n") { (name, status) ->
-		if (status.startsWith("failed")) "❌ $name — $status"
-		else "✓ $name — $status"
+		if (status.startsWith("failed")) "Fail: $name — $status"
+		else "Done: $name — $status"
 	}
-	return "🎵 Music sync complete\n$lines"
+	return "Music sync complete\n$lines"
 }

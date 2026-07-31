@@ -41,6 +41,6 @@ class SockseekHarvesterTest {
 
 		val paths = harvester.resolve("ex-1")
 
-		assertThat(paths).isEqualTo(listOf("/music/A/Album/01. a.flac", "/music/B/Album/02. b.flac"))
+		assertThat(paths).isEqualTo(listOf("/music/A/Album/01. a.flac", "/music/.opus", "/music/B/Album/02. b.flac"))
 	}
 }

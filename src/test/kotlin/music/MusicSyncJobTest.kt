@@ -7,17 +7,8 @@ import dpozinen.music.plex.PlexDirectory
 import dpozinen.music.plex.PlexPlaylistClient
 import dpozinen.music.plex.PlexPlaylistSyncer
 import dpozinen.music.plex.PlexSections
-import dpozinen.music.sockseek.SockseekClient
-import dpozinen.music.sockseek.SockseekJobDetail
-import dpozinen.music.sockseek.SockseekJobRequest
-import dpozinen.music.sockseek.SockseekJobResponse
-import dpozinen.music.sockseek.SockseekJobSummary
-import dpozinen.music.sockseek.SockseekHarvester
-import dpozinen.music.spotify.SpotifyClient
-import dpozinen.music.spotify.SpotifyOwner
-import dpozinen.music.spotify.SpotifyPagedPlaylists
-import dpozinen.music.spotify.SpotifyPlaylist
-import dpozinen.music.spotify.SpotifyUser
+import dpozinen.music.sockseek.*
+import dpozinen.music.spotify.*
 import feign.FeignException
 import feign.Request
 import io.mockk.every
@@ -131,7 +122,7 @@ class MusicSyncJobTest {
 
 		job.sync()
 
-		verify { telegram.sendMessage(any(), match { it.contains("Bad Mix") && it.contains("❌") }) }
+		verify { telegram.sendMessage(any(), match { it.contains("Bad Mix") }) }
 		verify { sockseek.submitJob(SockseekJobRequest("https://open.spotify.com/playlist/pl1")) }
 	}
 
@@ -144,7 +135,7 @@ class MusicSyncJobTest {
 
 		job.sync()
 
-		verify { telegram.sendMessage(any(), match { it.contains("🎵") && it.contains("My Mix") }) }
+		verify { telegram.sendMessage(any(), match { it.contains("My Mix") }) }
 	}
 
 	@Test

@@ -14,7 +14,7 @@ class SockseekHarvester(private val sockseek: SockseekClient) {
 			.filter { it.terminalOutcome == SockseekStates.SUCCEEDED || it.skipReason == SockseekStates.ALREADY_EXISTS }
 		val paths = songs
 			.mapNotNull { sockseek.getJob(it.jobId).payload }
-			.filter { it.downloadSource == SockseekStates.SOULSEEK || it.skipReason == SockseekStates.ALREADY_EXISTS }
+			.filter { it.downloadSource != "None" || it.skipReason == SockseekStates.ALREADY_EXISTS }
 			.mapNotNull { it.downloadPath }
 		log.info { "Workflow $workflowId (job $extractJobId): ${songs.size} succeeded/existing songs, ${paths.size} resolved paths" }
 		return paths
